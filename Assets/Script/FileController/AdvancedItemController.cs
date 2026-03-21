@@ -1,0 +1,160 @@
+using UnityEngine;
+using System.Collections.Generic;
+using System.IO;
+
+public class AdvancedItemController : MonoBehaviour
+{
+    [Header("文件设置")]
+    [SerializeField] private string fileName;
+    [SerializeField] private string customContent;
+    
+    [Header("管理对象")]
+    [SerializeField] private GameObject targetObject;
+    
+    [Header("功能开关")]
+    [SerializeField] private bool enablePosition = true;
+    [SerializeField] private bool enableRotation = false;
+    [SerializeField] private bool enableSpawn = false;
+    [SerializeField] private bool enableCritical = false;
+    [SerializeField] private bool enableVisibility = true;
+    
+    private LevelFileManager _manager;
+    private List<FeatureProcessor> _processors;
+    
+    public string FileName => fileName;
+    
+    void Awake()
+    {
+        if (targetObject == null)
+        {
+            targetObject = this.gameObject;
+        }
+        
+        InitializeProcessors();
+    }
+    
+    private void InitializeProcessors()
+    {
+        _processors = new List<FeatureProcessor>();
+        
+        if (enablePosition)
+        {
+            _processors.Add(new PositionProcessor());
+        }
+        
+        if (enableRotation)
+        {
+            _processors.Add(new RotationProcessor());
+        }
+        
+        if (enableSpawn)
+        {
+            _processors.Add(new SpawnProcessor());
+        }
+        
+        if (enableCritical)
+        {
+            _processors.Add(new CriticalProcessor());
+        }
+        
+        if (enableVisibility)
+        {
+            _processors.Add(new VisibilityProcessor());
+        }
+    }
+    
+    public void SetManager(LevelFileManager manager)
+    {
+        _manager = manager;
+    }
+    
+    public LevelFileManager GetManager()
+    {
+        return _manager;
+    }
+    
+    public List<FeatureProcessor> GetProcessors()
+    {
+        return _processors;
+    }
+    
+    public void SetFileName(string newFileName)
+    {
+        fileName = newFileName;
+    }
+    
+    public void DisableSpawn()
+    {
+        enableSpawn = false;
+        var spawnProcessor = _processors.Find(p => p is SpawnProcessor);
+        if (spawnProcessor != null)
+        {
+            _processors.Remove(spawnProcessor);
+        }
+    }
+    
+    public void CreateDefaultFile(string folderPath)
+    {
+        string fullPath = Path.Combine(folderPath, $"{fileName}.txt");
+        
+        if (File.Exists(fullPath)) return;
+        
+        string content = customContent;
+        
+        foreach (var processor in _processors)
+        {
+            string processorContent = processor.CreateDefaultContent(targetObject);
+            if (!string.IsNullOrEmpty(processorContent))
+            {
+                if (!string.IsNullOrEmpty(content))
+                {
+                    content += "\n" + processorContent;
+                }
+                else
+                {
+                    content = processorContent;
+                }
+            }
+        }
+        
+        if (!string.IsNullOrEmpty(content))
+        {
+            File.WriteAllText(fullPath, content);
+        }
+        
+        foreach (var processor in _processors)
+        {
+            processor.OnFileCreated(folderPath, fileName, targetObject);
+        }
+    }
+    
+    public void UpdateFromFile(string folderPath)
+    {
+        string fullPath = Path.Combine(folderPath, $"{fileName}.txt");
+        bool exists = File.Exists(fullPath);
+        
+        if (!exists)
+        {
+            foreach (var processor in _processors)
+            {
+                processor.OnFileDeleted(targetObject);
+            }
+            return;
+        }
+        
+        string content = File.ReadAllText(fullPath);
+        
+        foreach (var processor in _processors)
+        {
+            processor.OnFileUpdated(content, targetObject);
+        }
+    }
+    
+    public void OnFileCopied(string newFileName, string content)
+    {
+        foreach (var processor in _processors)
+        {
+            processor.OnFileCopied(newFileName, content, targetObject, this);
+        }
+    }
+}
