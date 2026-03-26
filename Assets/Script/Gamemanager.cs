@@ -26,15 +26,15 @@ public class GameManager : MonoBehaviour
     public void CompleteLevel()
     {
         if (!isPlaying) return;
-        UnityEditor.EditorApplication.isPlaying = false;
-        Debug.Log("��ϲ���أ�");
+        //UnityEditor.EditorApplication.isPlaying = false;
+        //Debug.Log("��ϲ���أ�");
     }
 
     public void GameOver()
     {
         if (!isPlaying) return;
-        UnityEditor.EditorApplication.isPlaying = false;
-        Debug.Log("��Ϸ����");
+        //UnityEditor.EditorApplication.isPlaying = false;
+        //Debug.Log("��Ϸ����");
         // ���������ʾUI
     }
 

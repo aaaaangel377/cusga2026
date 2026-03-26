@@ -3,6 +3,7 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using System;
 
 public class LevelFileManager: MonoBehaviour
 {
@@ -110,24 +111,24 @@ public class LevelFileManager: MonoBehaviour
         if (!Directory.Exists(_folderPath)) return;
         
         SpawnItem.RemoveAllCopies();
-        
-        string[] txtFiles = Directory.GetFiles(_folderPath, "*.txt");
-        foreach (string file in txtFiles)
+
+        if (!Directory.Exists(_folderPath)) return;
+
+        foreach (string dir in Directory.GetDirectories(_folderPath))
+        {
+            Directory.Delete(dir, true);
+        }
+
+        foreach (string file in Directory.GetFiles(_folderPath))
         {
             File.Delete(file);
         }
-        
-        string[] pngFiles = Directory.GetFiles(_folderPath, "*.png");
-        foreach (string file in pngFiles)
-        {
-            File.Delete(file);
-        }
-        
-        string[] copFiles = Directory.GetFiles(_folderPath, "*.cop");
-        foreach (string file in copFiles)
-        {
-            File.Delete(file);
-        }
+
+        // 强制刷新文件夹（发送刷新通知给资源管理器）
+        [System.Runtime.InteropServices.DllImport("shell32.dll")]
+        static extern void SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
+
+        SHChangeNotify(0x8000000, 0x1000, IntPtr.Zero, IntPtr.Zero);
     }
     
     void ClearLevelFolder()
@@ -143,6 +144,14 @@ public class LevelFileManager: MonoBehaviour
         }
     }
 
+
+    public string GetParentFolderPath()
+    {
+        if (string.IsNullOrEmpty(_folderPath))
+            return null;
+
+        return Directory.GetParent(_folderPath).FullName;
+    }
     void CreateDefaultFiles()
     {
         foreach (var item in basicItems)
