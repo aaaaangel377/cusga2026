@@ -6,6 +6,7 @@ public class AdvancedItemController : MonoBehaviour
 {
     [Header("文件设置")]
     [SerializeField] private string fileName;
+    [TextArea]
     [SerializeField] private string customContent;
     
     [Header("管理对象")]

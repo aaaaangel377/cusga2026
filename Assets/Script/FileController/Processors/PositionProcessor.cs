@@ -44,7 +44,7 @@ public class PositionProcessor : FeatureProcessor
     {
         if (string.IsNullOrEmpty(content)) return null;
         
-        Match match = Regex.Match(content, @"位置：(-?\d+\.?\d*),(-?\d+\.?\d*)");
+        Match match = Regex.Match(content, @"p(-?\d+\.?\d*)[\r\n]+((-?\d+\.?\d*))");
         
         if (match.Success)
         {

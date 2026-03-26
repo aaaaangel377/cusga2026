@@ -222,4 +222,14 @@ public class LevelFileManager : MonoBehaviour
     {
         return levelIndex;
     }
+    
+    public string GetFolderPath()
+    {
+        return _folderPath;
+    }
+    
+    public float GetCheckInterval()
+    {
+        return checkInterval;
+    }
 }
