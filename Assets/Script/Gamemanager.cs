@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public Image blackScreen;
     public float fadeDuration = 1.0f;
+
+    public int nextLevel;
     [Header("��Ϸ״̬")]
     public bool isPlaying = true;
 
@@ -45,7 +47,7 @@ public class GameManager : MonoBehaviour
     public void gotoNextlevel()
     {
         LevelFileManager.shouldResetFiles = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+        SceneManager.LoadScene(nextLevel);
         Debug.Log("下一关");
     }
     public AudioSource audioSource;
