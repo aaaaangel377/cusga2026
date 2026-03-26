@@ -19,7 +19,10 @@ public class LevelFileManager: MonoBehaviour
     [SerializeField] private List<BasicItem> basicItems = new List<BasicItem>();
     private List<AdvancedItemController> advancedItems = new List<AdvancedItemController>();
     private List<CollisionImageItem> collisionImageItems = new List<CollisionImageItem>();
+    private List<CustomSpawner> customSpawners = new List<CustomSpawner>();
     private HashSet<string> _existingFiles = new HashSet<string>();
+    private HashSet<string> _existingCopFiles = new HashSet<string>();
+    private bool _isInitialized = false;
 
     void Awake()
     {
@@ -34,6 +37,7 @@ public class LevelFileManager: MonoBehaviour
         basicItems = FindObjectsOfType<BasicItem>().ToList();
         advancedItems = FindObjectsOfType<AdvancedItemController>().ToList();
         collisionImageItems = FindObjectsOfType<CollisionImageItem>().ToList();
+        customSpawners = FindObjectsOfType<CustomSpawner>().ToList();
 
         foreach (var item in basicItems)
         {
@@ -59,6 +63,8 @@ public class LevelFileManager: MonoBehaviour
             shouldResetFiles = false;
         }
 
+        ClearLevelFolder();
+
         if (autoCreateFiles)
         {
             CreateDefaultFiles();
@@ -69,11 +75,28 @@ public class LevelFileManager: MonoBehaviour
             item.Initialize();
         }
 
+        StartCoroutine(InitCustomSpawners());
+    }
+    
+    System.Collections.IEnumerator InitCustomSpawners()
+    {
+        yield return new WaitForEndOfFrame();
+        
+        customSpawners = FindObjectsOfType<CustomSpawner>().ToList();
+        foreach (var spawner in customSpawners)
+        {
+            spawner.SetManager(this);
+            RegisterCustomSpawner(spawner);
+        }
+        
         ScanFiles();
+        _isInitialized = true;
     }
 
     void Update()
     {
+        if (!_isInitialized) return;
+        
         _timer += Time.deltaTime;
         if (_timer >= checkInterval)
         {
@@ -86,6 +109,8 @@ public class LevelFileManager: MonoBehaviour
     {
         if (!Directory.Exists(_folderPath)) return;
         
+        SpawnItem.RemoveAllCopies();
+        
         string[] txtFiles = Directory.GetFiles(_folderPath, "*.txt");
         foreach (string file in txtFiles)
         {
@@ -94,6 +119,25 @@ public class LevelFileManager: MonoBehaviour
         
         string[] pngFiles = Directory.GetFiles(_folderPath, "*.png");
         foreach (string file in pngFiles)
+        {
+            File.Delete(file);
+        }
+        
+        string[] copFiles = Directory.GetFiles(_folderPath, "*.cop");
+        foreach (string file in copFiles)
+        {
+            File.Delete(file);
+        }
+    }
+    
+    void ClearLevelFolder()
+    {
+        if (!Directory.Exists(_folderPath)) return;
+        
+        SpawnItem.RemoveAllCopies();
+        
+        string[] allFiles = Directory.GetFiles(_folderPath);
+        foreach (string file in allFiles)
         {
             File.Delete(file);
         }
@@ -115,28 +159,50 @@ public class LevelFileManager: MonoBehaviour
     void ScanFiles()
     {
         string[] allFiles = Directory.Exists(_folderPath)
-            ? Directory.GetFiles(_folderPath, "*.txt")
+            ? Directory.GetFiles(_folderPath, "*")
             : new string[0];
 
         var currentFiles = new HashSet<string>();
+        var currentCopFiles = new HashSet<string>();
 
         foreach (string file in allFiles)
         {
             string fileName = Path.GetFileName(file);
-            currentFiles.Add(fileName);
+            
+            if (fileName.EndsWith(".txt"))
+            {
+                currentFiles.Add(fileName);
+            }
+            else if (fileName.EndsWith(".cop"))
+            {
+                currentCopFiles.Add(fileName);
+            }
+        }
 
-            if (fileName.Contains(" - 副本"))
+        ScanTxtFiles(currentFiles);
+        ScanCopFiles(currentCopFiles);
+
+        _existingFiles = currentFiles;
+        _existingCopFiles = currentCopFiles;
+    }
+
+    void ScanTxtFiles(HashSet<string> currentFiles)
+    {
+        foreach (string fileName in currentFiles)
+        {
+            if (fileName.Contains(" - 副本") && fileName.EndsWith(".txt"))
             {
                 if (!_existingFiles.Contains(fileName))
                 {
-                    string baseName = fileName.Replace(" - 副本.txt", "");
+                    string baseName = System.Text.RegularExpressions.Regex.Replace(fileName, @" - 副本( \(\d+\))?\.txt", "");
 
                     SpawnItem[] spawners = FindObjectsOfType<SpawnItem>();
                     foreach (var spawner in spawners)
                     {
                         if (spawner.FileName == baseName)
                         {
-                            string content = File.ReadAllText(file);
+                            string fullPath = Path.Combine(_folderPath, fileName);
+                            string content = File.ReadAllText(fullPath);
                             spawner.OnFileCopied(fileName, content);
                             break;
                         }
@@ -147,7 +213,8 @@ public class LevelFileManager: MonoBehaviour
                     {
                         if (controller.FileName == baseName)
                         {
-                            string content = File.ReadAllText(file);
+                            string fullPath = Path.Combine(_folderPath, fileName);
+                            string content = File.ReadAllText(fullPath);
                             controller.OnFileCopied(fileName, content);
                             break;
                         }
@@ -171,10 +238,13 @@ public class LevelFileManager: MonoBehaviour
                         return;
                     }
                 }
+                
+                if (oldFile.Contains(" - 副本") && oldFile.EndsWith(".txt"))
+                {
+                    SpawnItem.RemoveCopyObject(oldFile);
+                }
             }
         }
-
-        _existingFiles = currentFiles;
 
         foreach (var item in basicItems)
         {
@@ -189,6 +259,110 @@ public class LevelFileManager: MonoBehaviour
         foreach (var item in collisionImageItems)
         {
             item.CheckImageFile(_folderPath);
+        }
+    }
+
+    void ScanCopFiles(HashSet<string> currentCopFiles)
+    {
+        var spawnersByBaseName = new Dictionary<string, List<CustomSpawner>>();
+        
+        foreach (var spawner in customSpawners.ToList())
+        {
+            if (spawner == null)
+            {
+                customSpawners.Remove(spawner);
+                continue;
+            }
+            
+            string baseName = spawner.GetBaseFileName();
+            if (string.IsNullOrEmpty(baseName))
+            {
+                baseName = "file";
+            }
+            
+            if (!spawnersByBaseName.ContainsKey(baseName))
+            {
+                spawnersByBaseName[baseName] = new List<CustomSpawner>();
+            }
+            spawnersByBaseName[baseName].Add(spawner);
+        }
+        
+        foreach (var kvp in spawnersByBaseName)
+        {
+            string baseName = kvp.Key;
+            var spawners = kvp.Value;
+            
+            string originalFileName = $"{baseName}.cop";
+            bool originalFileExists = currentCopFiles.Contains(originalFileName);
+            
+            foreach (var spawner in spawners)
+            {
+                if (spawner == null)
+                {
+                    continue;
+                }
+                
+                string spawnerFileName = spawner.GetOriginalFileName();
+                
+                if (string.IsNullOrEmpty(spawnerFileName))
+                {
+                    spawner.SetFileActive(false);
+                    continue;
+                }
+                
+                bool isCopySpawner = spawner.IsCopySpawner();
+                
+                if (isCopySpawner)
+                {
+                    if (currentCopFiles.Contains(spawnerFileName))
+                    {
+                        spawner.SetFileActive(true);
+                    }
+                    else
+                    {
+                        if (_existingCopFiles.Contains(spawnerFileName))
+                        {
+                            spawner.SetFileActive(false);
+                        }
+                        else
+                        {
+                            customSpawners.Remove(spawner);
+                            Destroy(spawner.gameObject);
+                        }
+                    }
+                }
+                else
+                {
+                    if (currentCopFiles.Contains(spawnerFileName))
+                    {
+                        spawner.SetFileActive(true);
+                    }
+                    else
+                    {
+                        spawner.SetFileActive(false);
+                    }
+                }
+            }
+        }
+        
+        foreach (string fileName in currentCopFiles)
+        {
+            if (fileName.Contains(" - 副本") && !_existingCopFiles.Contains(fileName))
+            {
+                string baseName = System.Text.RegularExpressions.Regex.Replace(fileName, @" - 副本( \(\d+\))?\.cop", "");
+                
+                if (spawnersByBaseName.ContainsKey(baseName))
+                {
+                    foreach (var spawner in spawnersByBaseName[baseName])
+                    {
+                        if (!spawner.IsCopySpawner())
+                        {
+                            spawner.SpawnCopyFromFile(fileName);
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -207,6 +381,14 @@ public class LevelFileManager: MonoBehaviour
             item.SetManager(this);
         }
     }
+    
+    public void UnregisterAdvancedItem(AdvancedItemController item)
+    {
+        if (advancedItems.Contains(item))
+        {
+            advancedItems.Remove(item);
+        }
+    }
 
     public void RegisterCollisionImage(CollisionImageItem item)
     {
@@ -215,6 +397,14 @@ public class LevelFileManager: MonoBehaviour
             collisionImageItems.Add(item);
             item.SetManager(this);
             item.Initialize();
+        }
+    }
+    
+    public void RegisterCustomSpawner(CustomSpawner spawner)
+    {
+        if (!customSpawners.Contains(spawner))
+        {
+            customSpawners.Add(spawner);
         }
     }
 

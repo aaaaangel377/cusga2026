@@ -12,8 +12,14 @@ public class SpawnProcessor : FeatureProcessor
     {
     }
     
-    public override void OnFileDeleted(GameObject target)
+    public override void OnCopyFileDeleted(GameObject target, AdvancedItemController controller)
     {
+        LevelFileManager manager = controller.GetManager();
+        if (manager != null)
+        {
+            manager.UnregisterAdvancedItem(controller);
+        }
+        Object.Destroy(target);
     }
     
     public override void OnFileCopied(string newFileName, string content, GameObject target, AdvancedItemController controller)
@@ -30,6 +36,11 @@ public class SpawnProcessor : FeatureProcessor
         newItem.SetFileName(newFileName.Replace(".txt", ""));
         newItem.SetManager(controller.GetManager());
         newItem.DisableSpawn();
+        
+        if (newObj.GetComponent<Rigidbody2D>() == null)
+        {
+            newObj.AddComponent<Rigidbody2D>();
+        }
         
         LevelFileManager manager = controller.GetManager();
         if (manager != null)

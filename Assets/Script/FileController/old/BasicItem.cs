@@ -6,6 +6,7 @@ public class BasicItem : MonoBehaviour
     [Header("文件设置")]
     [SerializeField] protected string fileName;
     [SerializeField] protected string fileContent;
+    [SerializeField] protected string fileclass;
 
     [Header("管理对象")]
     [SerializeField] protected GameObject targetObject;
@@ -13,7 +14,7 @@ public class BasicItem : MonoBehaviour
     protected LevelFileManager _manager;
 
     public string FileName => fileName;
-
+    public string Fileclass => fileclass;
     public void SetFileName(string newFileName)
     {
         fileName = newFileName;
@@ -34,8 +35,8 @@ public class BasicItem : MonoBehaviour
     }
 
     public void CreateDefaultFile(string folderPath)
-    {
-        string fullPath = Path.Combine(folderPath, $"{fileName}.txt");
+    {   
+        string fullPath = Path.Combine(folderPath, $"{fileName}.{fileclass}");
 
         if (File.Exists(fullPath)) return;
 
@@ -45,7 +46,7 @@ public class BasicItem : MonoBehaviour
     //根据文件内容更新对象状态
     public void UpdateFromFile(string folderPath)
     {
-        string fullPath = Path.Combine(folderPath, $"{fileName}.txt");
+        string fullPath = Path.Combine(folderPath, $"{fileName}.{fileclass}");
         bool exists = File.Exists(fullPath);
 
         if (!exists)

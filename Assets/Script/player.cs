@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class player : MonoBehaviour
+public class player: MonoBehaviour
 {
     private Animator anime;
     private Rigidbody2D rb;

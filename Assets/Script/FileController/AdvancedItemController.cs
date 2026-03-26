@@ -120,7 +120,15 @@ public class AdvancedItemController : MonoBehaviour
         {
             foreach (var processor in _processors)
             {
-                processor.OnFileDeleted(targetObject);
+                processor.OnFileDeleted(targetObject, this);
+            }
+            
+            if (fileName.Contains(" - 副本"))
+            {
+                foreach (var processor in _processors)
+                {
+                    processor.OnCopyFileDeleted(targetObject, this);
+                }
             }
             return;
         }

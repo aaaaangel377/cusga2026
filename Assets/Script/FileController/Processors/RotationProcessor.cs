@@ -20,7 +20,7 @@ public class RotationProcessor : FeatureProcessor
         }
     }
     
-    public override void OnFileDeleted(GameObject target)
+    public override void OnFileDeleted(GameObject target, AdvancedItemController controller)
     {
     }
     

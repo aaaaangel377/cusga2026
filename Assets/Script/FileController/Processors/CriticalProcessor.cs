@@ -12,9 +12,9 @@ public class CriticalProcessor : FeatureProcessor
     {
     }
     
-    public override void OnFileDeleted(GameObject target)
+    public override void OnFileDeleted(GameObject target, AdvancedItemController controller)
     {
-        LevelFileManager manager = target.GetComponent<AdvancedItemController>().GetManager();
+        LevelFileManager manager = controller.GetManager();
         if (manager != null)
         {
             manager.ReloadScene();

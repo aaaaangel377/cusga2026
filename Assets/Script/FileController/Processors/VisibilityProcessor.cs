@@ -12,7 +12,7 @@ public class VisibilityProcessor : FeatureProcessor
     {
     }
     
-    public override void OnFileDeleted(GameObject target)
+    public override void OnFileDeleted(GameObject target, AdvancedItemController controller)
     {
         target.SetActive(false);
     }

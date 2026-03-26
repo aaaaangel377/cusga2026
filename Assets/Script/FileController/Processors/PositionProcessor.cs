@@ -21,7 +21,7 @@ public class PositionProcessor : FeatureProcessor
         }
     }
     
-    public override void OnFileDeleted(GameObject target)
+    public override void OnFileDeleted(GameObject target, AdvancedItemController controller)
     {
     }
     
