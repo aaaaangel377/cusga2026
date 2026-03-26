@@ -5,17 +5,17 @@ public static class GridUtils
     public const int GRID_MAX_X = 11;
     public const int GRID_MAX_Y = 8;
 
-    public static Vector2Int ConvertToGridPosition(Vector3 actualPos)
+    /*public static Vector2Int ConvertToGridPosition(Vector3 actualPos)
     {
-        int gridX = Mathf.RoundToInt((actualPos.x / -1.1f) + 5.5f);
-        int gridY = Mathf.RoundToInt((actualPos.y / -1.1f) + 4f);
+        int gridX = Mathf.RoundToInt(actualPos.x + 5.5f);
+        int gridY = Mathf.RoundToInt(actualPos.y + 4f);
         return new Vector2Int(gridX, gridY);
-    }
+    }*/
 
     public static Vector3 ConvertToActualPosition(Vector2Int gridPos)
     {
-        float actualX = (gridPos.x - 5.5f) * -1.1f;
-        float actualY = (gridPos.y - 4f) * -1.1f;
+        float actualX = gridPos.x +0.5f;//00-0.5 8.5
+        float actualY = 8.5f-gridPos.y;
         return new Vector3(actualX, actualY, 0);
     }
 

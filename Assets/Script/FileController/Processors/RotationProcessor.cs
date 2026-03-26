@@ -42,7 +42,7 @@ public class RotationProcessor : FeatureProcessor
     {
         if (string.IsNullOrEmpty(content)) return null;
         
-        Match match = Regex.Match(content, @"r(-?\d+\.?\d*)");
+        Match match = Regex.Match(content, @"(-?\d+\.?\d*)");
         
         if (match.Success)
         {

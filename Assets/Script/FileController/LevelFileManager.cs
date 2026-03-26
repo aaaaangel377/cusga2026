@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
-public class LevelFileManager : MonoBehaviour
+public class LevelFileManager: MonoBehaviour
 {
     public static bool shouldResetFiles = false;
 
-    [SerializeField] private int levelIndex = 1;
+    [SerializeField] private string levelIndex = "level_name";
 
     [SerializeField] private float checkInterval = 0.5f;
 
@@ -218,7 +218,7 @@ public class LevelFileManager : MonoBehaviour
         }
     }
 
-    public int GetLevelIndex()
+    public string GetLevelIndex()
     {
         return levelIndex;
     }
