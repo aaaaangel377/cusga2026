@@ -7,23 +7,6 @@ public class PositionProcessor : FeatureProcessor
     
     public override void OnFileCreated(string folderPath, string fileName, GameObject target)
     {
-        Vector3 currentPos = target.transform.position;
-        Vector2Int gridPos = GridUtils.ConvertToGridPosition(currentPos);
-        string content = $"位置：{gridPos.x},{gridPos.y}";
-        
-        string fullPath = System.IO.Path.Combine(folderPath, $"{fileName}.txt");
-        if (!System.IO.File.Exists(fullPath))
-        {
-            System.IO.File.WriteAllText(fullPath, content);
-        }
-        else
-        {
-            string existing = System.IO.File.ReadAllText(fullPath);
-            if (!existing.Contains("位置："))
-            {
-                System.IO.File.AppendAllText(fullPath, "\n" + content);
-            }
-        }
     }
     
     public override void OnFileUpdated(string content, GameObject target)
@@ -54,9 +37,7 @@ public class PositionProcessor : FeatureProcessor
     
     public override string CreateDefaultContent(GameObject target)
     {
-        Vector3 currentPos = target.transform.position;
-        Vector2Int gridPos = GridUtils.ConvertToGridPosition(currentPos);
-        return $"位置：{gridPos.x},{gridPos.y}";
+        return string.Empty;
     }
     
     private Vector2Int? ParsePosition(string content)

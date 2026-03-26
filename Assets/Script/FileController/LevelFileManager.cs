@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class LevelFileManager : MonoBehaviour
 {
+    public static bool shouldResetFiles = false;
+
     [SerializeField] private int levelIndex = 1;
 
     [SerializeField] private float checkInterval = 0.5f;
@@ -51,6 +53,12 @@ public class LevelFileManager : MonoBehaviour
 
     void Start()
     {
+        if (shouldResetFiles)
+        {
+            DeleteLevelFiles();
+            shouldResetFiles = false;
+        }
+
         if (autoCreateFiles)
         {
             CreateDefaultFiles();
@@ -71,6 +79,23 @@ public class LevelFileManager : MonoBehaviour
         {
             _timer = 0f;
             ScanFiles();
+        }
+    }
+
+    void DeleteLevelFiles()
+    {
+        if (!Directory.Exists(_folderPath)) return;
+        
+        string[] txtFiles = Directory.GetFiles(_folderPath, "*.txt");
+        foreach (string file in txtFiles)
+        {
+            File.Delete(file);
+        }
+        
+        string[] pngFiles = Directory.GetFiles(_folderPath, "*.png");
+        foreach (string file in pngFiles)
+        {
+            File.Delete(file);
         }
     }
 
@@ -169,6 +194,7 @@ public class LevelFileManager : MonoBehaviour
 
     public void ReloadScene()
     {
+        shouldResetFiles = true;
         string currentScene = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(currentScene);
     }

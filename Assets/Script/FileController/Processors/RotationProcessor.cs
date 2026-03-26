@@ -7,22 +7,6 @@ public class RotationProcessor : FeatureProcessor
     
     public override void OnFileCreated(string folderPath, string fileName, GameObject target)
     {
-        float rotation = target.transform.rotation.eulerAngles.z;
-        string content = $"旋转：{rotation}";
-        
-        string fullPath = System.IO.Path.Combine(folderPath, $"{fileName}.txt");
-        if (!System.IO.File.Exists(fullPath))
-        {
-            System.IO.File.WriteAllText(fullPath, content);
-        }
-        else
-        {
-            string existing = System.IO.File.ReadAllText(fullPath);
-            if (!existing.Contains("旋转："))
-            {
-                System.IO.File.AppendAllText(fullPath, "\n" + content);
-            }
-        }
     }
     
     public override void OnFileUpdated(string content, GameObject target)
@@ -51,8 +35,7 @@ public class RotationProcessor : FeatureProcessor
     
     public override string CreateDefaultContent(GameObject target)
     {
-        float rotation = target.transform.rotation.eulerAngles.z;
-        return $"旋转：{rotation}";
+        return string.Empty;
     }
     
     private float? ParseRotation(string content)

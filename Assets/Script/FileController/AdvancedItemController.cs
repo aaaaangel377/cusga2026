@@ -99,27 +99,9 @@ public class AdvancedItemController : MonoBehaviour
         
         if (File.Exists(fullPath)) return;
         
-        string content = customContent;
-        
-        foreach (var processor in _processors)
+        if (!string.IsNullOrEmpty(customContent))
         {
-            string processorContent = processor.CreateDefaultContent(targetObject);
-            if (!string.IsNullOrEmpty(processorContent))
-            {
-                if (!string.IsNullOrEmpty(content))
-                {
-                    content += "\n" + processorContent;
-                }
-                else
-                {
-                    content = processorContent;
-                }
-            }
-        }
-        
-        if (!string.IsNullOrEmpty(content))
-        {
-            File.WriteAllText(fullPath, content);
+            File.WriteAllText(fullPath, customContent);
         }
         
         foreach (var processor in _processors)
