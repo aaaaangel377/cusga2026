@@ -61,17 +61,19 @@ public class LevelFileManager: MonoBehaviour
         {
             item.SetManager(this);
         }
+        DeleteLevelFiles();
     }
 
     void Start()
     {
-        if (shouldResetFiles)
-        {
-            DeleteLevelFiles();
-            shouldResetFiles = false;
-        }
+        //if (shouldResetFiles)
+        //{
+        //    DeleteLevelFiles();
+        //    shouldResetFiles = false;
+        //}
 
-        ClearLevelFolder();
+
+        //ClearLevelFolder();
 
         if (autoCreateFiles)
         {
