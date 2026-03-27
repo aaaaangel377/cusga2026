@@ -18,6 +18,7 @@ public class AdvancedItemController : MonoBehaviour
     [SerializeField] private bool enableSpawn = false;
     [SerializeField] private bool enableCritical = false;
     [SerializeField] private bool enableVisibility = true;
+    [SerializeField] private bool Cantbedeleted = false;
     
     private LevelFileManager _manager;
     private List<FeatureProcessor> _processors;
@@ -61,6 +62,10 @@ public class AdvancedItemController : MonoBehaviour
         if (enableVisibility)
         {
             _processors.Add(new VisibilityProcessor());
+        }
+        if (Cantbedeleted)
+        {
+            _processors.Add(new Cantbedeleted());
         }
     }
     
