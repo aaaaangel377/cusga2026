@@ -56,6 +56,7 @@ public class GravityController : MonoBehaviour
             File.WriteAllText(fullPath, "下");
             _lastContent = "下";
         }
+        Debug.Log($"GravityController: 已创建默认文件 {fullPath}");
     }
     
     void CheckFile()
