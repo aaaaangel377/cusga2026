@@ -17,9 +17,10 @@ public class LevelFileManager: MonoBehaviour
 
     private string _folderPath;
     private float _timer = 0f;
-    [SerializeField] private List<BasicItem> basicItems = new List<BasicItem>();
+    [SerializeField]     private List<BasicItem> basicItems = new List<BasicItem>();
     private List<AdvancedItemController> advancedItems = new List<AdvancedItemController>();
     private List<CollisionImageItem> collisionImageItems = new List<CollisionImageItem>();
+    private List<ImageColliderFile> imageColliderFiles = new List<ImageColliderFile>();
     private List<CustomSpawner> customSpawners = new List<CustomSpawner>();
     private HashSet<string> _existingFiles = new HashSet<string>();
     private HashSet<string> _existingCopFiles = new HashSet<string>();
@@ -38,6 +39,7 @@ public class LevelFileManager: MonoBehaviour
         basicItems = FindObjectsOfType<BasicItem>().ToList();
         advancedItems = FindObjectsOfType<AdvancedItemController>().ToList();
         collisionImageItems = FindObjectsOfType<CollisionImageItem>().ToList();
+        imageColliderFiles = FindObjectsOfType<ImageColliderFile>().ToList();
         customSpawners = FindObjectsOfType<CustomSpawner>().ToList();
 
         foreach (var item in basicItems)
@@ -51,6 +53,11 @@ public class LevelFileManager: MonoBehaviour
         }
 
         foreach (var item in collisionImageItems)
+        {
+            item.SetManager(this);
+        }
+
+        foreach (var item in imageColliderFiles)
         {
             item.SetManager(this);
         }
@@ -72,6 +79,11 @@ public class LevelFileManager: MonoBehaviour
         }
 
         foreach (var item in collisionImageItems)
+        {
+            item.Initialize();
+        }
+
+        foreach (var item in imageColliderFiles)
         {
             item.Initialize();
         }
@@ -269,6 +281,11 @@ public class LevelFileManager: MonoBehaviour
         {
             item.CheckImageFile(_folderPath);
         }
+
+        foreach (var item in imageColliderFiles)
+        {
+            item.CheckImageFile(_folderPath);
+        }
     }
 
     void ScanCopFiles(HashSet<string> currentCopFiles)
@@ -406,6 +423,24 @@ public class LevelFileManager: MonoBehaviour
             collisionImageItems.Add(item);
             item.SetManager(this);
             item.Initialize();
+        }
+    }
+
+    public void RegisterImageColliderFile(ImageColliderFile item)
+    {
+        if (!imageColliderFiles.Contains(item))
+        {
+            imageColliderFiles.Add(item);
+            item.SetManager(this);
+            item.Initialize();
+        }
+    }
+
+    public void UnregisterImageColliderFile(ImageColliderFile item)
+    {
+        if (imageColliderFiles.Contains(item))
+        {
+            imageColliderFiles.Remove(item);
         }
     }
     
