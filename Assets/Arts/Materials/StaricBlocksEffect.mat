@@ -11,7 +11,8 @@ Material:
   m_Shader: {fileID: 4800000, guid: d69330510de8fcf4090ad8c3a56e3db4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _EFFECTSPACE_SCREEN
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -65,11 +66,12 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DistortAmount: 0.2
+    - _DistortAmount: 0.198
     - _DistortSpeed: 1.5
     - _DstBlend: 0
-    - _EffectBlend: 1
-    - _EffectOpacity: 1
+    - _EffectBlend: 0.887
+    - _EffectOpacity: 0.148
+    - _EffectSpace: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -77,8 +79,8 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ShimmerIntensity: 1.39
-    - _ShimmerScale: 6.88
+    - _ShimmerIntensity: 0.8
+    - _ShimmerScale: 7.26
     - _ShimmerSpeed: 0.33
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -89,6 +91,6 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EvilDark: {r: 0.056603774, g: 0, b: 0.084905684, a: 1}
-    - _EvilPurple: {r: 0.6, g: 0.09999997, b: 0.8, a: 1}
+    - _EvilDark: {r: 0.5660378, g: 0, b: 0.6226415, a: 1}
+    - _EvilPurple: {r: 0.9128284, g: 0.6933962, b: 1, a: 1}
   m_BuildTextureStacks: []

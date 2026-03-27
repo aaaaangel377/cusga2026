@@ -2691,10 +2691,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   jumpforce: 11
-  groundcheckDistance: 0.8
+  groundcheckDistance: 0.7
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
+  groundCheckWidth: 0.5
+  groundCheckOffset: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
