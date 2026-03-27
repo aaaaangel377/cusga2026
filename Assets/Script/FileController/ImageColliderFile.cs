@@ -11,6 +11,14 @@ public class ImageColliderFile : MonoBehaviour
     [SerializeField] private string fileName;
     [SerializeField] private float checkInterval = 0.5f;
 
+    [Header("Resource 设置")]
+    [SerializeField] private string resourcePath;
+    [SerializeField] private bool useResourceAsDefault = true;
+
+    [Header("碰撞箱设置")]
+    [SerializeField] private Transform colliderChild;
+    [SerializeField] private bool autoAddCollider = false;
+
     [Header("碰撞设置")]
     [Range(0, 255)]
     [SerializeField] private float threshold = 128f;
@@ -34,20 +42,29 @@ public class ImageColliderFile : MonoBehaviour
     private float _timer = 0f;
     private bool _isInitialized;
     private bool _isFileActive = true;
-
     void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _collider = GetComponent<PolygonCollider2D>();
-
         if (_spriteRenderer == null)
         {
             _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         }
 
-        if (_collider == null)
+        if (colliderChild != null)
         {
-            _collider = gameObject.AddComponent<PolygonCollider2D>();
+            _collider = colliderChild.GetComponent<PolygonCollider2D>();
+            if (_collider == null && autoAddCollider)
+            {
+                _collider = colliderChild.gameObject.AddComponent<PolygonCollider2D>();
+            }
+        }
+        else
+        {
+            _collider = GetComponent<PolygonCollider2D>();
+            if (_collider == null)
+            {
+                _collider = gameObject.AddComponent<PolygonCollider2D>();
+            }
         }
     }
 
@@ -72,17 +89,55 @@ public class ImageColliderFile : MonoBehaviour
 
         string fullPath = Path.Combine(_folderPath, $"{fileName}.png");
 
-        if (!File.Exists(fullPath))
-        {
-            CreateDefaultImage();
-        }
-        else
+        if (File.Exists(fullPath))
         {
             _lastModifiedTime = File.GetLastWriteTime(fullPath);
             _lastFileHash = CalculateFileHash(fullPath);
+            LoadImageFromFile(fullPath);
+        }
+        else if (useResourceAsDefault && !string.IsNullOrEmpty(resourcePath))
+        {
+            Sprite resourceSprite = ResourceImageLoader.LoadSpriteFromResource(resourcePath);
+            if (resourceSprite != null)
+            {
+                Texture2D tex = ResourceImageLoader.SpriteToTexture2D(resourceSprite);
+                if (tex != null)
+                {
+                    _currentTexture = tex;
+                    
+                    if (_originalImageSize == Vector2.zero)
+                    {
+                        _originalImageSize = new Vector2(_currentTexture.width, _currentTexture.height);
+                    }
+                    
+                    if (_spriteRenderer != null)
+                    {
+                        UnityEngine.Rect rect = new UnityEngine.Rect(0, 0, _currentTexture.width, _currentTexture.height);
+                        Vector2 pivot = new Vector2(0.5f, 0.5f);
+                        Sprite newSprite = Sprite.Create(_currentTexture, rect, pivot, 100f);
+                        _spriteRenderer.sprite = newSprite;
+                    }
+                    
+                    ResourceImageLoader.SaveTextureAsPng(_currentTexture, fullPath);
+                    _lastModifiedTime = File.GetLastWriteTime(fullPath);
+                    _lastFileHash = CalculateFileHash(fullPath);
+                    Debug.Log($"[ImageColliderFile] Loaded from Resource and created external file: {fullPath}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[ImageColliderFile] Resource not found: {resourcePath}, skipping initialization");
+                _isInitialized = true;
+                return;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[ImageColliderFile] No external file and Resource not configured, skipping initialization");
+            _isInitialized = true;
+            return;
         }
 
-        LoadImageFromFile(fullPath);
         ProcessImageToCollision();
         _isInitialized = true;
     }
@@ -142,9 +197,9 @@ public class ImageColliderFile : MonoBehaviour
 
     private void CreateDefaultImage()
     {
-        if (_spriteRenderer.sprite == null)
+        if (string.IsNullOrEmpty(resourcePath))
         {
-            Debug.LogWarning($"[ImageColliderFile] {gameObject.name}: SpriteRenderer has no sprite, cannot create default image");
+            Debug.LogWarning($"[ImageColliderFile] {gameObject.name}: Resource path is not set, cannot create default image");
             return;
         }
 
@@ -152,33 +207,19 @@ public class ImageColliderFile : MonoBehaviour
 
         if (File.Exists(fullPath)) return;
 
-        try
+        Sprite resourceSprite = ResourceImageLoader.LoadSpriteFromResource(resourcePath);
+        if (resourceSprite == null)
         {
-            Texture2D sourceTex = _spriteRenderer.sprite.texture;
+            Debug.LogError($"[ImageColliderFile] {gameObject.name}: Failed to load Sprite from Resource: {resourcePath}");
+            return;
+        }
 
-            Texture2D readableTex = new Texture2D(sourceTex.width, sourceTex.height, TextureFormat.RGBA32, true);
-            Graphics.CopyTexture(sourceTex, 0, 0, readableTex, 0, 0);
-
-            byte[] bytes = readableTex.EncodeToPNG();
-            File.WriteAllBytes(fullPath, bytes);
-
+        ResourceImageLoader.SaveSpriteAsPng(resourceSprite, fullPath);
+        
+        if (File.Exists(fullPath))
+        {
             _lastModifiedTime = File.GetLastWriteTime(fullPath);
             _lastFileHash = CalculateFileHash(fullPath);
-
-            if (Application.isPlaying)
-            {
-                Destroy(readableTex);
-            }
-            else
-            {
-                DestroyImmediate(readableTex);
-            }
-
-            Debug.Log($"[ImageColliderFile] Created default image: {fullPath}");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"[ImageColliderFile] Failed to create default image: {e.Message}");
         }
     }
 
