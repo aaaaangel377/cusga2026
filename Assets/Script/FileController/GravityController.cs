@@ -53,6 +53,8 @@ public class GravityController : MonoBehaviour
         CreateDefaultFile();
         CheckFile();
         _isReady = true;
+        Physics2D.gravity = new Vector2(0, -_gravityMagnitude);
+
     }
 
     void Update()
