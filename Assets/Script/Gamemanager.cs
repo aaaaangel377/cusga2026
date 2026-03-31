@@ -55,6 +55,22 @@ public class GameManager : MonoBehaviour
     {
         audioSource.Play();
     }
+    
+    public void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+    }
+    
+    public static void PlaySoundAt(AudioClip clip, Vector3 position)
+    {
+        if (clip != null)
+        {
+            AudioSource.PlayClipAtPoint(clip, position);
+        }
+    }
 
 
     public void LoadScene(int i)

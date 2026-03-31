@@ -1388,6 +1388,9 @@ MonoBehaviour:
   enableCritical: 0
   enableVisibility: 1
   Cantbedeleted: 0
+  enableColliderDisableOnUpdate: 1
+  colliderDisableSound: {fileID: 0}
+  colliderDisableDuration: 0.3
 --- !u!212 &976429909
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2468,6 +2471,9 @@ MonoBehaviour:
   enableCritical: 0
   enableVisibility: 1
   Cantbedeleted: 0
+  enableColliderDisableOnUpdate: 1
+  colliderDisableSound: {fileID: 0}
+  colliderDisableDuration: 0.3
 --- !u!1001 &1894767979
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3088,7 +3094,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   jumpforce: 11
-  groundcheckDistance: 0.7
+  groundcheckDistance: 0.4
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8

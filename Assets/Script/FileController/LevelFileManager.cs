@@ -28,6 +28,7 @@ public class LevelFileManager: MonoBehaviour
 
     void Awake()
     {
+        Physics2D.gravity = new Vector2(0, -9.81f);
         string gameRoot = Directory.GetParent(Application.dataPath).FullName;
         _folderPath = Path.Combine(gameRoot, "level", levelIndex.ToString());
 

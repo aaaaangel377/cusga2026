@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 public class PositionProcessor : FeatureProcessor
 {
@@ -17,7 +18,11 @@ public class PositionProcessor : FeatureProcessor
         if (gridPos.HasValue && GridUtils.IsValidGrid(gridPos.Value))
         {
             Vector3 actualPos = GridUtils.ConvertToActualPosition(gridPos.Value);
-            target.transform.position = actualPos;
+            if (target.transform.position != actualPos)
+            {
+                target.transform.position = actualPos;
+                DisableColliderWithSound(target);
+            }
         }
     }
     
@@ -31,13 +36,49 @@ public class PositionProcessor : FeatureProcessor
         if (gridPos.HasValue && GridUtils.IsValidGrid(gridPos.Value))
         {
             Vector3 actualPos = GridUtils.ConvertToActualPosition(gridPos.Value);
-            target.transform.position = actualPos;
+            if (target.transform.position != actualPos)
+            {
+                target.transform.position = actualPos;
+                DisableColliderWithSound(target);
+            }
         }
     }
     
     public override string CreateDefaultContent(GameObject target)
     {
         return string.Empty;
+    }
+    
+    private void DisableColliderWithSound(GameObject target)
+    {
+        AdvancedItemController controller = target.GetComponent<AdvancedItemController>();
+        if (controller == null || !controller.EnableColliderDisableOnUpdate) return;
+        
+        Collider2D collider = target.GetComponentInChildren<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = false;
+            controller.StartCoroutine(ReenableColliderAfterDelay(collider, controller.ColliderDisableDuration));
+        }
+        
+        if (controller.ColliderDisableSound != null)
+        {
+            AudioSource audioSource = GameManager.Instance?.audioSource;
+            if (audioSource != null)
+            {
+                audioSource.PlayOneShot(controller.ColliderDisableSound);
+            }
+            else
+            {
+                AudioSource.PlayClipAtPoint(controller.ColliderDisableSound, target.transform.position);
+            }
+        }
+    }
+    
+    private IEnumerator ReenableColliderAfterDelay(Collider2D collider, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        collider.enabled = true;
     }
     
     private Vector2Int? ParsePosition(string content)

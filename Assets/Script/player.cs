@@ -141,9 +141,8 @@ public class player : MonoBehaviour
     [SerializeField] private float groundcheckDistance;
     [SerializeField] private LayerMask whatIsGround;
 
-    // ÐÂÔö£ºµØÃæ¼ì²âµÄ¿í¶È
     [SerializeField] private float groundCheckWidth = 0.5f;
-    [SerializeField] private float groundCheckOffset = 0f; // ¼ì²âµãÆ«ÒÆ£¨¿ÉÑ¡£©
+    [SerializeField] private float groundCheckOffset = 0f; // ï¿½ï¿½ï¿½ï¿½Æ«ï¿½Æ£ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½
 
     private bool IsGrounded;
 
@@ -166,7 +165,7 @@ public class player : MonoBehaviour
 
     private void groundCheck()
     {
-        // ·½·¨1£ºÊ¹ÓÃ BoxCast£¨ÍÆ¼ö£¬¼ì²â·¶Î§¸ü¿í£©
+        // ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¹ï¿½ï¿½ BoxCastï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ï¿½â·¶Î§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Vector2 boxSize = new Vector2(groundCheckWidth, 0.1f);
         Vector2 boxOrigin = new Vector2(transform.position.x, transform.position.y - groundcheckDistance / 2);
 
@@ -181,11 +180,11 @@ public class player : MonoBehaviour
 
         IsGrounded = hit.collider != null;
 
-        // ¿ÉÑ¡£ºµ÷ÊÔ¿ÉÊÓ»¯
+        // ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½Ó»ï¿½
         // Debug.DrawRay(transform.position, Vector2.down * groundcheckDistance, IsGrounded ? Color.green : Color.red);
     }
 
-    // ·½·¨2£ºÊ¹ÓÃ¶à¸öÉäÏß£¨±¸Ñ¡·½°¸£¬Èç¹ûÉÏÃæµÄ·½·¨ÓÐÎÊÌâ¿ÉÒÔÓÃÕâ¸ö£©
+    // ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½Ê¹ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void groundCheckMultipleRays()
     {
         Vector2 leftPoint = new Vector2(transform.position.x - groundCheckWidth / 2, transform.position.y);
@@ -198,7 +197,7 @@ public class player : MonoBehaviour
 
         IsGrounded = leftHit.collider != null || centerHit.collider != null || rightHit.collider != null;
 
-        // µ÷ÊÔ¿ÉÊÓ»¯
+        // ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½Ó»ï¿½
         Debug.DrawRay(leftPoint, Vector2.down * groundcheckDistance, IsGrounded ? Color.green : Color.red);
         Debug.DrawRay(centerPoint, Vector2.down * groundcheckDistance, IsGrounded ? Color.green : Color.red);
         Debug.DrawRay(rightPoint, Vector2.down * groundcheckDistance, IsGrounded ? Color.green : Color.red);
@@ -267,16 +266,16 @@ public class player : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        // ¸üÐÂGizmos¿ÉÊÓ»¯£¬ÏÔÊ¾¸ü¿íµÄ¼ì²â·¶Î§
+        // ï¿½ï¿½ï¿½ï¿½Gizmosï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½â·¶Î§
         Gizmos.color = IsGrounded ? Color.green : Color.red;
 
-        // ·½·¨1µÄBoxCast¿ÉÊÓ»¯
+        // ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½BoxCastï¿½ï¿½ï¿½Ó»ï¿½
         Vector2 boxSize = new Vector2(groundCheckWidth, 0.1f);
         Vector2 boxOrigin = new Vector2(transform.position.x, transform.position.y - groundcheckDistance / 2);
-        Gizmos.DrawWireCube(boxOrigin + Vector2.down * (groundcheckDistance / 2), boxSize);
+        //Gizmos.DrawWireCube(boxOrigin + Vector2.down * (groundcheckDistance / 2), boxSize);
 
-        // Ô­À´µÄÉäÏß¿ÉÊÓ»¯£¨¿ÉÑ¡£©
-        // Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - groundcheckDistance));
+        // Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¿ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½
+        //Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - groundcheckDistance));
     }
 
     /*private void Dash()

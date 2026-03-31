@@ -20,6 +20,11 @@ public class AdvancedItemController : MonoBehaviour
     [SerializeField] private bool enableVisibility = true;
     [SerializeField] private bool Cantbedeleted = false;
     
+    [Header("碰撞箱更新设置")]
+    [SerializeField] private bool enableColliderDisableOnUpdate = true;
+    [SerializeField] private AudioClip colliderDisableSound;
+    [SerializeField] private float colliderDisableDuration = 0.1f;
+    
     private LevelFileManager _manager;
     private List<FeatureProcessor> _processors;
     
@@ -153,4 +158,8 @@ public class AdvancedItemController : MonoBehaviour
             processor.OnFileCopied(newFileName, content, targetObject, this);
         }
     }
+    
+    public bool EnableColliderDisableOnUpdate => enableColliderDisableOnUpdate;
+    public AudioClip ColliderDisableSound => colliderDisableSound;
+    public float ColliderDisableDuration => colliderDisableDuration;
 }
