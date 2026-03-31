@@ -55,4 +55,21 @@ public class GameManager : MonoBehaviour
     {
         audioSource.Play();
     }
+
+
+    public void LoadScene(int i)
+    {
+        SceneManager.LoadScene(i);
+    }
+
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        // 编辑器模式下停止运行
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+// 打包后退出游戏
+Application.Quit();
+#endif
+    }
 }

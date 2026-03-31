@@ -12,9 +12,42 @@ EditorBuildSettings:
     path: Assets/Scenes/Scenetest1.unity
     guid: 9b0112f2c3b58404dbb6fa69fdc2ab1a
   - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_Title.unity
+    guid: c3e5d1c84eac7fe4db344fef01bf3f3b
+  - enabled: 1
     path: Assets/Scenes/test1levelscenes/Test1_level1.unity
     guid: d067adb4f2eab6240985a275adab12af
   - enabled: 1
     path: Assets/Scenes/test1levelscenes/Test1_level2.unity
     guid: fdd3e70aeb8b73544b709ddea9cf9a9a
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_level3.unity
+    guid: d4c20a2f178501849b8ce00c0565fb42
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_level4.unity
+    guid: a2c92ff25e00c1e47955a509bd79b05c
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_level5.unity
+    guid: d4f81876c815cae479f378b09b6124ef
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_level6.unity
+    guid: e4867eee65ea4f44492bf460e3cb88bc
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_level7.unity
+    guid: 31886d8dd301b5e49a478174c5ecbcb2
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_level8.unity
+    guid: 835f61365a66122459b4cf54ab0f29c9
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_level9HD.unity
+    guid: 412737360a675a3469d1b0fbecf8ee25
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_level8EX.unity
+    guid: 41f4309ad6e85634fbb59758d06dc412
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/testchooselevel.unity
+    guid: 710c44824d64cbf4cad554fe03299d31
+  - enabled: 1
+    path: Assets/Scenes/test1levelscenes/Test1_level10.unity
+    guid: bfc3d758149f12e49a5ce67e04a08e16
   m_configObjects: {}
