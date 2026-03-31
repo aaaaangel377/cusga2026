@@ -409,7 +409,7 @@ public class LevelFileManager: MonoBehaviour
                 {
                     foreach (var spawner in spawnersByBaseName[baseName])
                     {
-                        if (!spawner.IsCopySpawner())
+                        //if (!spawner.IsCopySpawner())
                         {
                             spawner.SpawnCopyFromFile(fileName);
                             break;

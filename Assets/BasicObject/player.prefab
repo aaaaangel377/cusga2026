@@ -102,10 +102,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   jumpforce: 13
-  groundcheckDistance: 1.2
+  groundcheckDistance: 0.4
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
+  groundCheckWidth: 0.5
 --- !u!70 &3612731806503622941
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -180,3 +181,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f39cda42f765f944dbca5d1850bc6b85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCollider: {fileID: 0}

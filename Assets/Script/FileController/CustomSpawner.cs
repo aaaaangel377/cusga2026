@@ -455,8 +455,8 @@ public class CustomSpawner : MonoBehaviour
 
     public void SpawnCopyFromFile(string fileName)
     {
-        if (_isCopySpawner) return;
-        if (_isInitialized) return;
+        //if (_isCopySpawner) return;
+        //if (_isInitialized) return;
 
         int copyNumber = 1;
         string numberStr = "";
@@ -521,7 +521,7 @@ public class CustomSpawner : MonoBehaviour
         CustomSpawner newSpawner = newObj.GetComponent<CustomSpawner>();
         if (newSpawner != null)
         {
-            newSpawner.InitializeForCopy(fileName, baseFileName, _manager, _folderPath, _checkInterval);
+            newSpawner.InitializeForCopy(fileName, baseFileName+" - 副本", _manager, _folderPath, _checkInterval);
         }
 
         if (_manager != null)
