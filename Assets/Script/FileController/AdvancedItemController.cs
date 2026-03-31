@@ -23,7 +23,7 @@ public class AdvancedItemController : MonoBehaviour
     [Header("碰撞箱更新设置")]
     [SerializeField] private bool enableColliderDisableOnUpdate = true;
     [SerializeField] private AudioClip colliderDisableSound;
-    [SerializeField] private float colliderDisableDuration = 0.1f;
+    [SerializeField] private float colliderDisableDuration = 0.3f;
     
     private LevelFileManager _manager;
     private List<FeatureProcessor> _processors;

@@ -37,9 +37,9 @@ public class GravityController : MonoBehaviour
             return;
         }
 
-        Debug.Log($"GravityController: 文件夹路径 = {_folderPath}");
-        Debug.Log($"GravityController: 文件名 = {fileName}");
-        Debug.Log($"GravityController: 完整路径 = {Path.Combine(_folderPath, $"{fileName}.txt")}");
+        //Debug.Log($"GravityController: 文件夹路径 = {_folderPath}");
+        //Debug.Log($"GravityController: 文件名 = {fileName}");
+        //Debug.Log($"GravityController: 完整路径 = {Path.Combine(_folderPath, $"{fileName}.txt")}");
 
         _gravityMagnitude = Physics2D.gravity.magnitude;
 

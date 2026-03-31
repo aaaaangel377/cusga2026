@@ -22,6 +22,8 @@ public class LevelFileManager: MonoBehaviour
     //private List<CollisionImageItem> collisionImageItems = new List<CollisionImageItem>();
     private List<ImageColliderFile> imageColliderFiles = new List<ImageColliderFile>();
     private List<CustomSpawner> customSpawners = new List<CustomSpawner>();
+    private List<FileRegionManager> regionManagers = new List<FileRegionManager>();
+    private Dictionary<string, string> _regionFolders = new Dictionary<string, string>();
     private HashSet<string> _existingFiles = new HashSet<string>();
     private HashSet<string> _existingCopFiles = new HashSet<string>();
     private bool _isInitialized = false;
@@ -42,6 +44,7 @@ public class LevelFileManager: MonoBehaviour
        // collisionImageItems = FindObjectsOfType<CollisionImageItem>().ToList();
         imageColliderFiles = FindObjectsOfType<ImageColliderFile>().ToList();
         customSpawners = FindObjectsOfType<CustomSpawner>().ToList();
+        regionManagers = FindObjectsOfType<FileRegionManager>().ToList();
 
         foreach (var item in basicItems)
         {
@@ -62,6 +65,15 @@ public class LevelFileManager: MonoBehaviour
         {
             item.SetManager(this);
         }
+
+        foreach (var region in regionManagers)
+        {
+            if (region != null)
+            {
+                region.SetManager(this);
+            }
+        }
+
         DeleteLevelFiles();
     }
 
@@ -129,6 +141,18 @@ public class LevelFileManager: MonoBehaviour
 
         if (!Directory.Exists(_folderPath)) return;
 
+        foreach (var kvp in _regionFolders)
+        {
+            if (Directory.Exists(kvp.Value))
+            {
+                foreach (string file in Directory.GetFiles(kvp.Value))
+                {
+                    File.Delete(file);
+                }
+            }
+        }
+        _regionFolders.Clear();
+
         foreach (string dir in Directory.GetDirectories(_folderPath))
         {
             Directory.Delete(dir, true);
@@ -182,8 +206,9 @@ public class LevelFileManager: MonoBehaviour
 
     void ScanFiles()
     {
+        // 只扫描顶层文件，不扫描子文件夹（区域文件夹）
         string[] allFiles = Directory.Exists(_folderPath)
-            ? Directory.GetFiles(_folderPath, "*")
+            ? Directory.GetFiles(_folderPath, "*.*", SearchOption.TopDirectoryOnly)
             : new string[0];
 
         var currentFiles = new HashSet<string>();
@@ -463,6 +488,25 @@ public class LevelFileManager: MonoBehaviour
     public string GetFolderPath()
     {
         return _folderPath;
+    }
+    
+    public string CreateRegionFolder(string regionName)
+    {
+        if (_regionFolders.ContainsKey(regionName))
+        {
+            return _regionFolders[regionName];
+        }
+        
+        string regionPath = Path.Combine(_folderPath, regionName);
+        
+        if (!Directory.Exists(regionPath))
+        {
+            Directory.CreateDirectory(regionPath);
+            Debug.Log($"[LevelFileManager] 创建区域文件夹：{regionPath}");
+        }
+        
+        _regionFolders[regionName] = regionPath;
+        return regionPath;
     }
     
     public float GetCheckInterval()
