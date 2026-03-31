@@ -20,8 +20,11 @@ public class PositionProcessor : FeatureProcessor
             Vector3 actualPos = GridUtils.ConvertToActualPosition(gridPos.Value);
             if (target.transform.position != actualPos)
             {
+                if(target.transform.position.y< actualPos.y)
+                {
+                    DisableColliderWithSound(target);
+                }
                 target.transform.position = actualPos;
-                DisableColliderWithSound(target);
             }
         }
     }
@@ -38,8 +41,11 @@ public class PositionProcessor : FeatureProcessor
             Vector3 actualPos = GridUtils.ConvertToActualPosition(gridPos.Value);
             if (target.transform.position != actualPos)
             {
+                if(target.transform.position.y< actualPos.y)
+                {
+                    DisableColliderWithSound(target);
+                }
                 target.transform.position = actualPos;
-                DisableColliderWithSound(target);
             }
         }
     }

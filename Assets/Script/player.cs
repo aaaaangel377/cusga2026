@@ -142,7 +142,7 @@ public class player : MonoBehaviour
     [SerializeField] private LayerMask whatIsGround;
 
     [SerializeField] private float groundCheckWidth = 0.5f;
-    [SerializeField] private float groundCheckOffset = 0f; // ����ƫ�ƣ���ѡ��
+    //[SerializeField] private float groundCheckOffset = 0f;
 
     private bool IsGrounded;
 

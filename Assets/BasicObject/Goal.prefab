@@ -146,7 +146,7 @@ MonoBehaviour:
   onBallReachHole:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 5037646475161258648, guid: 7ea19a6e15e54184b9acd677dfd01bd0, type: 3}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: gotoNextlevel
         m_Mode: 1
@@ -158,4 +158,4 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  tag: Player
+  targetTag: Player
