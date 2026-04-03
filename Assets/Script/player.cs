@@ -128,7 +128,7 @@ public class player : MonoBehaviour
     public float speed;
     public float jumpforce;
     //public bool isjumping;
-    //public bool ismoving;
+    public bool ismoving;
     private int facingDir = 1;
     private bool facingright = true;
     private float xInput;
@@ -157,7 +157,7 @@ public class player : MonoBehaviour
     {
         Movement();
         CheckInput();
-        //AnimatorControllers();
+        AnimatorControllers();
         groundCheck();
         FlipController();
     }
@@ -237,15 +237,15 @@ public class player : MonoBehaviour
         }
     }
 
-    /*private void AnimatorControllers()
+    private void AnimatorControllers()
     {
-        anime.SetFloat("yvelocity", rb.velocity.y);
-        isjumping = rb.velocity.y > 0;
-        anime.SetBool("IsGrounded", IsGrounded);
+        //anime.SetFloat("yvelocity", rb.velocity.y);
+        //isjumping = rb.velocity.y > 0;
+        // anime.SetBool("IsGrounded", IsGrounded);
         ismoving = rb.velocity.x != 0;
         anime.SetBool("isMoving", ismoving);
         //anime.SetBool("isDashing", dashTime > 0);
-    }*/
+    }
     private void flip()
     {
         facingDir = facingDir * -1;
