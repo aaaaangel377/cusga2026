@@ -17,7 +17,7 @@ public class AdvancedItemController : MonoBehaviour
     [SerializeField] private bool enableRotation = false;
     //[SerializeField] private bool enableSpawn = false;
     [SerializeField] private bool enableCritical = false;
-    //[SerializeField] private bool enableVisibility = true;
+    private bool enableVisibility = true;
     [SerializeField] private bool Cantbedeleted = false;
     
     [Header("碰撞箱更新设置")]
@@ -64,10 +64,10 @@ public class AdvancedItemController : MonoBehaviour
             _processors.Add(new CriticalProcessor());
         }
         
-        // if (enableVisibility)
-        // {
-        //     _processors.Add(new VisibilityProcessor());
-        // }
+        if (enableVisibility)
+        {
+            _processors.Add(new VisibilityProcessor());
+        }
         if (Cantbedeleted)
         {
             _processors.Add(new Cantbedeleted());
