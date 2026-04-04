@@ -120,6 +120,7 @@ public class FileRegionManager : MonoBehaviour
         if (advancedItem != null)
         {
             MoveFileToRegion(advancedItem.FileName, "txt");
+            _manager?.RegisterItemInRegion(advancedItem.FileName, "txt");
             if (!_advancedItemsInRegion.Contains(advancedItem))
             {
                 _advancedItemsInRegion.Add(advancedItem);
@@ -159,6 +160,7 @@ public class FileRegionManager : MonoBehaviour
         if (advancedItem != null)
         {
             MoveFileToParent(advancedItem.FileName, "txt");
+            _manager?.UnregisterItemInRegion(advancedItem.FileName, "txt");
             _advancedItemsInRegion.Remove(advancedItem);
         }
 
@@ -298,17 +300,17 @@ public class FileRegionManager : MonoBehaviour
         if (!Directory.Exists(_regionFolderPath)) return;
 
         // 扫描区域文件夹中的文件并更新区域内物体状态
-        foreach (var basicItem in _basicItemsInRegion.ToList())
-        {
-            if (basicItem != null)
-            {
-                basicItem.UpdateFromFile(_regionFolderPath);
-            }
-            else
-            {
-                _basicItemsInRegion.Remove(basicItem);
-            }
-        }
+        // foreach (var basicItem in _basicItemsInRegion.ToList())
+        // {
+        //     if (basicItem != null)
+        //     {
+        //         basicItem.UpdateFromFile(_regionFolderPath);
+        //     }
+        //     else
+        //     {
+        //         _basicItemsInRegion.Remove(basicItem);
+        //     }
+        // }
 
         foreach (var advancedItem in _advancedItemsInRegion.ToList())
         {

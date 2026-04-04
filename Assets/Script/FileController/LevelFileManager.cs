@@ -26,6 +26,7 @@ public class LevelFileManager: MonoBehaviour
     private Dictionary<string, string> _regionFolders = new Dictionary<string, string>();
     private HashSet<string> _existingFiles = new HashSet<string>();
     private HashSet<string> _existingCopFiles = new HashSet<string>();
+    private HashSet<string> _itemsInRegions = new HashSet<string>();
     private bool _isInitialized = false;
 
     void Awake()
@@ -302,6 +303,12 @@ public class LevelFileManager: MonoBehaviour
 
         foreach (var item in advancedItems)
         {
+            if (item == null) continue;
+            
+            if (IsItemInRegion(item.FileName, "txt"))
+            {
+                continue;
+            }
             item.UpdateFromFile(_folderPath);
         }
 
@@ -512,5 +519,20 @@ public class LevelFileManager: MonoBehaviour
     public float GetCheckInterval()
     {
         return checkInterval;
+    }
+    
+    public void RegisterItemInRegion(string fileName, string fileExtension = "txt")
+    {
+        _itemsInRegions.Add($"{fileName}.{fileExtension}");
+    }
+    
+    public void UnregisterItemInRegion(string fileName, string fileExtension = "txt")
+    {
+        _itemsInRegions.Remove($"{fileName}.{fileExtension}");
+    }
+    
+    public bool IsItemInRegion(string fileName, string fileExtension = "txt")
+    {
+        return _itemsInRegions.Contains($"{fileName}.{fileExtension}");
     }
 }
