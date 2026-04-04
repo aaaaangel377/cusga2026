@@ -264,7 +264,7 @@ public class LevelFileManager: MonoBehaviour
                         {
                             string fullPath = Path.Combine(_folderPath, fileName);
                             string content = File.ReadAllText(fullPath);
-                            controller.OnFileCopied(fileName, content);
+                            //controller.OnFileCopied(fileName, content);
                             break;
                         }
                     }

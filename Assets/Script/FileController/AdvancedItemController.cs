@@ -15,9 +15,9 @@ public class AdvancedItemController : MonoBehaviour
     [Header("功能开关")]
     [SerializeField] private bool enablePosition = true;
     [SerializeField] private bool enableRotation = false;
-    [SerializeField] private bool enableSpawn = false;
+    //[SerializeField] private bool enableSpawn = false;
     [SerializeField] private bool enableCritical = false;
-    [SerializeField] private bool enableVisibility = true;
+    //[SerializeField] private bool enableVisibility = true;
     [SerializeField] private bool Cantbedeleted = false;
     
     [Header("碰撞箱更新设置")]
@@ -54,20 +54,20 @@ public class AdvancedItemController : MonoBehaviour
             _processors.Add(new RotationProcessor());
         }
         
-        if (enableSpawn)
-        {
-            _processors.Add(new SpawnProcessor());
-        }
+        // if (enableSpawn)
+        // {
+        //     _processors.Add(new SpawnProcessor());
+        // }
         
         if (enableCritical)
         {
             _processors.Add(new CriticalProcessor());
         }
         
-        if (enableVisibility)
-        {
-            _processors.Add(new VisibilityProcessor());
-        }
+        // if (enableVisibility)
+        // {
+        //     _processors.Add(new VisibilityProcessor());
+        // }
         if (Cantbedeleted)
         {
             _processors.Add(new Cantbedeleted());
@@ -94,15 +94,15 @@ public class AdvancedItemController : MonoBehaviour
         fileName = newFileName;
     }
     
-    public void DisableSpawn()
-    {
-        enableSpawn = false;
-        var spawnProcessor = _processors.Find(p => p is SpawnProcessor);
-        if (spawnProcessor != null)
-        {
-            _processors.Remove(spawnProcessor);
-        }
-    }
+    // public void DisableSpawn()
+    // {
+    //     //enableSpawn = false;
+    //     var spawnProcessor = _processors.Find(p => p is SpawnProcessor);
+    //     if (spawnProcessor != null)
+    //     {
+    //         _processors.Remove(spawnProcessor);
+    //     }
+    // }
     
     public void CreateDefaultFile(string folderPath)
     {
@@ -151,13 +151,13 @@ public class AdvancedItemController : MonoBehaviour
         }
     }
     
-    public void OnFileCopied(string newFileName, string content)
-    {
-        foreach (var processor in _processors)
-        {
-            processor.OnFileCopied(newFileName, content, targetObject, this);
-        }
-    }
+    // public void OnFileCopied(string newFileName, string content)
+    // {
+    //     foreach (var processor in _processors)
+    //     {
+    //         processor.OnFileCopied(newFileName, content, targetObject, this);
+    //     }
+    // }
     
     public bool EnableColliderDisableOnUpdate => enableColliderDisableOnUpdate;
     public AudioClip ColliderDisableSound => colliderDisableSound;
