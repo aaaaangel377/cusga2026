@@ -128,6 +128,7 @@ public class AdvancedItemController : MonoBehaviour
         
         if (!exists)
         {
+            
             foreach (var processor in _processors)
             {
                 processor.OnFileDeleted(targetObject, this);
@@ -142,7 +143,7 @@ public class AdvancedItemController : MonoBehaviour
             }
             return;
         }
-        
+        targetObject.SetActive(true);
         string content = File.ReadAllText(fullPath);
         
         foreach (var processor in _processors)
