@@ -17,7 +17,6 @@ public class LevelFileManager: MonoBehaviour
 
     private string _folderPath;
     private float _timer = 0f;
-    [SerializeField] private List<BasicItem> basicItems = new List<BasicItem>();
     private List<AdvancedItemController> advancedItems = new List<AdvancedItemController>();
     //private List<CollisionImageItem> collisionImageItems = new List<CollisionImageItem>();
     private List<ImageColliderFile> imageColliderFiles = new List<ImageColliderFile>();
@@ -41,17 +40,10 @@ public class LevelFileManager: MonoBehaviour
             Directory.CreateDirectory(_folderPath);
         }
 
-        basicItems = FindObjectsOfType<BasicItem>().ToList();
         advancedItems = FindObjectsOfType<AdvancedItemController>().ToList();
-       // collisionImageItems = FindObjectsOfType<CollisionImageItem>().ToList();
         imageColliderFiles = FindObjectsOfType<ImageColliderFile>().ToList();
         customSpawners = FindObjectsOfType<CustomSpawner>().ToList();
         regionManagers = FindObjectsOfType<FileRegionManager>().ToList();
-
-        foreach (var item in basicItems)
-        {
-            item.SetManager(this);
-        }
 
         foreach (var item in advancedItems)
         {
@@ -195,11 +187,6 @@ public class LevelFileManager: MonoBehaviour
     }
     void CreateDefaultFiles()
     {
-        foreach (var item in basicItems)
-        {
-            item.CreateDefaultFile(_folderPath);
-        }
-
         foreach (var item in advancedItems)
         {
             item.CreateDefaultFile(_folderPath);
@@ -295,11 +282,6 @@ public class LevelFileManager: MonoBehaviour
                     SpawnItem.RemoveCopyObject(oldFile);
                 }
             }
-        }
-
-        foreach (var item in basicItems)
-        {
-            item.UpdateFromFile(_folderPath);
         }
 
         foreach (var item in advancedItems)
@@ -572,10 +554,17 @@ public class LevelFileManager: MonoBehaviour
     {
         var items = new List<MonoBehaviour>();
         
-        foreach (var item in basicItems)
+        foreach (var item in advancedItems)
         {
             if (item != null) items.Add(item);
         }
+        
+        return items;
+    }
+    
+    public List<AdvancedItemController> GetAdvancedItems()
+    {
+        var items = new List<AdvancedItemController>();
         
         foreach (var item in advancedItems)
         {

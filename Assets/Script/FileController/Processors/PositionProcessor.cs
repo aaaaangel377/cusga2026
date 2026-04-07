@@ -125,7 +125,7 @@ public class PositionProcessor : FeatureProcessor
         }
         
         Vector3 normalPos = GridUtils.ConvertToActualPosition(gridPos);
-        Debug.Log($"[PositionProcessor] {target.name} 在区域外，网格 ({gridPos.x},{gridPos.y}) → 世界 ({normalPos.x},{normalPos.y})");
+//        Debug.Log($"[PositionProcessor] {target.name} 在区域外，网格 ({gridPos.x},{gridPos.y}) → 世界 ({normalPos.x},{normalPos.y})");
         return normalPos;
     }
 
@@ -156,6 +156,8 @@ public class PositionProcessor : FeatureProcessor
         }
         
         // 如果没有注册，检查物体位置是否在任何区域内
+        // 注意：这里不直接注册，而是让 FileRegionManager.CheckObjectsInRegion() 来处理
+        // 这样可以确保文件移动逻辑正确执行
         Vector3 objPos = target.transform.position;
         FileRegionManager[] allRegions = Object.FindObjectsOfType<FileRegionManager>();
         
@@ -163,14 +165,14 @@ public class PositionProcessor : FeatureProcessor
         {
             if (r.IsPointInRegion(objPos))
             {
-                Debug.Log($"[PositionProcessor] {target.name} 位置在区域 {r.GetRegionFolderName()} 内，自动注册");
-                // 自动注册
-                manager.RegisterRegionObject(target, r);
-                return r;
+                //Debug.Log($"[PositionProcessor] {target.name} 位置在区域 {r.GetRegionFolderName()} 内，等待 FileRegionManager 处理");
+                // 不直接注册，返回 null 让坐标使用全局坐标系
+                // FileRegionManager.CheckObjectsInRegion() 会检测并处理
+                return null;
             }
         }
         
-        Debug.Log($"[PositionProcessor] {target.name} 不在任何区域内");
+        //Debug.Log($"[PositionProcessor] {target.name} 不在任何区域内");
         return null;
     }
 
