@@ -27,6 +27,7 @@ public class LevelFileManager: MonoBehaviour
     private HashSet<string> _existingFiles = new HashSet<string>();
     private HashSet<string> _existingCopFiles = new HashSet<string>();
     private HashSet<string> _itemsInRegions = new HashSet<string>();
+    private Dictionary<GameObject, FileRegionManager> _objectsInRegions = new Dictionary<GameObject, FileRegionManager>();
     private bool _isInitialized = false;
 
     void Awake()
@@ -534,5 +535,53 @@ public class LevelFileManager: MonoBehaviour
     public bool IsItemInRegion(string fileName, string fileExtension = "txt")
     {
         return _itemsInRegions.Contains($"{fileName}.{fileExtension}");
+    }
+
+    public void RegisterRegionObject(GameObject obj, FileRegionManager region)
+    {
+        if (!_objectsInRegions.ContainsKey(obj))
+        {
+            _objectsInRegions[obj] = region;
+            Debug.Log($"[LevelFileManager] {obj.name} 进入区域 {region.GetRegionFolderName()}");
+        }
+    }
+
+    public void UnregisterRegionObject(GameObject obj)
+    {
+        if (_objectsInRegions.ContainsKey(obj))
+        {
+            FileRegionManager region = _objectsInRegions[obj];
+            Debug.Log($"[LevelFileManager] {obj.name} 离开区域 {region.GetRegionFolderName()}");
+            _objectsInRegions.Remove(obj);
+        }
+    }
+
+    public bool IsObjectInRegion(GameObject obj, out FileRegionManager region)
+    {
+        return _objectsInRegions.TryGetValue(obj, out region);
+    }
+
+    public FileRegionManager GetRegionForObject(GameObject obj)
+    {
+        FileRegionManager region;
+        _objectsInRegions.TryGetValue(obj, out region);
+        return region;
+    }
+
+    public List<MonoBehaviour> GetTrackableItems()
+    {
+        var items = new List<MonoBehaviour>();
+        
+        foreach (var item in basicItems)
+        {
+            if (item != null) items.Add(item);
+        }
+        
+        foreach (var item in advancedItems)
+        {
+            if (item != null) items.Add(item);
+        }
+        
+        return items;
     }
 }

@@ -11,6 +11,9 @@ public class FileRegionManager : MonoBehaviour
     [Header("扫描设置")]
     [SerializeField] private float checkInterval = 0.3f;
 
+    [Header("碰撞箱设置")]
+    [SerializeField] private Transform colliderChild;
+
     [Header("调试")]
     [SerializeField] private bool showGizmos = true;
 
@@ -19,34 +22,46 @@ public class FileRegionManager : MonoBehaviour
     private LevelFileManager _manager;
     private string _regionFolderPath;
     private string _parentFolderPath;
-    private BoxCollider2D _regionCollider;
+    private Collider2D _childCollider;
     private float _timer = 0f;
     private Vector2 _currentGravity = new Vector2(0, -9.81f);
     private bool _isInitialized = false;
     private bool _hasGravityConfig = false;
+    private Vector2Int _parentGridPos;
+    private Vector2Int _regionSize;
 
     private List<Rigidbody2D> _rigidbodiesInRegion = new List<Rigidbody2D>();
     private Dictionary<Rigidbody2D, float> _originalGravityScales = new Dictionary<Rigidbody2D, float>();
     private HashSet<string> _filesInRegion = new HashSet<string>();
     private List<BasicItem> _basicItemsInRegion = new List<BasicItem>();
     private List<AdvancedItemController> _advancedItemsInRegion = new List<AdvancedItemController>();
+    private HashSet<GameObject> _objectsInRegion = new HashSet<GameObject>();
+    private Dictionary<GameObject, Vector3> _objectPositions = new Dictionary<GameObject, Vector3>();
 
     void Awake()
     {
-        _regionCollider = GetComponent<BoxCollider2D>();
-        if (_regionCollider == null)
+        if (colliderChild != null)
         {
-            Debug.LogError($"[FileRegionManager] {gameObject.name}: 未找到 BoxCollider2D 组件，组件将不工作");
+            _childCollider = colliderChild.GetComponent<Collider2D>();
+        }
+        else
+        {
+            _childCollider = GetComponentInChildren<Collider2D>();
+        }
+
+        if (_childCollider == null)
+        {
+            Debug.LogError($"[FileRegionManager] {gameObject.name}: 未找到子物体碰撞箱，组件将不工作");
             enabled = false;
             return;
         }
 
-        _regionCollider.isTrigger = true;
+        _childCollider.isTrigger = true;
     }
 
     void Start()
     {
-        if (_regionCollider == null) return;
+        if (_childCollider == null) return;
 
         if (_manager == null)
         {
@@ -58,8 +73,13 @@ public class FileRegionManager : MonoBehaviour
             _regionFolderPath = _manager.CreateRegionFolder(regionFolderName);
             _parentFolderPath = _manager.GetFolderPath();
             
+            CalculateParentGridPosition();
+            CalculateRegionSize();
+            
             Debug.Log($"[FileRegionManager] 父文件夹路径：{_parentFolderPath}");
             Debug.Log($"[FileRegionManager] 区域文件夹路径：{_regionFolderPath}");
+            Debug.Log($"[FileRegionManager] 父物体网格坐标：{_parentGridPos}");
+            Debug.Log($"[FileRegionManager] 区域大小：{_regionSize}");
 
             ReadGravityConfig();
 
@@ -85,22 +105,30 @@ public class FileRegionManager : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+
+
+    public void OnObjectEnterRegion(Collider2D other)
     {
         if (!_isInitialized) return;
 
         Debug.Log($"[FileRegionManager] 物体进入区域：{other.gameObject.name}");
 
         ProcessObjectEnter(other);
+        
+        _objectsInRegion.Add(other.gameObject);
+        _manager?.RegisterRegionObject(other.gameObject, this);
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    public void OnObjectExitRegion(Collider2D other)
     {
         if (!_isInitialized) return;
 
         Debug.Log($"[FileRegionManager] 物体离开区域：{other.gameObject.name}");
 
         ProcessObjectExit(other);
+        
+        _objectsInRegion.Remove(other.gameObject);
+        _manager?.UnregisterRegionObject(other.gameObject);
     }
 
     void ProcessObjectEnter(Collider2D other)
@@ -180,6 +208,53 @@ public class FileRegionManager : MonoBehaviour
         }
     }
 
+    void CalculateParentGridPosition()
+    {
+        _parentGridPos = new Vector2Int(
+            Mathf.RoundToInt(transform.position.x - 0.5f),
+            Mathf.RoundToInt(8.5f - transform.position.y)
+        );
+    }
+
+    void CalculateRegionSize()
+    {
+        if (_childCollider == null) return;
+        _regionSize = new Vector2Int(
+            Mathf.RoundToInt(_childCollider.bounds.size.x),
+            Mathf.RoundToInt(_childCollider.bounds.size.y)
+        );
+    }
+
+    public Vector3 ConvertRegionGridToWorld(Vector2Int fileGridPos)
+    {
+        Vector2Int actualGridPos = _parentGridPos + fileGridPos;
+        return GridUtils.ConvertToActualPosition(actualGridPos);
+    }
+
+    public bool IsPointInRegion(Vector3 worldPos)
+    {
+        if (_childCollider == null) return false;
+        
+        Bounds bounds = _childCollider.bounds;
+        
+        // 缩小边界，避免边沿触发（X 和 Y 方向各缩小 0.2 单位）
+        float margin = 0.2f;
+        Vector3 min = bounds.min + new Vector3(margin, margin, 0);
+        Vector3 max = bounds.max - new Vector3(margin, margin, 0);
+        
+        bool result = worldPos.x >= min.x && worldPos.x <= max.x &&
+                      worldPos.y >= min.y && worldPos.y <= max.y;
+        
+        Debug.Log($"[FileRegionManager] IsPointInRegion: pos=({worldPos.x},{worldPos.y}), bounds=[({min.x},{min.y})-({max.x},{max.y})], result={result}");
+        return result;
+    }
+
+    public Vector2Int GetRegionSize() => _regionSize;
+
+    public Vector2Int GetParentGridPos() => _parentGridPos;
+
+    public bool IsObjectInRegion(GameObject obj) => _objectsInRegion.Contains(obj);
+
     void MoveFileToRegion(string fileName, string fileClass)
     {
         if (string.IsNullOrEmpty(fileName)) return;
@@ -224,12 +299,57 @@ public class FileRegionManager : MonoBehaviour
         }
     }
 
+    void MoveObjectFileToRegion(GameObject obj)
+    {
+        AdvancedItemController advancedItem = obj.GetComponent<AdvancedItemController>();
+        if (advancedItem != null)
+        {
+            MoveFileToRegion(advancedItem.FileName, "txt");
+            _manager?.RegisterItemInRegion(advancedItem.FileName, "txt");
+            if (!_advancedItemsInRegion.Contains(advancedItem))
+            {
+                _advancedItemsInRegion.Add(advancedItem);
+            }
+            return;
+        }
+        
+        BasicItem basicItem = obj.GetComponent<BasicItem>();
+        if (basicItem != null)
+        {
+            MoveFileToRegion(basicItem.FileName, basicItem.Fileclass);
+            if (!_basicItemsInRegion.Contains(basicItem))
+            {
+                _basicItemsInRegion.Add(basicItem);
+            }
+        }
+    }
+
+    void MoveObjectFileToParent(GameObject obj)
+    {
+        AdvancedItemController advancedItem = obj.GetComponent<AdvancedItemController>();
+        if (advancedItem != null)
+        {
+            MoveFileToParent(advancedItem.FileName, "txt");
+            _manager?.UnregisterItemInRegion(advancedItem.FileName, "txt");
+            _advancedItemsInRegion.Remove(advancedItem);
+            return;
+        }
+        
+        BasicItem basicItem = obj.GetComponent<BasicItem>();
+        if (basicItem != null)
+        {
+            MoveFileToParent(basicItem.FileName, basicItem.Fileclass);
+            _basicItemsInRegion.Remove(basicItem);
+        }
+    }
+
     void ScanRegion()
     {
         ReadGravityConfig();
         ApplyGravityToRigidbodies();
 
         ScanFilesInRegion();
+        CheckObjectsInRegion();
     }
 
     void ReadGravityConfig()
@@ -325,6 +445,54 @@ public class FileRegionManager : MonoBehaviour
         }
     }
 
+    void CheckObjectsInRegion()
+    {
+        if (_childCollider == null || _manager == null) return;
+        
+        var allItems = _manager.GetTrackableItems();
+        
+        foreach (var item in allItems)
+        {
+            if (item == null) continue;
+            
+            GameObject obj = item.gameObject;
+            Vector3 currentPos = obj.transform.position;
+            
+            bool positionChanged = !_objectPositions.ContainsKey(obj) || 
+                                   Vector3.Distance(_objectPositions[obj], currentPos) > 0.01f;
+            
+            if (!positionChanged) continue;
+            
+            _objectPositions[obj] = currentPos;
+            
+            bool isInBounds = IsPointInRegion(currentPos);
+            bool isRegistered = _manager.IsObjectInRegion(obj, out _);
+            
+            Debug.Log($"[FileRegionManager] CheckObjectsInRegion: {obj.name}, pos={currentPos}, isInBounds={isInBounds}, isRegistered={isRegistered}");
+            
+            if (isInBounds && !isRegistered)
+            {
+                _objectsInRegion.Add(obj);
+                _manager.RegisterRegionObject(obj, this);
+                
+                // 移动文件到区域文件夹
+                MoveObjectFileToRegion(obj);
+                
+                Debug.Log($"[FileRegionManager] 自动注册区域内物体：{obj.name}");
+            }
+            else if (!isInBounds && isRegistered)
+            {
+                _objectsInRegion.Remove(obj);
+                _manager.UnregisterRegionObject(obj);
+                
+                // 移动文件回父文件夹
+                MoveObjectFileToParent(obj);
+                
+                Debug.Log($"[FileRegionManager] 自动注销区域外物体：{obj.name}");
+            }
+        }
+    }
+
     public void SetManager(LevelFileManager manager)
     {
         _manager = manager;
@@ -360,38 +528,58 @@ public class FileRegionManager : MonoBehaviour
         return _regionFolderPath;
     }
 
+    public string GetRegionFolderName()
+    {
+        return regionFolderName;
+    }
+
     void OnDrawGizmos()
     {
         if (!showGizmos) return;
 
-        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        Collider2D collider = null;
+        
+        if (colliderChild != null)
+        {
+            collider = colliderChild.GetComponent<Collider2D>();
+        }
+        else
+        {
+            collider = GetComponentInChildren<Collider2D>();
+        }
+        
         if (collider == null) return;
 
         Gizmos.color = new Color(0, 1, 0, 0.5f);
+        Gizmos.DrawWireCube(collider.bounds.center, collider.bounds.size);
 
-        Vector2 center = collider.offset;
-        Vector2 size = collider.size;
-
-        Matrix4x4 rotationMatrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
-        Gizmos.matrix = rotationMatrix;
-
-        Gizmos.DrawWireCube(center, size);
-
-        Gizmos.color = Color.green;
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 16;
-        style.normal.textColor = Color.green;
+        Vector2Int gridPos = new Vector2Int(
+            Mathf.RoundToInt(transform.position.x - 0.5f),
+            Mathf.RoundToInt(8.5f - transform.position.y)
+        );
+        //Debug.Log($"[FileRegionManager] {gameObject.name}: 父物体网格坐标 ({gridPos.x}, {gridPos.y})");
     }
 
     void OnValidate()
     {
         if (!Application.isPlaying)
         {
-            BoxCollider2D collider = GetComponent<BoxCollider2D>();
+            Collider2D collider = null;
+            
+            if (colliderChild != null)
+            {
+                collider = colliderChild.GetComponent<Collider2D>();
+            }
+            else
+            {
+                collider = GetComponentInChildren<Collider2D>();
+            }
+            
             if (collider != null)
             {
                 collider.isTrigger = true;
             }
         }
     }
+
 }

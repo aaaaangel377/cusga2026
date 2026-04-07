@@ -15,17 +15,17 @@ public class PositionProcessor : FeatureProcessor
         if (string.IsNullOrEmpty(content)) return;
         
         Vector2Int? gridPos = ParsePosition(content);
-        if (gridPos.HasValue && GridUtils.IsValidGrid(gridPos.Value))
+        if (!gridPos.HasValue || !IsValidPosition(gridPos.Value, target)) return;
+        
+        Vector3 actualPos = GetActualPosition(gridPos.Value, target);
+        
+        if (target.transform.position != actualPos)
         {
-            Vector3 actualPos = GridUtils.ConvertToActualPosition(gridPos.Value);
-            if (target.transform.position != actualPos)
+            if(target.transform.position.y< actualPos.y)
             {
-                if(target.transform.position.y< actualPos.y)
-                {
-                    DisableColliderWithSound(target);
-                }
-                target.transform.position = actualPos;
+                DisableColliderWithSound(target);
             }
+            target.transform.position = actualPos;
         }
     }
     
@@ -36,17 +36,17 @@ public class PositionProcessor : FeatureProcessor
     public override void OnFileCopied(string newFileName, string content, GameObject target, AdvancedItemController controller)
     {
         Vector2Int? gridPos = ParsePosition(content);
-        if (gridPos.HasValue && GridUtils.IsValidGrid(gridPos.Value))
+        if (!gridPos.HasValue || !IsValidPosition(gridPos.Value, target)) return;
+        
+        Vector3 actualPos = GetActualPosition(gridPos.Value, target);
+        
+        if (target.transform.position != actualPos)
         {
-            Vector3 actualPos = GridUtils.ConvertToActualPosition(gridPos.Value);
-            if (target.transform.position != actualPos)
+            if(target.transform.position.y< actualPos.y)
             {
-                if(target.transform.position.y< actualPos.y)
-                {
-                    DisableColliderWithSound(target);
-                }
-                target.transform.position = actualPos;
+                DisableColliderWithSound(target);
             }
+            target.transform.position = actualPos;
         }
     }
     
@@ -110,5 +110,84 @@ public class PositionProcessor : FeatureProcessor
     private bool IsInteger(float value)
     {
         return Mathf.Approximately(value, Mathf.Round(value));
+    }
+
+    private Vector3 GetActualPosition(Vector2Int gridPos, GameObject target)
+    {
+        LevelFileManager manager = GetManagerFromTarget(target);
+        FileRegionManager region = FindRegionForObject(target, manager);
+        
+        if (region != null)
+        {
+            Vector3 pos = region.ConvertRegionGridToWorld(gridPos);
+            Debug.Log($"[PositionProcessor] {target.name} 在区域内，网格 ({gridPos.x},{gridPos.y}) → 世界 ({pos.x},{pos.y})");
+            return pos;
+        }
+        
+        Vector3 normalPos = GridUtils.ConvertToActualPosition(gridPos);
+        Debug.Log($"[PositionProcessor] {target.name} 在区域外，网格 ({gridPos.x},{gridPos.y}) → 世界 ({normalPos.x},{normalPos.y})");
+        return normalPos;
+    }
+
+    private bool IsValidPosition(Vector2Int gridPos, GameObject target)
+    {
+        LevelFileManager manager = GetManagerFromTarget(target);
+        FileRegionManager region = FindRegionForObject(target, manager);
+        
+        if (region != null)
+        {
+            Vector2Int regionSize = region.GetRegionSize();
+            return gridPos.x >= 0 && gridPos.x < regionSize.x 
+                && gridPos.y >= 0 && gridPos.y < regionSize.y;
+        }
+        
+        return GridUtils.IsValidGrid(gridPos);
+    }
+
+    private FileRegionManager FindRegionForObject(GameObject target, LevelFileManager manager)
+    {
+        if (manager == null) return null;
+        
+        // 先检查注册列表
+        if (manager.IsObjectInRegion(target, out FileRegionManager region))
+        {
+            Debug.Log($"[PositionProcessor] {target.name} 已在注册列表中，区域：{region.GetRegionFolderName()}");
+            return region;
+        }
+        
+        // 如果没有注册，检查物体位置是否在任何区域内
+        Vector3 objPos = target.transform.position;
+        FileRegionManager[] allRegions = Object.FindObjectsOfType<FileRegionManager>();
+        
+        foreach (var r in allRegions)
+        {
+            if (r.IsPointInRegion(objPos))
+            {
+                Debug.Log($"[PositionProcessor] {target.name} 位置在区域 {r.GetRegionFolderName()} 内，自动注册");
+                // 自动注册
+                manager.RegisterRegionObject(target, r);
+                return r;
+            }
+        }
+        
+        Debug.Log($"[PositionProcessor] {target.name} 不在任何区域内");
+        return null;
+    }
+
+    private LevelFileManager GetManagerFromTarget(GameObject target)
+    {
+        AdvancedItemController advancedItem = target.GetComponent<AdvancedItemController>();
+        if (advancedItem != null)
+        {
+            return advancedItem.GetManager();
+        }
+        
+        BasicItem basicItem = target.GetComponent<BasicItem>();
+        if (basicItem != null)
+        {
+            return basicItem.GetManager();
+        }
+        
+        return null;
     }
 }

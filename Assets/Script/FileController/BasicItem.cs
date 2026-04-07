@@ -34,6 +34,11 @@ public class BasicItem : MonoBehaviour
         _manager = manager;
     }
 
+    public LevelFileManager GetManager()
+    {
+        return _manager;
+    }
+
     public void CreateDefaultFile(string folderPath)
     {   
         string fullPath = Path.Combine(folderPath, $"{fileName}.{fileclass}");
