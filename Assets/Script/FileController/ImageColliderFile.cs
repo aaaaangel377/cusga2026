@@ -9,6 +9,7 @@ public class ImageColliderFile : MonoBehaviour
 {
     [Header("文件设置")]
     [SerializeField] private string fileName;
+    [SerializeField] private string fileExtension = "png";
     [SerializeField] private float checkInterval = 0.5f;
 
     [Header("Resource 设置")]
@@ -87,7 +88,7 @@ public class ImageColliderFile : MonoBehaviour
             fileName = gameObject.name;
         }
 
-        string fullPath = Path.Combine(_folderPath, $"{fileName}.png");
+        string fullPath = Path.Combine(_folderPath, $"{fileName}.{fileExtension}");
 
         if (File.Exists(fullPath))
         {
