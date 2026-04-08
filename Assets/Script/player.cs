@@ -127,7 +127,7 @@ public class player : MonoBehaviour
     private Rigidbody2D rb;
     public float speed;
     public float jumpforce;
-    //public bool isjumping;
+    public bool isjumping;
     public bool ismoving;
     private int facingDir = 1;
     private bool facingright = true;
@@ -239,9 +239,9 @@ public class player : MonoBehaviour
 
     private void AnimatorControllers()
     {
-        //anime.SetFloat("yvelocity", rb.velocity.y);
-        //isjumping = rb.velocity.y > 0;
-        // anime.SetBool("IsGrounded", IsGrounded);
+        anime.SetFloat("yvelocity", rb.velocity.y);
+        isjumping = rb.velocity.y > 0;
+        anime.SetBool("IsGrounded", IsGrounded);
         ismoving = rb.velocity.x != 0;
         anime.SetBool("isMoving", ismoving);
         //anime.SetBool("isDashing", dashTime > 0);

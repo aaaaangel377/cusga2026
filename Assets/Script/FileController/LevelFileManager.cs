@@ -4,11 +4,13 @@ using System.IO;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 public class LevelFileManager: MonoBehaviour
 {
     public static bool shouldResetFiles = false;
-
+    //public UnityEvent onFilesReset;
     [SerializeField] private string levelIndex = "level_name";
 
     [SerializeField] private float checkInterval = 0.5f;
@@ -28,6 +30,7 @@ public class LevelFileManager: MonoBehaviour
     private HashSet<string> _itemsInRegions = new HashSet<string>();
     private Dictionary<GameObject, FileRegionManager> _objectsInRegions = new Dictionary<GameObject, FileRegionManager>();
     private bool _isInitialized = false;
+    float time=0f;
 
     void Awake()
     {
@@ -78,7 +81,7 @@ public class LevelFileManager: MonoBehaviour
         //    DeleteLevelFiles();
         //    shouldResetFiles = false;
         //}
-
+        
 
         //ClearLevelFolder();
 
@@ -98,6 +101,7 @@ public class LevelFileManager: MonoBehaviour
         }
 
         StartCoroutine(InitCustomSpawners());
+        //fileCreate();
     }
     
     System.Collections.IEnumerator InitCustomSpawners()
@@ -115,6 +119,14 @@ public class LevelFileManager: MonoBehaviour
         _isInitialized = true;
     }
 
+    // void fileCreate()
+    // {
+        
+    //     if(time>1f)
+    //     {
+    //         onFilesReset?.Invoke();
+    //     }
+    // }
     void Update()
     {
         if (!_isInitialized) return;
@@ -125,6 +137,7 @@ public class LevelFileManager: MonoBehaviour
             _timer = 0f;
             ScanFiles();
         }
+        //time += Time.deltaTime;
     }
 
     void DeleteLevelFiles()
