@@ -30,7 +30,7 @@ public class LevelFileManager: MonoBehaviour
     private HashSet<string> _itemsInRegions = new HashSet<string>();
     private Dictionary<GameObject, FileRegionManager> _objectsInRegions = new Dictionary<GameObject, FileRegionManager>();
     private bool _isInitialized = false;
-    float time=0f;
+    //float time=0f;
 
     void Awake()
     {
