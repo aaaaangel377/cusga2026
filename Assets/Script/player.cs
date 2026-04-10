@@ -235,8 +235,8 @@ public class player : MonoBehaviour
     {
         if (IsGrounded)
         {
-            AudioManager.Instance.PlayOneShotEffect("2 - Jump", AudioManager.Instance.JumpVolume);
             rb.velocity = new Vector2(rb.velocity.x, jumpforce);
+            AudioManager.Instance.PlayOneShotEffect("2 - Jump", AudioManager.Instance.JumpVolume);
         }
     }
 
