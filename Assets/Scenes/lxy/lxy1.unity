@@ -324,6 +324,7 @@ GameObject:
   - component: {fileID: 154234855}
   - component: {fileID: 154234856}
   - component: {fileID: 154234857}
+  - component: {fileID: 154234858}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -380,6 +381,18 @@ MonoBehaviour:
   nextLevel: 1
   isPlaying: 1
   audioSource: {fileID: 0}
+--- !u!114 &154234858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154234854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cddee6d5f86992c4380a1037e992edb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &198772769
 GameObject:
   m_ObjectHideFlags: 0
@@ -2113,6 +2126,10 @@ PrefabInstance:
     - target: {fileID: 200622868830906503, guid: 752293406ac39ba4b9a95e9134d54b1a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1981219466369992866, guid: 752293406ac39ba4b9a95e9134d54b1a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.013647607
       objectReference: {fileID: 0}
     - target: {fileID: 2628036972301961650, guid: 752293406ac39ba4b9a95e9134d54b1a, type: 3}
       propertyPath: m_Name
