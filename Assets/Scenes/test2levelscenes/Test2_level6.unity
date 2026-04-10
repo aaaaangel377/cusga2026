@@ -1709,6 +1709,18 @@ MonoBehaviour:
   onBallReachHole:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 2066025295}
+        m_TargetAssemblyTypeName: LevelUnlockSystem, Assembly-CSharp
+        m_MethodName: SaveLevelPassed
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 7
+          m_FloatArgument: 0
+          m_StringArgument: 7
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 154234857}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: LoadScene
@@ -3298,6 +3310,52 @@ RectTransform:
   m_AnchoredPosition: {x: 0.1116, y: 3.9992}
   m_SizeDelta: {x: 1883.5718, y: 160.2101}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2066025294
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2066025296}
+  - component: {fileID: 2066025295}
+  m_Layer: 0
+  m_Name: SaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2066025295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066025294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d1a24e0c4fc86c4a88155e362743689, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelButtons: []
+  num: []
+--- !u!4 &2066025296
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066025294}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.783711, y: 5.091027, z: 5.1062016}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1678490467698028138
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3387,3 +3445,4 @@ SceneRoots:
   - {fileID: 56715179}
   - {fileID: 1867936233}
   - {fileID: 1522532470}
+  - {fileID: 2066025296}
