@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 154234855}
   - component: {fileID: 154234856}
   - component: {fileID: 154234857}
+  - component: {fileID: 154234858}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -170,7 +171,9 @@ MonoBehaviour:
   levelIndex: gunmu
   checkInterval: 0.5
   autoCreateFiles: 1
-  basicItems: []
+  fileStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &154234857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,6 +193,28 @@ MonoBehaviour:
   nextLevel: 1
   isPlaying: 1
   audioSource: {fileID: 0}
+--- !u!114 &154234858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154234854}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dff88f0a40d1d30489a5d367ce3ced63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSecondEffectTimes: 20
+  walkVolume: 0.6
+  jumpVolume: 0.8
+  victoryVolume: 1
+  gameOverVolume: 1
+  fileSuccessVolume: 0.7
+  fileFailVolume: 0.7
+  bgmSource: {fileID: 0}
+  bgmIsLoop: 1
+  effectSource: {fileID: 0}
 --- !u!1 &362739176
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,9 +251,11 @@ MonoBehaviour:
   targetObject: {fileID: 0}
   enablePosition: 1
   enableRotation: 0
-  enableSpawn: 0
   enableCritical: 0
-  enableVisibility: 0
+  Cantbedeleted: 0
+  enableColliderDisableOnUpdate: 1
+  colliderDisableSound: {fileID: 0}
+  colliderDisableDuration: 0.3
 --- !u!4 &362739178
 Transform:
   m_ObjectHideFlags: 0
@@ -576,7 +603,7 @@ SpriteRenderer:
   m_Size: {x: 10.5, y: 7.89}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1011555636
@@ -699,9 +726,11 @@ MonoBehaviour:
   targetObject: {fileID: 0}
   enablePosition: 1
   enableRotation: 0
-  enableSpawn: 0
   enableCritical: 0
-  enableVisibility: 0
+  Cantbedeleted: 0
+  enableColliderDisableOnUpdate: 1
+  colliderDisableSound: {fileID: 0}
+  colliderDisableDuration: 0.3
 --- !u!4 &1039492311
 Transform:
   m_ObjectHideFlags: 0
@@ -866,9 +895,11 @@ MonoBehaviour:
   targetObject: {fileID: 0}
   enablePosition: 0
   enableRotation: 1
-  enableSpawn: 0
   enableCritical: 1
-  enableVisibility: 1
+  Cantbedeleted: 0
+  enableColliderDisableOnUpdate: 1
+  colliderDisableSound: {fileID: 0}
+  colliderDisableDuration: 0.3
 --- !u!1 &1562216473
 GameObject:
   m_ObjectHideFlags: 0

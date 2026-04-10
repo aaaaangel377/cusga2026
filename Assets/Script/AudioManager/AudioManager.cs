@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 音频管理器 - 单例模式
@@ -21,6 +22,36 @@ public sealed class AudioManager : MonoBehaviour
     /// 用于限制音效的播放频率，避免音效叠加过多
     /// </summary>
     [SerializeField] private int maxSecondEffectTimes = 20;
+
+    /// <summary>
+    /// 移动音效音量
+    /// </summary>
+    [SerializeField] private float walkVolume = 0.6f;
+
+    /// <summary>
+    /// 跳跃音效音量
+    /// </summary>
+    [SerializeField] private float jumpVolume = 0.8f;
+
+    /// <summary>
+    /// 胜利音效音量
+    /// </summary>
+    [SerializeField] private float victoryVolume = 1.0f;
+
+    /// <summary>
+    /// 死亡音效音量
+    /// </summary>
+    [SerializeField] private float gameOverVolume = 1.0f;
+
+    /// <summary>
+    /// 文件修改成功音效音量
+    /// </summary>
+    [SerializeField] private float fileSuccessVolume = 0.7f;
+
+    /// <summary>
+    /// 文件修改失败音效音量
+    /// </summary>
+    [SerializeField] private float fileFailVolume = 0.7f;
 
     /// <summary>
     /// 单例实例
@@ -47,11 +78,47 @@ public sealed class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource effectSource;
 
     /// <summary>
+    /// 移动音效音量
+    /// </summary>
+    public float WalkVolume => walkVolume;
+
+    /// <summary>
+    /// 跳跃音效音量
+    /// </summary>
+    public float JumpVolume => jumpVolume;
+
+    /// <summary>
+    /// 胜利音效音量
+    /// </summary>
+    public float VictoryVolume => victoryVolume;
+
+    /// <summary>
+    /// 死亡音效音量
+    /// </summary>
+    public float GameOverVolume => gameOverVolume;
+
+    /// <summary>
+    /// 文件修改成功音效音量
+    /// </summary>
+    public float FileSuccessVolume => fileSuccessVolume;
+
+    /// <summary>
+    /// 文件修改失败音效音量
+    /// </summary>
+    public float FileFailVolume => fileFailVolume;
+
+    /// <summary>
     /// 连续音效播放器字典
     /// 存储所有已注册的连续音效播放器，通过唯一键值标识
     /// 用于管理需要持续播放或条件触发的音效（如脚步声、环境音效等）
     /// </summary>
     private Dictionary<string,ContinuousAudioEffectPlayer> continuousAudioEffectPlayers = new Dictionary<string, ContinuousAudioEffectPlayer>();
+
+    /// <summary>
+    /// 场景加载事件是否已订阅
+    /// 避免 DontDestroyOnLoad 导致重复订阅
+    /// </summary>
+    private bool _sceneLoadedEventSubscribed = false;
 
     /// <summary>
     /// 初始化单例实例和音频源组件
@@ -104,6 +171,24 @@ public sealed class AudioManager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(ContinueToChangeCanAddClips());
+    }
+
+    void OnEnable()
+    {
+        if (!_sceneLoadedEventSubscribed)
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            _sceneLoadedEventSubscribed = true;
+        }
+    }
+
+    void OnDisable()
+    {
+        if (_sceneLoadedEventSubscribed)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            _sceneLoadedEventSubscribed = false;
+        }
     }
 
     /// <summary>
@@ -179,13 +264,14 @@ public sealed class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 使用PlayOneShot方式播放音效
-    /// PlayOneShot允许同时播放多个音效，不会被新的音效打断
+    /// 使用 PlayOneShot 方式播放音效
+    /// PlayOneShot 允许同时播放多个音效，不会被新的音效打断
     /// 适用于需要叠加播放的音效（如连续射击、爆炸等）
     /// </summary>
     /// <param name="name">音效文件名（不包含扩展名）</param>
-    /// <param name="isIgnore">是否忽略限流控制，默认为true</param>
-    public void PlayOneShotEffect(string name, bool isIgnore = true)
+    /// <param name="volumeScale">音量缩放系数，默认为 1.0</param>
+    /// <param name="isIgnore">是否忽略限流控制，默认为 true</param>
+    public void PlayOneShotEffect(string name, float volumeScale = 1.0f, bool isIgnore = true)
     {
         if (isIgnore)
         {
@@ -193,13 +279,13 @@ public sealed class AudioManager : MonoBehaviour
             {
                 canAddClip = false;
                 AudioClip clip = Resources.Load<AudioClip>("Sounds/Effects/" + name); 
-                effectSource.PlayOneShot(clip);
+                effectSource.PlayOneShot(clip, volumeScale);
             }
         }
         else
         {
             AudioClip clip = Resources.Load<AudioClip>("Sounds/Effects/" + name);
-            effectSource.PlayOneShot(clip);
+            effectSource.PlayOneShot(clip, volumeScale);
         }
         Resources.UnloadUnusedAssets();
     }
@@ -311,7 +397,17 @@ public sealed class AudioManager : MonoBehaviour
             Debug.LogWarning("None key: " + key);
         }
     }
-    
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        foreach (var player in continuousAudioEffectPlayers.Values)
+        {
+            player.StopMonitorToPlay();
+        }
+        continuousAudioEffectPlayers.Clear();
+        
+        Debug.Log("[AudioManager] 场景切换，已清理所有连续音效播放器，数量：" + continuousAudioEffectPlayers.Count);
+    }
     
 }
 
@@ -393,7 +489,7 @@ class ContinuousAudioEffectPlayer
                     // 从列表中随机选择一个音频
                     AudioClip clip = AudioClips[UnityEngine.Random.Range(0, AudioClips.Count)];
                     audioSource.PlayOneShot(clip);
-                    yield return new WaitForSeconds(clip.length);
+                    yield return new WaitForSeconds(clip.length*0.5f);
                 }
                 yield return null;
             }

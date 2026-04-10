@@ -362,7 +362,9 @@ MonoBehaviour:
   levelIndex: Level4
   checkInterval: 0.1
   autoCreateFiles: 1
-  basicItems: []
+  fileStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &154234857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2586,9 +2588,7 @@ MonoBehaviour:
   targetObject: {fileID: 0}
   enablePosition: 1
   enableRotation: 0
-  enableSpawn: 0
   enableCritical: 0
-  enableVisibility: 1
   Cantbedeleted: 0
   enableColliderDisableOnUpdate: 1
   colliderDisableSound: {fileID: 0}
