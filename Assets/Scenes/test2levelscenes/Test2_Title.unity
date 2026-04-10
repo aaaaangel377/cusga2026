@@ -1006,7 +1006,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 20cc7623a213522409527fd195078ce6, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.21
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -2347,12 +2347,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSecondEffectTimes: 20
-  walkVolume: 0.6
+  walkVolume: 0.5
   jumpVolume: 0.8
   victoryVolume: 1
   gameOverVolume: 1
-  fileSuccessVolume: 0.7
-  fileFailVolume: 0.7
+  fileSuccessVolume: 1
+  fileFailVolume: 1
   bgmSource: {fileID: 838193467}
   bgmIsLoop: 1
   effectSource: {fileID: 0}
