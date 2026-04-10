@@ -234,7 +234,21 @@ public class LevelFileManager: MonoBehaviour
     {
         foreach (var item in advancedItems)
         {
-            item.CreateDefaultFile(_folderPath);
+            bool isInRegion = false;
+            foreach (var region in regionManagers)
+            {
+                if (region.IsPresetItem(item))
+                {
+                    isInRegion = true;
+                    Debug.Log($"[LevelFileManager] 跳过预设对象的外部文件创建：{item.FileName}");
+                    break;
+                }
+            }
+            
+            if (!isInRegion)
+            {
+                item.CreateDefaultFile(_folderPath);
+            }
         }
     }
 
