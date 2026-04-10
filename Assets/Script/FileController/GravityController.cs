@@ -4,6 +4,9 @@ using System.IO;
 public class GravityController : MonoBehaviour
 {
     [SerializeField] private string fileName = "g.cfg";
+    
+    [Header("默认内容")]
+    [SerializeField] private string defaultContent = "下";
 
     private string _folderPath;
     private float _checkInterval = 0.5f;
@@ -11,6 +14,9 @@ public class GravityController : MonoBehaviour
     private float _timer = 0f;
     private float _gravityMagnitude;
     private bool _isReady = false;
+    
+    public string FileName => fileName;
+    public string DefaultContent => defaultContent;
 
     void Start()
     {
@@ -77,6 +83,20 @@ public class GravityController : MonoBehaviour
             return;
         }
 
+        FileRegionManager[] regions = FindObjectsOfType<FileRegionManager>();
+        bool isInRegionPreset = false;
+        foreach (var region in regions)
+        {
+            if (region.IsGravityPreset(this))
+            {
+                isInRegionPreset = true;
+                Debug.Log($"[GravityController] {gameObject.name} 是区域 {region.GetRegionFolderName()} 的重力预设，跳过外部文件创建");
+                break;
+            }
+        }
+        
+        if (isInRegionPreset) return;
+
         string fullPath = Path.Combine(_folderPath, $"{fileName}.txt");
 
         // 参考成功脚本：如果文件存在，直接返回
@@ -99,10 +119,9 @@ public class GravityController : MonoBehaviour
         // 文件不存在，创建新文件
         try
         {
-            // 参考成功脚本：直接写入，不做复杂验证
-            File.WriteAllText(fullPath, "下", System.Text.Encoding.UTF8);
-            _lastContent = "下";
-            Debug.Log($"GravityController: 创建文件成功 {fullPath}");
+            File.WriteAllText(fullPath, defaultContent, System.Text.Encoding.UTF8);
+            _lastContent = defaultContent;
+            Debug.Log($"GravityController: 创建文件成功 {fullPath}, 内容={defaultContent}");
 
             // 简单验证（可选）
             if (File.Exists(fullPath))

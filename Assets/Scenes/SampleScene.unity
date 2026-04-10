@@ -197,6 +197,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2576132285638015742, guid: 379c6b2d3a867d4478ff6ad2fe3dc658, type: 3}
   m_PrefabInstance: {fileID: 7879753878107509390}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &578314373 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5032386712356561468, guid: 379c6b2d3a867d4478ff6ad2fe3dc658, type: 3}
+  m_PrefabInstance: {fileID: 976327284}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17046ace9b2c6ac46aed912853835cd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &624334925
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,7 +561,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -1513,16 +1524,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4840713711309746225, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
       propertyPath: presetItems.Array.size
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4840713711309746225, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
+      propertyPath: gravityPresets.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4840713711309746225, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
       propertyPath: presetItems.Array.data[0]
       value: 
-      objectReference: {fileID: 1473072823}
+      objectReference: {fileID: 0}
     - target: {fileID: 4840713711309746225, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
       propertyPath: presetItems.Array.data[1]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4840713711309746225, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
+      propertyPath: gravityPresets.Array.data[0]
+      value: 
+      objectReference: {fileID: 578314373}
     - target: {fileID: 5231500236435707466, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
       propertyPath: m_IsTrigger
       value: 1

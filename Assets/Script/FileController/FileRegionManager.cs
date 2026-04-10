@@ -17,6 +17,10 @@ public class FileRegionManager : MonoBehaviour
     [Header("预设对象")]
     [SerializeField] private AdvancedItemController[] presetItems;
 
+    [Header("区域重力预设")]
+    [Tooltip("如果数组不为空，会在区域文件夹内创建重力配置文件")]
+    [SerializeField] private GravityController[] gravityPresets;
+
     [Header("调试")]
     [SerializeField] private bool showGizmos = true;
 
@@ -132,6 +136,8 @@ public class FileRegionManager : MonoBehaviour
             ReadGravityConfig();
 
             InitializePresetItems();
+            
+            InitializeRegionGravity();
 
             _isInitialized = true;
             Debug.Log($"[FileRegionManager] {gameObject.name} 初始化完成，区域：{regionFolderName}");
@@ -225,6 +231,49 @@ public class FileRegionManager : MonoBehaviour
             }
             
             Debug.Log($"[FileRegionManager] 预设对象初始化完成：{obj.name}");
+        }
+    }
+
+    void InitializeRegionGravity()
+    {
+        if (gravityPresets == null || gravityPresets.Length == 0) return;
+        
+        if (string.IsNullOrEmpty(_regionFolderPath))
+        {
+            Debug.LogWarning("[FileRegionManager] 区域文件夹路径为空，跳过重力初始化");
+            return;
+        }
+        
+        foreach (var gravityController in gravityPresets)
+        {
+            if (gravityController == null) continue;
+            
+            string fileName = gravityController.FileName;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                Debug.LogWarning($"[FileRegionManager] 重力预设对象 {gravityController.gameObject.name} 的文件名为空，跳过");
+                continue;
+            }
+            
+            string gravityPath = Path.Combine(_regionFolderPath, $"{fileName}.txt");
+            string content = gravityController.DefaultContent;
+            
+            try
+            {
+                if (!File.Exists(gravityPath))
+                {
+                    File.WriteAllText(gravityPath, content);
+                    Debug.Log($"[FileRegionManager] 区域重力文件已创建：{gravityPath}, 内容={content}");
+                }
+                else
+                {
+                    Debug.Log($"[FileRegionManager] 区域重力文件已存在：{gravityPath}");
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[FileRegionManager] 创建区域重力文件失败：{e.Message}");
+            }
         }
     }
 
@@ -779,6 +828,17 @@ public class FileRegionManager : MonoBehaviour
         foreach (var preset in presetItems)
         {
             if (preset == item) return true;
+        }
+        return false;
+    }
+    
+    public bool IsGravityPreset(GravityController gravityController)
+    {
+        if (gravityPresets == null || gravityPresets.Length == 0) return false;
+        
+        foreach (var preset in gravityPresets)
+        {
+            if (preset == gravityController) return true;
         }
         return false;
     }
