@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
     public void LoadScene(int i)
     {
         SceneManager.LoadScene(i);
-        AudioManager.Instance.PlayOneShotEffect("游戏过关音效", AudioManager.Instance.JumpVolume);
+        AudioManager.Instance.PlayOneShotEffect("游戏过关音效", AudioManager.Instance.VictoryVolume);
     }
 
     public void ExitGame()

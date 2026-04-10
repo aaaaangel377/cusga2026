@@ -47,7 +47,7 @@ MonoBehaviour:
   maxSecondEffectTimes: 20
   walkVolume: 0.6
   jumpVolume: 0.8
-  victoryVolume: 1
+  victoryVolume: 5.05
   gameOverVolume: 1
   fileSuccessVolume: 0.7
   fileFailVolume: 0.7
