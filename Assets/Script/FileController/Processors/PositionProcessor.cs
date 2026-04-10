@@ -10,13 +10,19 @@ public class PositionProcessor : FeatureProcessor
     {
     }
     
+    bool Fal=false;
+    
     public override void OnFileUpdated(string content, GameObject target)
     {
         if (string.IsNullOrEmpty(content))
         {
             if (FailSoundThrottle.CanPlay())
             {
-                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume,true);
+                if(Fal==!true)
+                {
+                    AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume,true);
+                    Fal = true;
+                }
                 FailSoundThrottle.MarkPlayed();
             }
             return;
@@ -27,12 +33,17 @@ public class PositionProcessor : FeatureProcessor
         {
             if (FailSoundThrottle.CanPlay())
             {
-                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume,true);
+                if(Fal==!true)
+                {
+                    AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume,true);
+                    Fal = true;
+                }
                 FailSoundThrottle.MarkPlayed();
             }
             return;
         }
         
+        FailSoundThrottle.Reset();
         Vector3 actualPos = GetActualPosition(gridPos.Value, target);
         
         if (target.transform.position != actualPos)
@@ -43,6 +54,7 @@ public class PositionProcessor : FeatureProcessor
             }
             target.transform.position = actualPos;
             AudioManager.Instance.PlayOneShotEffect("correct", AudioManager.Instance.FileSuccessVolume);
+            Fal=false;
         }
     }
     
