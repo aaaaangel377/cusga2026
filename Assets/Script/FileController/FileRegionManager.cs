@@ -30,6 +30,7 @@ public class FileRegionManager : MonoBehaviour
     private Collider2D _childCollider;
     private float _timer = 0f;
     private Vector2 _currentGravity = new Vector2(0, -9.81f);
+    private float _gravityMagnitude = 9.81f;
     private bool _isInitialized = false;
     private bool _hasGravityConfig = false;
     private Vector2Int _parentGridPos;
@@ -111,7 +112,7 @@ public class FileRegionManager : MonoBehaviour
         if (rb != null && _rigidbodiesInRegion.Contains(rb))
         {
             _rigidbodiesInRegion.Remove(rb);
-            _originalGravityScales.Remove(rb);
+            RestoreGravityScale(rb);
             Debug.Log($"[FileRegionManager] 物体离开区域：{other.gameObject.name}, 列表数={_rigidbodiesInRegion.Count}");
         }
     }
@@ -119,6 +120,7 @@ public class FileRegionManager : MonoBehaviour
     void Start()
     {
         if (_childCollider == null) return;
+        _gravityMagnitude = Physics2D.gravity.magnitude;
 
         if (_manager == null)
         {
@@ -160,6 +162,12 @@ public class FileRegionManager : MonoBehaviour
             Debug.Log($"[FileRegionManager] ScanRegion: 区域={regionFolderName}, Rigidbody 数={_rigidbodiesInRegion.Count}, 重力={_hasGravityConfig}");
             ScanRegion();
         }
+    }
+
+    void FixedUpdate()
+    {
+        if (!_isInitialized || !_hasGravityConfig) return;
+        ApplyGravityToRigidbodies();
     }
 
     void InitializePresetItems()
@@ -388,10 +396,7 @@ public class FileRegionManager : MonoBehaviour
         if (rb != null)
         {
             _rigidbodiesInRegion.Remove(rb);
-            if (_originalGravityScales.ContainsKey(rb))
-            {
-                _originalGravityScales.Remove(rb);
-            }
+            RestoreGravityScale(rb);
         }
         
         Debug.Log($"[FileRegionManager] 物体离开区域完成：{obj.name}");
@@ -616,20 +621,19 @@ public class FileRegionManager : MonoBehaviour
 
     Vector2 ParseGravityDirection(string direction)
     {
-        float magnitude = Physics2D.gravity.magnitude;
         switch (direction)
         {
             case "上":
-                return new Vector2(0, 16 * magnitude);
+                return new Vector2(0, _gravityMagnitude);
             case "下":
-                return new Vector2(0, -16 * magnitude);
+                return new Vector2(0, -_gravityMagnitude);
             case "左":
-                return new Vector2(-16 * magnitude, 0);
+                return new Vector2(-16 * _gravityMagnitude, 0);
             case "右":
-                return new Vector2(16 * magnitude, 0);
+                return new Vector2(16 * _gravityMagnitude, 0);
             default:
                 Debug.LogWarning($"[FileRegionManager] 未知重力方向：'{direction}'，使用默认向下重力");
-                return new Vector2(0, -16 * magnitude);
+                return new Vector2(0, -_gravityMagnitude);
         }
     }
 
@@ -667,9 +671,9 @@ public class FileRegionManager : MonoBehaviour
             if (rb == null || !currentRigidbodies.Contains(rb))
             {
                 _rigidbodiesInRegion.RemoveAt(i);
-                if (rb != null && _originalGravityScales.ContainsKey(rb))
+                if (rb != null)
                 {
-                    _originalGravityScales.Remove(rb);
+                    RestoreGravityScale(rb);
                 }
                 Debug.Log($"[FileRegionManager] 物体离开区域，列表数={_rigidbodiesInRegion.Count}");
             }
@@ -687,6 +691,7 @@ public class FileRegionManager : MonoBehaviour
             Rigidbody2D rb = _rigidbodiesInRegion[i];
             if (rb != null)
             {
+                rb.gravityScale = 0f;
                 Vector2 force = _currentGravity * rb.mass;
                 rb.AddForce(force, ForceMode2D.Force);
             }
@@ -694,6 +699,21 @@ public class FileRegionManager : MonoBehaviour
             {
                 _rigidbodiesInRegion.RemoveAt(i);
             }
+        }
+    }
+
+    void RestoreGravityScale(Rigidbody2D rb)
+    {
+        if (rb == null) return;
+
+        if (_originalGravityScales.TryGetValue(rb, out float originalGravityScale))
+        {
+            rb.gravityScale = originalGravityScale;
+            _originalGravityScales.Remove(rb);
+        }
+        else
+        {
+            rb.gravityScale = 1f;
         }
     }
 
