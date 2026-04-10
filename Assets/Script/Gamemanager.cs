@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     //��һ��
     public void gotoNextlevel()
     {
+        AudioManager.Instance.PlayOneShotEffect("游戏过关音效", AudioManager.Instance.JumpVolume);
         LevelFileManager.shouldResetFiles = false;
         SceneManager.LoadScene(nextLevel);
         Debug.Log("下一关");
@@ -97,6 +98,7 @@ public class GameManager : MonoBehaviour
     public void LoadScene(int i)
     {
         SceneManager.LoadScene(i);
+        AudioManager.Instance.PlayOneShotEffect("游戏过关音效", AudioManager.Instance.VictoryVolume);
     }
 
     public void ExitGame()
