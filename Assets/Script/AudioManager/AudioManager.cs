@@ -489,7 +489,7 @@ class ContinuousAudioEffectPlayer
                     // 从列表中随机选择一个音频
                     AudioClip clip = AudioClips[UnityEngine.Random.Range(0, AudioClips.Count)];
                     audioSource.PlayOneShot(clip);
-                    yield return new WaitForSeconds(clip.length);
+                    yield return new WaitForSeconds(clip.length*0.5f);
                 }
                 yield return null;
             }

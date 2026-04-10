@@ -14,7 +14,7 @@ public class CriticalProcessor : FeatureProcessor
     
     public override void OnFileDeleted(GameObject target, AdvancedItemController controller)
     {
-        AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume);
+        AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume,false);
         LevelFileManager manager = controller.GetManager();
         if (manager != null)
         {

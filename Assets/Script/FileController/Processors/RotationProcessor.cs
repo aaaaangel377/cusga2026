@@ -33,7 +33,7 @@ public class RotationProcessor : FeatureProcessor
         }
         
         target.transform.rotation = Quaternion.Euler(0, 0, rotation.Value);
-        AudioManager.Instance.PlayOneShotEffect("8 - ButtonClick", AudioManager.Instance.FileSuccessVolume);
+        AudioManager.Instance.PlayOneShotEffect("correct", AudioManager.Instance.FileSuccessVolume);
     }
     
     public override void OnFileDeleted(GameObject target, AdvancedItemController controller)

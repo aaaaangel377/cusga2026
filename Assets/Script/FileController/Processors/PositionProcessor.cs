@@ -16,7 +16,7 @@ public class PositionProcessor : FeatureProcessor
         {
             if (FailSoundThrottle.CanPlay())
             {
-                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume);
+                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume,true);
                 FailSoundThrottle.MarkPlayed();
             }
             return;
@@ -27,7 +27,7 @@ public class PositionProcessor : FeatureProcessor
         {
             if (FailSoundThrottle.CanPlay())
             {
-                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume);
+                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume,true);
                 FailSoundThrottle.MarkPlayed();
             }
             return;
@@ -42,7 +42,7 @@ public class PositionProcessor : FeatureProcessor
                 DisableColliderWithSound(target);
             }
             target.transform.position = actualPos;
-            AudioManager.Instance.PlayOneShotEffect("8 - ButtonClick", AudioManager.Instance.FileSuccessVolume);
+            AudioManager.Instance.PlayOneShotEffect("correct", AudioManager.Instance.FileSuccessVolume);
         }
     }
     

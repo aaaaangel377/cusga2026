@@ -166,11 +166,8 @@ public class LevelFileManager: MonoBehaviour
             deletedCount++;
         }
 
-        // 播放文件删除音效
-        if (deletedCount > 0 && AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlayOneShotEffect("8 - ButtonClick", AudioManager.Instance.FileSuccessVolume);
-        }
+        
+        
 
         // 强制刷新文件夹（发送刷新通知给资源管理器）
         [System.Runtime.InteropServices.DllImport("shell32.dll")]
@@ -280,6 +277,8 @@ public class LevelFileManager: MonoBehaviour
         {
             if (!currentFiles.Contains(oldFile))
             {
+                AudioManager.Instance.PlayOneShotEffect("correct", AudioManager.Instance.FileSuccessVolume);
+                Debug.Log($"[LevelFileManager] 文件被删除：{oldFile}");
                 string baseName = oldFile.Replace(".txt", "");
 
                 CriticalItem[] criticalItems = FindObjectsOfType<CriticalItem>();
