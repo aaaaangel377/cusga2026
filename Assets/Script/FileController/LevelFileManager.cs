@@ -19,6 +19,7 @@ public class LevelFileManager: MonoBehaviour
 
     private string _folderPath;
     private float _timer = 0f;
+    public UnityEvent fileStartEvent;
     private List<AdvancedItemController> advancedItems = new List<AdvancedItemController>();
     //private List<CollisionImageItem> collisionImageItems = new List<CollisionImageItem>();
     private List<ImageColliderFile> imageColliderFiles = new List<ImageColliderFile>();
@@ -102,6 +103,7 @@ public class LevelFileManager: MonoBehaviour
 
         StartCoroutine(InitCustomSpawners());
         //fileCreate();
+        fileStartEvent?.Invoke();
     }
     
     System.Collections.IEnumerator InitCustomSpawners()

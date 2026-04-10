@@ -129,6 +129,8 @@ public class player : MonoBehaviour
     public float jumpforce;
     public bool isjumping;
     public bool ismoving;
+    private bool _footstepsRegistered = false;
+    private const string FOOTSTEP_KEY = "player_footsteps";
     private int facingDir = 1;
     private bool facingright = true;
     private float xInput;
@@ -233,6 +235,7 @@ public class player : MonoBehaviour
     {
         if (IsGrounded)
         {
+            AudioManager.Instance.PlayOneShotEffect("2 - Jump", AudioManager.Instance.JumpVolume);
             rb.velocity = new Vector2(rb.velocity.x, jumpforce);
         }
     }
@@ -244,7 +247,21 @@ public class player : MonoBehaviour
         anime.SetBool("IsGrounded", IsGrounded);
         ismoving = rb.velocity.x != 0;
         anime.SetBool("isMoving", ismoving);
-        //anime.SetBool("isDashing", dashTime > 0);
+        
+        if (ismoving && !_footstepsRegistered)
+        {
+            AudioManager.Instance.RegisterContinuousAudioEffect(
+                FOOTSTEP_KEY,
+                () => ismoving,
+                "1 - Walk"
+            );
+            _footstepsRegistered = true;
+        }
+        else if (!ismoving && _footstepsRegistered)
+        {
+            AudioManager.Instance.UnregisterContinuousAudioEffect(FOOTSTEP_KEY);
+            _footstepsRegistered = false;
+        }
     }
     private void flip()
     {

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,23 +22,8 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         isPlaying = true;
-        Debug.Log("��Ϸ��ʼ");
+        Debug.Log("Ϸʼ");
     }
-    public void CompleteLevel()
-    {
-        if (!isPlaying) return;
-        //UnityEditor.EditorApplication.isPlaying = false;
-        //Debug.Log("��ϲ���أ�");
-    }
-
-    public void GameOver()
-    {
-        if (!isPlaying) return;
-        //UnityEditor.EditorApplication.isPlaying = false;
-        //Debug.Log("��Ϸ����");
-        // ���������ʾUI
-    }
-
     public void RestartGame()
     {
         LevelFileManager.shouldResetFiles = true;
@@ -69,6 +55,26 @@ public class GameManager : MonoBehaviour
         if (clip != null)
         {
             AudioSource.PlayClipAtPoint(clip, position);
+        }
+    }
+    
+    public void CompleteLevel()
+    {
+        if (!isPlaying) return;
+        AudioClip clip = Resources.Load<AudioClip>("Sounds/Effects/10 - HappyRobot");
+        if (clip != null)
+        {
+            AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, AudioManager.Instance.VictoryVolume);
+        }
+    }
+    
+    public void GameOver()
+    {
+        if (!isPlaying) return;
+        AudioClip clip = Resources.Load<AudioClip>("Sounds/Effects/11 - Death");
+        if (clip != null)
+        {
+            AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, AudioManager.Instance.GameOverVolume);
         }
     }
 

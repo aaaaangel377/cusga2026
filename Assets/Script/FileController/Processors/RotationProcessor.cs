@@ -11,13 +11,29 @@ public class RotationProcessor : FeatureProcessor
     
     public override void OnFileUpdated(string content, GameObject target)
     {
-        if (string.IsNullOrEmpty(content)) return;
+        if (string.IsNullOrEmpty(content))
+        {
+            if (FailSoundThrottle.CanPlay())
+            {
+                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume);
+                FailSoundThrottle.MarkPlayed();
+            }
+            return;
+        }
         
         float? rotation = ParseRotation(content);
-        if (rotation.HasValue)
+        if (!rotation.HasValue)
         {
-            target.transform.rotation = Quaternion.Euler(0, 0, rotation.Value);
+            if (FailSoundThrottle.CanPlay())
+            {
+                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume);
+                FailSoundThrottle.MarkPlayed();
+            }
+            return;
         }
+        
+        target.transform.rotation = Quaternion.Euler(0, 0, rotation.Value);
+        AudioManager.Instance.PlayOneShotEffect("8 - ButtonClick", AudioManager.Instance.FileSuccessVolume);
     }
     
     public override void OnFileDeleted(GameObject target, AdvancedItemController controller)

@@ -12,20 +12,37 @@ public class PositionProcessor : FeatureProcessor
     
     public override void OnFileUpdated(string content, GameObject target)
     {
-        if (string.IsNullOrEmpty(content)) return;
+        if (string.IsNullOrEmpty(content))
+        {
+            if (FailSoundThrottle.CanPlay())
+            {
+                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume);
+                FailSoundThrottle.MarkPlayed();
+            }
+            return;
+        }
         
         Vector2Int? gridPos = ParsePosition(content);
-        if (!gridPos.HasValue || !IsValidPosition(gridPos.Value, target)) return;
+        if (!gridPos.HasValue || !IsValidPosition(gridPos.Value, target))
+        {
+            if (FailSoundThrottle.CanPlay())
+            {
+                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume);
+                FailSoundThrottle.MarkPlayed();
+            }
+            return;
+        }
         
         Vector3 actualPos = GetActualPosition(gridPos.Value, target);
         
         if (target.transform.position != actualPos)
         {
-            if(target.transform.position.y< actualPos.y)
+            if(target.transform.position.y < actualPos.y)
             {
                 DisableColliderWithSound(target);
             }
             target.transform.position = actualPos;
+            AudioManager.Instance.PlayOneShotEffect("8 - ButtonClick", AudioManager.Instance.FileSuccessVolume);
         }
     }
     
