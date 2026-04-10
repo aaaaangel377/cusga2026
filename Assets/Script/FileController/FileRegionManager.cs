@@ -69,14 +69,18 @@ public class FileRegionManager : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!_isInitialized) return;
+        Debug.Log($"[FileRegionManager] OnTriggerEnter2D 被调用：{other.gameObject.name}, _isInitialized={_isInitialized}");
         
-        Debug.Log($"[FileRegionManager] OnTriggerEnter2D: {other.gameObject.name}");
+        if (!_isInitialized)
+        {
+            Debug.LogWarning($"[FileRegionManager] 尚未初始化，忽略触发器");
+            return;
+        }
         
         Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            Debug.Log($"[FileRegionManager] 检测到 Rigidbody: {other.gameObject.name}, 已在列表中={_rigidbodiesInRegion.Contains(rb)}");
+            Debug.Log($"[FileRegionManager] 检测到 Rigidbody: {other.gameObject.name}, gravityScale={rb.gravityScale}, 已在列表中={_rigidbodiesInRegion.Contains(rb)}");
             if (!_rigidbodiesInRegion.Contains(rb))
             {
                 _rigidbodiesInRegion.Add(rb);
@@ -513,6 +517,7 @@ public class FileRegionManager : MonoBehaviour
     void ScanRegion()
     {
         ReadGravityConfig();
+        ScanRigidbodiesInRegion();
         ApplyGravityToRigidbodies();
 
         ScanFilesInRegion();
@@ -576,6 +581,49 @@ public class FileRegionManager : MonoBehaviour
             default:
                 Debug.LogWarning($"[FileRegionManager] 未知重力方向：'{direction}'，使用默认向下重力");
                 return new Vector2(0, -16 * magnitude);
+        }
+    }
+
+    void ScanRigidbodiesInRegion()
+    {
+        if (_childCollider == null) return;
+        
+        Collider2D[] colliders = new Collider2D[100];
+        int count = Physics2D.OverlapCollider(_childCollider, new ContactFilter2D(), colliders);
+        
+        HashSet<Rigidbody2D> currentRigidbodies = new HashSet<Rigidbody2D>();
+        
+        for (int i = 0; i < count; i++)
+        {
+            Rigidbody2D rb = colliders[i].GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                currentRigidbodies.Add(rb);
+                
+                if (!_rigidbodiesInRegion.Contains(rb))
+                {
+                    _rigidbodiesInRegion.Add(rb);
+                    if (!_originalGravityScales.ContainsKey(rb))
+                    {
+                        _originalGravityScales[rb] = rb.gravityScale;
+                    }
+                    Debug.Log($"[FileRegionManager] 检测到区域内物体：{colliders[i].gameObject.name}, 列表数={_rigidbodiesInRegion.Count}");
+                }
+            }
+        }
+        
+        for (int i = _rigidbodiesInRegion.Count - 1; i >= 0; i--)
+        {
+            Rigidbody2D rb = _rigidbodiesInRegion[i];
+            if (rb == null || !currentRigidbodies.Contains(rb))
+            {
+                _rigidbodiesInRegion.RemoveAt(i);
+                if (rb != null && _originalGravityScales.ContainsKey(rb))
+                {
+                    _originalGravityScales.Remove(rb);
+                }
+                Debug.Log($"[FileRegionManager] 物体离开区域，列表数={_rigidbodiesInRegion.Count}");
+            }
         }
     }
 

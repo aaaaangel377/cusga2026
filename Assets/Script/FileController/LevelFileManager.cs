@@ -82,7 +82,7 @@ public class LevelFileManager: MonoBehaviour
 
     void Start()
     {
-        Debug.Log("[LevelFileManager] Start() 执行，场景：" + gameObject.scene.name + ", autoCreateFiles: " + autoCreateFiles);
+        //Debug.Log("[LevelFileManager] Start() 执行，场景：" + gameObject.scene.name + ", autoCreateFiles: " + autoCreateFiles);
         
         if (autoCreateFiles)
         {
@@ -134,7 +134,7 @@ public class LevelFileManager: MonoBehaviour
             }
             
             _regionFileStates[regionName] = files;
-            Debug.Log($"[LevelFileManager] 初始化区域文件状态：{regionName}, 文件数={files.Count}");
+            //Debug.Log($"[LevelFileManager] 初始化区域文件状态：{regionName}, 文件数={files.Count}");
             
             // 初始化时，将已存在的文件也注册到区域管理
             foreach (string fileName in files)
@@ -240,7 +240,7 @@ public class LevelFileManager: MonoBehaviour
                 if (region.IsPresetItem(item))
                 {
                     isInRegion = true;
-                    Debug.Log($"[LevelFileManager] 跳过预设对象的外部文件创建：{item.FileName}");
+                    //Debug.Log($"[LevelFileManager] 跳过预设对象的外部文件创建：{item.FileName}");
                     break;
                 }
             }
@@ -625,24 +625,24 @@ public class LevelFileManager: MonoBehaviour
         return _itemsInRegions.Contains($"{fileName}.{fileExtension}");
     }
 
-    public void RegisterRegionObject(GameObject obj, FileRegionManager region)
-    {
-        if (!_objectsInRegions.ContainsKey(obj))
-        {
-            _objectsInRegions[obj] = region;
-            Debug.Log($"[LevelFileManager] {obj.name} 进入区域 {region.GetRegionFolderName()}");
-        }
-    }
+    // public void RegisterRegionObject(GameObject obj, FileRegionManager region)
+    // {
+    //     if (!_objectsInRegions.ContainsKey(obj))
+    //     {
+    //         _objectsInRegions[obj] = region;
+    //         Debug.Log($"[LevelFileManager] {obj.name} 进入区域 {region.GetRegionFolderName()}");
+    //     }
+    // }
 
-    public void UnregisterRegionObject(GameObject obj)
-    {
-        if (_objectsInRegions.ContainsKey(obj))
-        {
-            FileRegionManager region = _objectsInRegions[obj];
-            Debug.Log($"[LevelFileManager] {obj.name} 离开区域 {region.GetRegionFolderName()}");
-            _objectsInRegions.Remove(obj);
-        }
-    }
+    // public void UnregisterRegionObject(GameObject obj)
+    // {
+    //     if (_objectsInRegions.ContainsKey(obj))
+    //     {
+    //         FileRegionManager region = _objectsInRegions[obj];
+    //         Debug.Log($"[LevelFileManager] {obj.name} 离开区域 {region.GetRegionFolderName()}");
+    //         _objectsInRegions.Remove(obj);
+    //     }
+    // }
 
     public bool IsObjectInRegion(GameObject obj, out FileRegionManager region)
     {
