@@ -32,6 +32,7 @@ public class RotationProcessor : FeatureProcessor
             return;
         }
         
+        FailSoundThrottle.Reset();
         target.transform.rotation = Quaternion.Euler(0, 0, rotation.Value);
         AudioManager.Instance.PlayOneShotEffect("correct", AudioManager.Instance.FileSuccessVolume);
     }
