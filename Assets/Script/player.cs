@@ -157,11 +157,11 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movement();
         CheckInput();
-        AnimatorControllers();
         groundCheck();
+        Movement();
         FlipController();
+        AnimatorControllers();
     }
 
 
