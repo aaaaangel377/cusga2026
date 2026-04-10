@@ -6,8 +6,13 @@ public class AdvancedItemController : MonoBehaviour
 {
     [Header("文件设置")]
     [SerializeField] private string fileName;
+    
+    [Header("初始内容")]
     [TextArea]
     [SerializeField] private string customContent;
+    
+    // Public accessors
+    public string CustomContent => customContent;
     
     [Header("管理对象")]
     [SerializeField] private GameObject targetObject;

@@ -31,6 +31,9 @@ public class LevelFileManager: MonoBehaviour
     private HashSet<string> _itemsInRegions = new HashSet<string>();
     private Dictionary<GameObject, FileRegionManager> _objectsInRegions = new Dictionary<GameObject, FileRegionManager>();
     private bool _isInitialized = false;
+    
+    // 记录区域文件夹中的文件状态
+    private Dictionary<string, HashSet<string>> _regionFileStates = new Dictionary<string, HashSet<string>>();
     //float time=0f;
 
     void Awake()
@@ -108,7 +111,37 @@ public class LevelFileManager: MonoBehaviour
         }
         
         ScanFiles();
+        
+        // 初始化区域文件状态
+        InitializeRegionFileStates();
+        
         _isInitialized = true;
+    }
+    
+    void InitializeRegionFileStates()
+    {
+        foreach (var region in regionManagers)
+        {
+            string regionName = region.GetRegionFolderName();
+            string regionPath = region.GetRegionFolderPath();
+            
+            if (!Directory.Exists(regionPath)) continue;
+            
+            var files = new HashSet<string>();
+            foreach (string file in Directory.GetFiles(regionPath, "*.txt"))
+            {
+                files.Add(Path.GetFileNameWithoutExtension(file));
+            }
+            
+            _regionFileStates[regionName] = files;
+            Debug.Log($"[LevelFileManager] 初始化区域文件状态：{regionName}, 文件数={files.Count}");
+            
+            // 初始化时，将已存在的文件也注册到区域管理
+            foreach (string fileName in files)
+            {
+                region.CheckFileDraggedIn(fileName);
+            }
+        }
     }
 
     // void fileCreate()
@@ -229,11 +262,56 @@ public class LevelFileManager: MonoBehaviour
             }
         }
 
+        // 先扫描区域文件夹，更新区域文件状态
+        ScanRegionFiles();
+        
         ScanTxtFiles(currentFiles);
         ScanCopFiles(currentCopFiles);
 
         _existingFiles = currentFiles;
         _existingCopFiles = currentCopFiles;
+    }
+    
+    void ScanRegionFiles()
+    {
+        foreach (var region in regionManagers)
+        {
+            string regionName = region.GetRegionFolderName();
+            string regionPath = region.GetRegionFolderPath();
+            
+            if (!Directory.Exists(regionPath)) continue;
+            
+            var currentRegionFiles = new HashSet<string>();
+            foreach (string file in Directory.GetFiles(regionPath, "*.txt"))
+            {
+                currentRegionFiles.Add(Path.GetFileNameWithoutExtension(file));
+            }
+            
+            // 检测新进入区域的文件
+            if (_regionFileStates.ContainsKey(regionName))
+            {
+                foreach (string fileName in currentRegionFiles)
+                {
+                    if (!_regionFileStates[regionName].Contains(fileName))
+                    {
+                        Debug.Log($"[LevelFileManager] 检测到文件进入区域 {regionName}: {fileName}.txt");
+                        region.CheckFileDraggedIn(fileName);
+                    }
+                }
+                
+                // 检测离开区域的文件
+                foreach (string fileName in _regionFileStates[regionName])
+                {
+                    if (!currentRegionFiles.Contains(fileName))
+                    {
+                        Debug.Log($"[LevelFileManager] 检测到文件离开区域 {regionName}: {fileName}.txt");
+                        region.CheckFileDraggedOut(fileName);
+                    }
+                }
+            }
+            
+            _regionFileStates[regionName] = currentRegionFiles;
+        }
     }
 
     void ScanTxtFiles(HashSet<string> currentFiles)

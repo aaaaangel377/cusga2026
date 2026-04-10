@@ -165,31 +165,25 @@ public class PositionProcessor : FeatureProcessor
     {
         if (manager == null) return null;
         
-        // 先检查注册列表
+        // 1. 先检查是否被 FileRegionManager 管理
+        FileRegionManager[] allRegions = Object.FindObjectsOfType<FileRegionManager>();
+        foreach (var r in allRegions)
+        {
+            if (r.IsObjectManaged(target))
+            {
+                Debug.Log($"[PositionProcessor] {target.name} 被区域 {r.GetRegionFolderName()} 管理");
+                return r;
+            }
+        }
+        
+        // 2. 检查注册列表（向后兼容）
         if (manager.IsObjectInRegion(target, out FileRegionManager region))
         {
             Debug.Log($"[PositionProcessor] {target.name} 已在注册列表中，区域：{region.GetRegionFolderName()}");
             return region;
         }
         
-        // 如果没有注册，检查物体位置是否在任何区域内
-        // 注意：这里不直接注册，而是让 FileRegionManager.CheckObjectsInRegion() 来处理
-        // 这样可以确保文件移动逻辑正确执行
-        Vector3 objPos = target.transform.position;
-        FileRegionManager[] allRegions = Object.FindObjectsOfType<FileRegionManager>();
-        
-        foreach (var r in allRegions)
-        {
-            if (r.IsPointInRegion(objPos))
-            {
-                //Debug.Log($"[PositionProcessor] {target.name} 位置在区域 {r.GetRegionFolderName()} 内，等待 FileRegionManager 处理");
-                // 不直接注册，返回 null 让坐标使用全局坐标系
-                // FileRegionManager.CheckObjectsInRegion() 会检测并处理
-                return null;
-            }
-        }
-        
-        //Debug.Log($"[PositionProcessor] {target.name} 不在任何区域内");
+        // 3. 如果没有被管理，返回 null（使用全局坐标）
         return null;
     }
 
