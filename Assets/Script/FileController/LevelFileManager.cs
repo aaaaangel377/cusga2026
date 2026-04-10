@@ -35,6 +35,8 @@ public class LevelFileManager: MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("[LevelFileManager] Awake() 执行，场景：" + gameObject.scene.name + ", 路径：" + _folderPath);
+        
         Physics2D.gravity = new Vector2(0, -9.81f);
         string gameRoot = Directory.GetParent(Application.dataPath).FullName;
         _folderPath = Path.Combine(gameRoot, "level", levelIndex.ToString());
@@ -49,15 +51,15 @@ public class LevelFileManager: MonoBehaviour
         customSpawners = FindObjectsOfType<CustomSpawner>().ToList();
         regionManagers = FindObjectsOfType<FileRegionManager>().ToList();
 
+        Debug.Log("[LevelFileManager] 找到对象 - AdvancedItem: " + advancedItems.Count + 
+            ", ImageCollider: " + imageColliderFiles.Count + 
+            ", CustomSpawner: " + customSpawners.Count + 
+            ", RegionManager: " + regionManagers.Count);
+
         foreach (var item in advancedItems)
         {
             item.SetManager(this);
         }
-
-        /*foreach (var item in collisionImageItems)
-        {
-            item.SetManager(this);
-        }*/
 
         foreach (var item in imageColliderFiles)
         {
@@ -77,24 +79,13 @@ public class LevelFileManager: MonoBehaviour
 
     void Start()
     {
-        //if (shouldResetFiles)
-        //{
-        //    DeleteLevelFiles();
-        //    shouldResetFiles = false;
-        //}
+        Debug.Log("[LevelFileManager] Start() 执行，场景：" + gameObject.scene.name + ", autoCreateFiles: " + autoCreateFiles);
         
-
-        //ClearLevelFolder();
-
         if (autoCreateFiles)
         {
             CreateDefaultFiles();
+            Debug.Log("[LevelFileManager] CreateDefaultFiles() 执行完成");
         }
-
-        /*foreach (var item in collisionImageItems)
-        {
-            item.Initialize();
-        }*/
 
         foreach (var item in imageColliderFiles)
         {
@@ -102,7 +93,6 @@ public class LevelFileManager: MonoBehaviour
         }
 
         StartCoroutine(InitCustomSpawners());
-        //fileCreate();
         fileStartEvent?.Invoke();
     }
     
@@ -150,6 +140,8 @@ public class LevelFileManager: MonoBehaviour
 
         if (!Directory.Exists(_folderPath)) return;
 
+        int deletedCount = 0;
+
         foreach (var kvp in _regionFolders)
         {
             if (Directory.Exists(kvp.Value))
@@ -157,6 +149,7 @@ public class LevelFileManager: MonoBehaviour
                 foreach (string file in Directory.GetFiles(kvp.Value))
                 {
                     File.Delete(file);
+                    deletedCount++;
                 }
             }
         }
@@ -170,6 +163,13 @@ public class LevelFileManager: MonoBehaviour
         foreach (string file in Directory.GetFiles(_folderPath))
         {
             File.Delete(file);
+            deletedCount++;
+        }
+
+        // 播放文件删除音效
+        if (deletedCount > 0 && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayOneShotEffect("8 - ButtonClick", AudioManager.Instance.FileSuccessVolume);
         }
 
         // 强制刷新文件夹（发送刷新通知给资源管理器）

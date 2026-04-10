@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 音频管理器 - 单例模式
@@ -114,6 +115,12 @@ public sealed class AudioManager : MonoBehaviour
     private Dictionary<string,ContinuousAudioEffectPlayer> continuousAudioEffectPlayers = new Dictionary<string, ContinuousAudioEffectPlayer>();
 
     /// <summary>
+    /// 场景加载事件是否已订阅
+    /// 避免 DontDestroyOnLoad 导致重复订阅
+    /// </summary>
+    private bool _sceneLoadedEventSubscribed = false;
+
+    /// <summary>
     /// 初始化单例实例和音频源组件
     /// 确保场景切换时音频管理器不会被销毁
     /// 自动获取或创建所需的AudioSource组件
@@ -164,6 +171,24 @@ public sealed class AudioManager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(ContinueToChangeCanAddClips());
+    }
+
+    void OnEnable()
+    {
+        if (!_sceneLoadedEventSubscribed)
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            _sceneLoadedEventSubscribed = true;
+        }
+    }
+
+    void OnDisable()
+    {
+        if (_sceneLoadedEventSubscribed)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            _sceneLoadedEventSubscribed = false;
+        }
     }
 
     /// <summary>
@@ -372,7 +397,17 @@ public sealed class AudioManager : MonoBehaviour
             Debug.LogWarning("None key: " + key);
         }
     }
-    
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        foreach (var player in continuousAudioEffectPlayers.Values)
+        {
+            player.StopMonitorToPlay();
+        }
+        continuousAudioEffectPlayers.Clear();
+        
+        Debug.Log("[AudioManager] 场景切换，已清理所有连续音效播放器，数量：" + continuousAudioEffectPlayers.Count);
+    }
     
 }
 

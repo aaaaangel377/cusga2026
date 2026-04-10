@@ -17,8 +17,20 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
+        Debug.Log("[GameManager] Awake() 执行，场景：" + gameObject.scene.name + ", Instance 是否为 null: " + (Instance == null));
+        
+        if (Instance == null)
+        {
+            Instance = this;
+            Debug.Log("[GameManager] 设置为 Instance");
+        }
+        else if (Instance != this)
+        {
+            Debug.Log("[GameManager] 已存在 Instance，销毁当前对象：" + gameObject.name);
+            Destroy(gameObject);
+        }
     }
+
     public void StartGame()
     {
         isPlaying = true;
@@ -39,7 +51,10 @@ public class GameManager : MonoBehaviour
     public AudioSource audioSource;
     public void end()
     {
-        audioSource.Play();
+        if (audioSource != null)
+        {
+            audioSource.Play();
+        }
     }
     
     public void PlaySound(AudioClip clip)
