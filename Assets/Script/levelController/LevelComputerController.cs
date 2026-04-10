@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using System;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
+using System.Collections;
 
 public class LevelComputerController : MonoBehaviour
 {
@@ -14,13 +15,15 @@ public class LevelComputerController : MonoBehaviour
     void Start()
     {
         levelFileManager = GetComponent<LevelFileManager>();
-
+        StartCoroutine(DelayStart());
     }
 
 
-    public void Deleteblock()
+    IEnumerator DelayStart()
     {
-        File.Delete(Path.Combine(levelFileManager.GetFolderPath(), "block.p.txt"));     
+        yield return null;
+        File.Delete(Path.Combine(levelFileManager.GetFolderPath(), "block.p.txt"));
+        File.Delete(Path.Combine(levelFileManager.GetFolderPath(), "key.txt"));
     }
 
     // Update is called once per frame

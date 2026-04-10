@@ -12,7 +12,7 @@ public class Level2Tip : MonoBehaviour
     void Start()
     {
         
-        tip.text = "Warning：错误发生于：\r" + levelFileManager.GetParentFolderPath() + "\n//\r" + "\nplease try tofinditttttttttttt_";
+        tip.text = "Warning：错误发生于：\r" + levelFileManager.GetParentFolderPath() + "\n//\r" + "\nplease try tofinditttttttttttt_" + "\nplease try tofinditttttttttttt_" + "\nplease try tofinditttttttttttt_" + "\nplease try tofinditttttttttttt_" + "\nplease try tofinditttttttttttt_";
     }
 
     // Update is called once per frame

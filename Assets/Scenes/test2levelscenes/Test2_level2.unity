@@ -300,7 +300,9 @@ MonoBehaviour:
   levelIndex: Level2
   checkInterval: 0.1
   autoCreateFiles: 1
-  basicItems: []
+  fileStartEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &154234857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -487,8 +489,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00000017136, y: 3.89}
-  m_SizeDelta: {x: 1883.5718, y: 218.3078}
+  m_AnchoredPosition: {x: 0.00000017136, y: 2.2}
+  m_SizeDelta: {x: 1883.5718, y: 731.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &265624467
 MonoBehaviour:
@@ -531,7 +533,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 300
-    m_Alignment: 3
+    m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -1441,9 +1443,7 @@ MonoBehaviour:
   targetObject: {fileID: 0}
   enablePosition: 1
   enableRotation: 0
-  enableSpawn: 0
   enableCritical: 0
-  enableVisibility: 1
   Cantbedeleted: 0
   enableColliderDisableOnUpdate: 1
   colliderDisableSound: {fileID: 0}
@@ -2511,9 +2511,7 @@ MonoBehaviour:
   targetObject: {fileID: 0}
   enablePosition: 1
   enableRotation: 0
-  enableSpawn: 0
   enableCritical: 0
-  enableVisibility: 1
   Cantbedeleted: 0
   enableColliderDisableOnUpdate: 1
   colliderDisableSound: {fileID: 0}
