@@ -14,10 +14,15 @@ public class FileRegionManager : MonoBehaviour
     [Header("碰撞箱设置")]
     [SerializeField] private Transform colliderChild;
 
+    [Header("预设对象")]
+    [SerializeField] private AdvancedItemController[] presetItems;
+
+    [Header("区域重力预设")]
+    [Tooltip("如果数组不为空，会在区域文件夹内创建重力配置文件")]
+    [SerializeField] private GravityController[] gravityPresets;
+
     [Header("调试")]
     [SerializeField] private bool showGizmos = true;
-
-    private const float GRAVITY_MAGNITUDE = 25f;
 
     private LevelFileManager _manager;
     private string _regionFolderPath;
@@ -41,6 +46,9 @@ public class FileRegionManager : MonoBehaviour
     private Dictionary<GameObject, string> _objectInitialContents = new Dictionary<GameObject, string>();
     private Dictionary<GameObject, Vector3> _objectInitialPositions = new Dictionary<GameObject, Vector3>();
     private HashSet<GameObject> _managedObjects = new HashSet<GameObject>();
+    
+    // 重力配置
+    private string _lastGravityContent;
 
     void Awake()
     {
@@ -58,6 +66,53 @@ public class FileRegionManager : MonoBehaviour
             Debug.LogError($"[FileRegionManager] {gameObject.name}: 未找到子物体碰撞箱，组件将不工作");
             enabled = false;
             return;
+        }
+        
+        Debug.Log($"[FileRegionManager] Collider 设置：{_childCollider.gameObject.name}, IsTrigger={_childCollider.isTrigger}");
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log($"[FileRegionManager] OnTriggerEnter2D 被调用：{other.gameObject.name}, _isInitialized={_isInitialized}");
+        
+        if (!_isInitialized)
+        {
+            Debug.LogWarning($"[FileRegionManager] 尚未初始化，忽略触发器");
+            return;
+        }
+        
+        Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            Debug.Log($"[FileRegionManager] 检测到 Rigidbody: {other.gameObject.name}, gravityScale={rb.gravityScale}, 已在列表中={_rigidbodiesInRegion.Contains(rb)}");
+            if (!_rigidbodiesInRegion.Contains(rb))
+            {
+                _rigidbodiesInRegion.Add(rb);
+                if (!_originalGravityScales.ContainsKey(rb))
+                {
+                    _originalGravityScales[rb] = rb.gravityScale;
+                }
+                Debug.Log($"[FileRegionManager] 物体进入区域：{other.gameObject.name}, 列表数={_rigidbodiesInRegion.Count}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[FileRegionManager] 物体 {other.gameObject.name} 没有 Rigidbody2D 组件");
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (!_isInitialized) return;
+        
+        Debug.Log($"[FileRegionManager] OnTriggerExit2D: {other.gameObject.name}");
+        
+        Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
+        if (rb != null && _rigidbodiesInRegion.Contains(rb))
+        {
+            _rigidbodiesInRegion.Remove(rb);
+            _originalGravityScales.Remove(rb);
+            Debug.Log($"[FileRegionManager] 物体离开区域：{other.gameObject.name}, 列表数={_rigidbodiesInRegion.Count}");
         }
     }
 
@@ -78,12 +133,11 @@ public class FileRegionManager : MonoBehaviour
             CalculateParentGridPosition();
             CalculateRegionSize();
             
-            Debug.Log($"[FileRegionManager] 父文件夹路径：{_parentFolderPath}");
-            Debug.Log($"[FileRegionManager] 区域文件夹路径：{_regionFolderPath}");
-            Debug.Log($"[FileRegionManager] 父物体网格坐标：{_parentGridPos}");
-            Debug.Log($"[FileRegionManager] 区域大小：{_regionSize}");
-
             ReadGravityConfig();
+
+            InitializePresetItems();
+            
+            InitializeRegionGravity();
 
             _isInitialized = true;
             Debug.Log($"[FileRegionManager] {gameObject.name} 初始化完成，区域：{regionFolderName}");
@@ -103,7 +157,123 @@ public class FileRegionManager : MonoBehaviour
         if (_timer >= checkInterval)
         {
             _timer = 0f;
+            Debug.Log($"[FileRegionManager] ScanRegion: 区域={regionFolderName}, Rigidbody 数={_rigidbodiesInRegion.Count}, 重力={_hasGravityConfig}");
             ScanRegion();
+        }
+    }
+
+    void InitializePresetItems()
+    {
+        if (presetItems == null || presetItems.Length == 0)
+        {
+            Debug.Log($"[FileRegionManager] 预设对象数组为空或长度为 0，跳过初始化");
+            return;
+        }
+        
+        foreach (var item in presetItems)
+        {
+            if (item == null) continue;
+            
+            GameObject obj = item.gameObject;
+            string fileName = item.FileName;
+            
+            if (string.IsNullOrEmpty(fileName))
+            {
+                Debug.LogWarning($"[FileRegionManager] 预设对象 {obj.name} 的文件名为空，跳过");
+                continue;
+            }
+            
+            string regionFilePath = Path.Combine(_regionFolderPath, $"{fileName}.txt");
+            string parentFilePath = Path.Combine(_parentFolderPath, $"{fileName}.txt");
+            
+            string content = !string.IsNullOrEmpty(item.CustomContent) ? item.CustomContent : "0\n0";
+            
+            try
+            {
+                if (File.Exists(parentFilePath))
+                {
+                    File.Delete(parentFilePath);
+                }
+                File.WriteAllText(regionFilePath, content);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[FileRegionManager] 创建预设对象区域文件失败：{e.Message}");
+                continue;
+            }
+            
+            item.SetManager(_manager);
+            
+            _objectInitialContents[obj] = content;
+            _objectInitialPositions[obj] = obj.transform.position;
+            
+            obj.transform.position = transform.position;
+            
+            _managedObjects.Add(obj);
+            
+            _manager?.RegisterItemInRegion(fileName, "txt");
+            if (!_advancedItemsInRegion.Contains(item))
+            {
+                _advancedItemsInRegion.Add(item);
+            }
+            
+            Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                if (!_originalGravityScales.ContainsKey(rb))
+                {
+                    _originalGravityScales[rb] = rb.gravityScale;
+                }
+                if (!_rigidbodiesInRegion.Contains(rb))
+                {
+                    _rigidbodiesInRegion.Add(rb);
+                }
+            }
+            
+            Debug.Log($"[FileRegionManager] 预设对象初始化完成：{obj.name}");
+        }
+    }
+
+    void InitializeRegionGravity()
+    {
+        if (gravityPresets == null || gravityPresets.Length == 0) return;
+        
+        if (string.IsNullOrEmpty(_regionFolderPath))
+        {
+            Debug.LogWarning("[FileRegionManager] 区域文件夹路径为空，跳过重力初始化");
+            return;
+        }
+        
+        foreach (var gravityController in gravityPresets)
+        {
+            if (gravityController == null) continue;
+            
+            string fileName = gravityController.FileName;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                Debug.LogWarning($"[FileRegionManager] 重力预设对象 {gravityController.gameObject.name} 的文件名为空，跳过");
+                continue;
+            }
+            
+            string gravityPath = Path.Combine(_regionFolderPath, $"{fileName}.txt");
+            string content = gravityController.DefaultContent;
+            
+            try
+            {
+                if (!File.Exists(gravityPath))
+                {
+                    File.WriteAllText(gravityPath, content);
+                    Debug.Log($"[FileRegionManager] 区域重力文件已创建：{gravityPath}, 内容={content}");
+                }
+                else
+                {
+                    Debug.Log($"[FileRegionManager] 区域重力文件已存在：{gravityPath}");
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[FileRegionManager] 创建区域重力文件失败：{e.Message}");
+            }
         }
     }
 
@@ -116,12 +286,8 @@ public class FileRegionManager : MonoBehaviour
         string regionFilePath = Path.Combine(_regionFolderPath, $"{fileName}.txt");
         string parentFilePath = Path.Combine(_parentFolderPath, $"{fileName}.txt");
         
-        Debug.Log($"[FileRegionManager] ProcessObjectEnter: 物体={obj.name}, 文件名={fileName}");
-        
-        // 1. 保存初始状态（如果还未保存）
         if (!_objectInitialContents.ContainsKey(obj))
         {
-            // 读取当前文件内容作为初始内容
             try
             {
                 if (File.Exists(parentFilePath))
@@ -134,7 +300,6 @@ public class FileRegionManager : MonoBehaviour
                 }
                 else
                 {
-                    // 如果文件都不存在，使用 customContent 或空字符串
                     _objectInitialContents[obj] = advancedItem.CustomContent ?? "";
                 }
             }
@@ -144,24 +309,19 @@ public class FileRegionManager : MonoBehaviour
                 _objectInitialContents[obj] = advancedItem.CustomContent ?? "";
             }
             
-            // 保存初始位置
             _objectInitialPositions[obj] = obj.transform.position;
-            Debug.Log($"[FileRegionManager] 保存初始状态：{obj.name}, 初始内容={_objectInitialContents[obj]}, 初始位置={_objectInitialPositions[obj]}");
         }
         
-        // 2. 将文件内容修改为 "0\n0"
         string newContent = "0\n0";
         try
         {
             if (File.Exists(parentFilePath))
             {
                 File.WriteAllText(parentFilePath, newContent);
-                Debug.Log($"[FileRegionManager] 修改文件内容：{parentFilePath} -> \"0\\n0\"");
             }
             else if (File.Exists(regionFilePath))
             {
                 File.WriteAllText(regionFilePath, newContent);
-                Debug.Log($"[FileRegionManager] 修改文件内容：{regionFilePath} -> \"0\\n0\"");
             }
         }
         catch (System.Exception e)
@@ -169,39 +329,28 @@ public class FileRegionManager : MonoBehaviour
             Debug.LogWarning($"[FileRegionManager] 修改文件内容失败：{e.Message}");
         }
         
-        // 3. 将物体传送到 FileRegionManager 的位置
         obj.transform.position = transform.position;
-        Debug.Log($"[FileRegionManager] 物体传送到区域位置：{obj.name} -> {transform.position}");
         
-        // 4. 标记为由区域管理
         _managedObjects.Add(obj);
         
-        // 5. 注册到 LevelFileManager
         _manager?.RegisterItemInRegion(fileName, "txt");
         if (!_advancedItemsInRegion.Contains(advancedItem))
         {
             _advancedItemsInRegion.Add(advancedItem);
         }
         
-        // 6. 应用重力设置（如果有的话）
-        if (_hasGravityConfig)
+        Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
+        if (rb != null)
         {
-            Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-            if (rb != null)
+            if (!_originalGravityScales.ContainsKey(rb))
             {
-                if (!_originalGravityScales.ContainsKey(rb))
-                {
-                    _originalGravityScales[rb] = rb.gravityScale;
-                }
-                rb.gravityScale = 0f;
-                if (!_rigidbodiesInRegion.Contains(rb))
-                {
-                    _rigidbodiesInRegion.Add(rb);
-                }
+                _originalGravityScales[rb] = rb.gravityScale;
+            }
+            if (!_rigidbodiesInRegion.Contains(rb))
+            {
+                _rigidbodiesInRegion.Add(rb);
             }
         }
-        
-        Debug.Log($"[FileRegionManager] 物体进入区域完成：{obj.name}");
     }
 
     void ProcessObjectExit(GameObject obj)
@@ -212,9 +361,6 @@ public class FileRegionManager : MonoBehaviour
         string fileName = advancedItem.FileName;
         string parentFilePath = Path.Combine(_parentFolderPath, $"{fileName}.txt");
         
-        Debug.Log($"[FileRegionManager] ProcessObjectExit: 物体={obj.name}, 文件名={fileName}");
-        
-        // 1. 恢复初始文件内容
         if (_objectInitialContents.ContainsKey(obj))
         {
             string initialContent = _objectInitialContents[obj];
@@ -222,39 +368,29 @@ public class FileRegionManager : MonoBehaviour
             if (File.Exists(parentFilePath))
             {
                 File.WriteAllText(parentFilePath, initialContent);
-                Debug.Log($"[FileRegionManager] 恢复文件内容：{fileName}.txt, 内容={initialContent}");
             }
             
             _objectInitialContents.Remove(obj);
         }
         
-        // 2. 恢复初始位置
         if (_objectInitialPositions.ContainsKey(obj))
         {
             obj.transform.position = _objectInitialPositions[obj];
-            Debug.Log($"[FileRegionManager] 恢复物体位置：{obj.name} -> {_objectInitialPositions[obj]}");
             _objectInitialPositions.Remove(obj);
         }
         
-        // 3. 清除管理标记
         _managedObjects.Remove(obj);
         
-        // 4. 注销区域注册
         _manager?.UnregisterItemInRegion(fileName, "txt");
         _advancedItemsInRegion.Remove(advancedItem);
         
-        // 5. 恢复重力设置
-        if (_hasGravityConfig)
+        Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
+        if (rb != null)
         {
-            Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-            if (rb != null)
+            _rigidbodiesInRegion.Remove(rb);
+            if (_originalGravityScales.ContainsKey(rb))
             {
-                if (_originalGravityScales.ContainsKey(rb))
-                {
-                    rb.gravityScale = _originalGravityScales[rb];
-                    _originalGravityScales.Remove(rb);
-                }
-                _rigidbodiesInRegion.Remove(rb);
+                _originalGravityScales.Remove(rb);
             }
         }
         
@@ -430,6 +566,7 @@ public class FileRegionManager : MonoBehaviour
     void ScanRegion()
     {
         ReadGravityConfig();
+        ScanRigidbodiesInRegion();
         ApplyGravityToRigidbodies();
 
         ScanFilesInRegion();
@@ -447,8 +584,18 @@ public class FileRegionManager : MonoBehaviour
             try
             {
                 string content = File.ReadAllText(gravityPath).Trim();
-                _currentGravity = ParseGravityDirection(content);
-                _hasGravityConfig = true;
+                
+                if (content != _lastGravityContent)
+                {
+                    _currentGravity = ParseGravityDirection(content);
+                    _hasGravityConfig = true;
+                    _lastGravityContent = content;
+                    Debug.Log($"[FileRegionManager] 区域重力变化：{regionFolderName}，方向={content}");
+                }
+                else
+                {
+                    _hasGravityConfig = true;
+                }
             }
             catch (System.Exception e)
             {
@@ -458,31 +605,82 @@ public class FileRegionManager : MonoBehaviour
         }
         else
         {
+            if (_hasGravityConfig)
+            {
+                Debug.Log($"[FileRegionManager] g.cfg.txt 离开区域 {regionFolderName}，重力已恢复");
+            }
             _hasGravityConfig = false;
+            _lastGravityContent = null;
         }
     }
 
     Vector2 ParseGravityDirection(string direction)
     {
+        float magnitude = Physics2D.gravity.magnitude;
         switch (direction)
         {
             case "上":
-                return new Vector2(0, 16*GRAVITY_MAGNITUDE);
+                return new Vector2(0, 16 * magnitude);
             case "下":
-                return new Vector2(0, -16*GRAVITY_MAGNITUDE);
+                return new Vector2(0, -16 * magnitude);
             case "左":
-                return new Vector2(-16 * 16*GRAVITY_MAGNITUDE, 0);
+                return new Vector2(-16 * magnitude, 0);
             case "右":
-                return new Vector2(16 * 16*GRAVITY_MAGNITUDE, 0);
+                return new Vector2(16 * magnitude, 0);
             default:
                 Debug.LogWarning($"[FileRegionManager] 未知重力方向：'{direction}'，使用默认向下重力");
-                return new Vector2(0, -16*GRAVITY_MAGNITUDE);
+                return new Vector2(0, -16 * magnitude);
+        }
+    }
+
+    void ScanRigidbodiesInRegion()
+    {
+        if (_childCollider == null) return;
+        
+        Collider2D[] colliders = new Collider2D[100];
+        int count = Physics2D.OverlapCollider(_childCollider, new ContactFilter2D(), colliders);
+        
+        HashSet<Rigidbody2D> currentRigidbodies = new HashSet<Rigidbody2D>();
+        
+        for (int i = 0; i < count; i++)
+        {
+            Rigidbody2D rb = colliders[i].GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                currentRigidbodies.Add(rb);
+                
+                if (!_rigidbodiesInRegion.Contains(rb))
+                {
+                    _rigidbodiesInRegion.Add(rb);
+                    if (!_originalGravityScales.ContainsKey(rb))
+                    {
+                        _originalGravityScales[rb] = rb.gravityScale;
+                    }
+                    Debug.Log($"[FileRegionManager] 检测到区域内物体：{colliders[i].gameObject.name}, 列表数={_rigidbodiesInRegion.Count}");
+                }
+            }
+        }
+        
+        for (int i = _rigidbodiesInRegion.Count - 1; i >= 0; i--)
+        {
+            Rigidbody2D rb = _rigidbodiesInRegion[i];
+            if (rb == null || !currentRigidbodies.Contains(rb))
+            {
+                _rigidbodiesInRegion.RemoveAt(i);
+                if (rb != null && _originalGravityScales.ContainsKey(rb))
+                {
+                    _originalGravityScales.Remove(rb);
+                }
+                Debug.Log($"[FileRegionManager] 物体离开区域，列表数={_rigidbodiesInRegion.Count}");
+            }
         }
     }
 
     void ApplyGravityToRigidbodies()
     {
         if (!_hasGravityConfig) return;
+        
+        if (_rigidbodiesInRegion.Count == 0) return;
         
         for (int i = _rigidbodiesInRegion.Count - 1; i >= 0; i--)
         {
@@ -502,7 +700,7 @@ public class FileRegionManager : MonoBehaviour
     void ScanFilesInRegion()
     {
         if (!Directory.Exists(_regionFolderPath)) return;
-
+        
         foreach (var advancedItem in _advancedItemsInRegion.ToList())
         {
             if (advancedItem != null)
@@ -621,6 +819,28 @@ public class FileRegionManager : MonoBehaviour
     public bool IsObjectManaged(GameObject obj)
     {
         return _managedObjects.Contains(obj);
+    }
+    
+    public bool IsPresetItem(AdvancedItemController item)
+    {
+        if (presetItems == null || presetItems.Length == 0) return false;
+        
+        foreach (var preset in presetItems)
+        {
+            if (preset == item) return true;
+        }
+        return false;
+    }
+    
+    public bool IsGravityPreset(GravityController gravityController)
+    {
+        if (gravityPresets == null || gravityPresets.Length == 0) return false;
+        
+        foreach (var preset in gravityPresets)
+        {
+            if (preset == gravityController) return true;
+        }
+        return false;
     }
 
     void OnDrawGizmos()
