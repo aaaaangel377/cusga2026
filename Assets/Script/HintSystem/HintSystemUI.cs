@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +15,7 @@ public class HintSystemUI : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject panelRoot;
-    [SerializeField] private TMP_Text hintText;
+    [SerializeField] private Text hintText;
     [SerializeField] private Button mainHintButton;
     [SerializeField] private Button[] hintButtons = new Button[ExpectedHintCount];
 
@@ -226,7 +225,7 @@ public class HintSystemUI : MonoBehaviour
             Transform hintTextTransform = FindDescendantByName(transform, "HintText");
             if (hintTextTransform != null)
             {
-                hintText = hintTextTransform.GetComponent<TMP_Text>();
+                hintText = hintTextTransform.GetComponent<Text>();
             }
         }
 
