@@ -21,18 +21,15 @@ public class LevelFileManager: MonoBehaviour
     private float _timer = 0f;
     public UnityEvent fileStartEvent;
     private List<AdvancedItemController> advancedItems = new List<AdvancedItemController>();
-    //private List<CollisionImageItem> collisionImageItems = new List<CollisionImageItem>();
     private List<ImageColliderFile> imageColliderFiles = new List<ImageColliderFile>();
     private List<CustomSpawner> customSpawners = new List<CustomSpawner>();
     private List<FileRegionManager> regionManagers = new List<FileRegionManager>();
     private Dictionary<string, string> _regionFolders = new Dictionary<string, string>();
     private HashSet<string> _existingFiles = new HashSet<string>();
     private HashSet<string> _existingCopFiles = new HashSet<string>();
-    private HashSet<string> _itemsInRegions = new HashSet<string>();
     private Dictionary<GameObject, FileRegionManager> _objectsInRegions = new Dictionary<GameObject, FileRegionManager>();
     private bool _isInitialized = false;
     
-    // 记录区域文件夹中的文件状态
     private Dictionary<string, HashSet<string>> _regionFileStates = new Dictionary<string, HashSet<string>>();
     //float time=0f;
 
@@ -82,12 +79,9 @@ public class LevelFileManager: MonoBehaviour
 
     void Start()
     {
-        //Debug.Log("[LevelFileManager] Start() 执行，场景：" + gameObject.scene.name + ", autoCreateFiles: " + autoCreateFiles);
-        
         if (autoCreateFiles)
         {
             CreateDefaultFiles();
-            Debug.Log("[LevelFileManager] CreateDefaultFiles() 执行完成");
         }
 
         foreach (var item in imageColliderFiles)
@@ -95,8 +89,69 @@ public class LevelFileManager: MonoBehaviour
             item.Initialize();
         }
 
+        HandleInitialInactiveItems();
+
         StartCoroutine(InitCustomSpawners());
         fileStartEvent?.Invoke();
+    }
+    
+    void HandleInitialInactiveItems()
+    {
+        foreach (var item in advancedItems)
+        {
+            if (item == null || item.StartActive) continue;
+            
+            string folderPath = GetItemFolderPath(item);
+            
+            if (!string.IsNullOrEmpty(folderPath))
+            {
+                string filePath = Path.Combine(folderPath, $"{item.FileName}.txt");
+                if (File.Exists(filePath))
+                {
+                    try
+                    {
+                        File.Delete(filePath);
+                        Debug.Log($"[LevelFileManager] 删除初始非激活物体的文件：{filePath}");
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogError($"[LevelFileManager] 删除文件失败：{e.Message}");
+                    }
+                }
+            }
+            
+            item.SetInitialInactive();
+        }
+    }
+    
+    string GetRegionFolderPath(string regionName)
+    {
+        if (string.IsNullOrEmpty(regionName))
+        {
+            foreach (var region in regionManagers)
+            {
+                if (region != null)
+                {
+                    return region.GetRegionFolderPath();
+                }
+            }
+            return null;
+        }
+        
+        if (_regionFolders.ContainsKey(regionName))
+        {
+            return _regionFolders[regionName];
+        }
+        
+        foreach (var region in regionManagers)
+        {
+            if (region != null && region.GetRegionFolderName() == regionName)
+            {
+                return region.GetRegionFolderPath();
+            }
+        }
+        
+        return null;
     }
     
     System.Collections.IEnumerator InitCustomSpawners()
@@ -112,7 +167,6 @@ public class LevelFileManager: MonoBehaviour
         
         ScanFiles();
         
-        // 初始化区域文件状态
         InitializeRegionFileStates();
         
         _isInitialized = true;
@@ -134,13 +188,6 @@ public class LevelFileManager: MonoBehaviour
             }
             
             _regionFileStates[regionName] = files;
-            //Debug.Log($"[LevelFileManager] 初始化区域文件状态：{regionName}, 文件数={files.Count}");
-            
-            // 初始化时，将已存在的文件也注册到区域管理
-            foreach (string fileName in files)
-            {
-                region.CheckFileDraggedIn(fileName);
-            }
         }
     }
 
@@ -234,27 +281,32 @@ public class LevelFileManager: MonoBehaviour
     {
         foreach (var item in advancedItems)
         {
-            bool isInRegion = false;
-            foreach (var region in regionManagers)
-            {
-                if (region.IsPresetItem(item))
-                {
-                    isInRegion = true;
-                    //Debug.Log($"[LevelFileManager] 跳过预设对象的外部文件创建：{item.FileName}");
-                    break;
-                }
-            }
+            if (!item.StartActive) continue;
             
-            if (!isInRegion)
+            string folderPath = GetItemFolderPath(item);
+            
+            if (!string.IsNullOrEmpty(folderPath))
             {
-                item.CreateDefaultFile(_folderPath);
+                item.CreateDefaultFile(folderPath);
             }
         }
+    }
+    
+    string GetItemFolderPath(AdvancedItemController item)
+    {
+        foreach (var region in regionManagers)
+        {
+            if (region != null && region.IsPresetItem(item))
+            {
+                return region.GetPresetItemRegionPath(item);
+            }
+        }
+        
+        return _folderPath;
     }
 
     void ScanFiles()
     {
-        // 只扫描顶层文件，不扫描子文件夹（区域文件夹）
         string[] allFiles = Directory.Exists(_folderPath)
             ? Directory.GetFiles(_folderPath, "*.*", SearchOption.TopDirectoryOnly)
             : new string[0];
@@ -276,7 +328,6 @@ public class LevelFileManager: MonoBehaviour
             }
         }
 
-        // 先扫描区域文件夹，更新区域文件状态
         ScanRegionFiles();
         
         ScanTxtFiles(currentFiles);
@@ -301,7 +352,6 @@ public class LevelFileManager: MonoBehaviour
                 currentRegionFiles.Add(Path.GetFileNameWithoutExtension(file));
             }
             
-            // 检测新进入区域的文件
             if (_regionFileStates.ContainsKey(regionName))
             {
                 foreach (string fileName in currentRegionFiles)
@@ -309,22 +359,27 @@ public class LevelFileManager: MonoBehaviour
                     if (!_regionFileStates[regionName].Contains(fileName))
                     {
                         Debug.Log($"[LevelFileManager] 检测到文件进入区域 {regionName}: {fileName}.txt");
-                        region.CheckFileDraggedIn(fileName);
                     }
                 }
                 
-                // 检测离开区域的文件
                 foreach (string fileName in _regionFileStates[regionName])
                 {
                     if (!currentRegionFiles.Contains(fileName))
                     {
                         Debug.Log($"[LevelFileManager] 检测到文件离开区域 {regionName}: {fileName}.txt");
-                        region.CheckFileDraggedOut(fileName);
                     }
                 }
             }
             
             _regionFileStates[regionName] = currentRegionFiles;
+            
+            foreach (var item in advancedItems)
+            {
+                if (item != null && region.IsPresetItem(item))
+                {
+                    item.UpdateFromFile(regionPath);
+                }
+            }
         }
     }
 
@@ -357,7 +412,6 @@ public class LevelFileManager: MonoBehaviour
                         {
                             string fullPath = Path.Combine(_folderPath, fileName);
                             string content = File.ReadAllText(fullPath);
-                            //controller.OnFileCopied(fileName, content);
                             break;
                         }
                     }
@@ -394,17 +448,21 @@ public class LevelFileManager: MonoBehaviour
         {
             if (item == null) continue;
             
-            if (IsItemInRegion(item.FileName, "txt"))
+            bool isPreset = false;
+            foreach (var region in regionManagers)
             {
-                continue;
+                if (region != null && region.IsPresetItem(item))
+                {
+                    isPreset = true;
+                    break;
+                }
             }
-            item.UpdateFromFile(_folderPath);
+            
+            if (!isPreset)
+            {
+                item.UpdateFromFile(_folderPath);
+            }
         }
-
-        /*foreach (var item in collisionImageItems)
-        {
-            item.CheckImageFile(_folderPath);
-        }*/ 
 
         foreach (var item in imageColliderFiles)
         {
@@ -610,51 +668,9 @@ public class LevelFileManager: MonoBehaviour
         return checkInterval;
     }
     
-    public void RegisterItemInRegion(string fileName, string fileExtension = "txt")
-    {
-        _itemsInRegions.Add($"{fileName}.{fileExtension}");
-    }
-    
-    public void UnregisterItemInRegion(string fileName, string fileExtension = "txt")
-    {
-        _itemsInRegions.Remove($"{fileName}.{fileExtension}");
-    }
-    
-    public bool IsItemInRegion(string fileName, string fileExtension = "txt")
-    {
-        return _itemsInRegions.Contains($"{fileName}.{fileExtension}");
-    }
 
-    // public void RegisterRegionObject(GameObject obj, FileRegionManager region)
-    // {
-    //     if (!_objectsInRegions.ContainsKey(obj))
-    //     {
-    //         _objectsInRegions[obj] = region;
-    //         Debug.Log($"[LevelFileManager] {obj.name} 进入区域 {region.GetRegionFolderName()}");
-    //     }
-    // }
 
-    // public void UnregisterRegionObject(GameObject obj)
-    // {
-    //     if (_objectsInRegions.ContainsKey(obj))
-    //     {
-    //         FileRegionManager region = _objectsInRegions[obj];
-    //         Debug.Log($"[LevelFileManager] {obj.name} 离开区域 {region.GetRegionFolderName()}");
-    //         _objectsInRegions.Remove(obj);
-    //     }
-    // }
 
-    public bool IsObjectInRegion(GameObject obj, out FileRegionManager region)
-    {
-        return _objectsInRegions.TryGetValue(obj, out region);
-    }
-
-    public FileRegionManager GetRegionForObject(GameObject obj)
-    {
-        FileRegionManager region;
-        _objectsInRegions.TryGetValue(obj, out region);
-        return region;
-    }
 
     public List<MonoBehaviour> GetTrackableItems()
     {

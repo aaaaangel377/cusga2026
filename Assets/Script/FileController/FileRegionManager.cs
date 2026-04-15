@@ -15,6 +15,7 @@ public class FileRegionManager : MonoBehaviour
     [SerializeField] private Transform colliderChild;
 
     [Header("预设对象")]
+    [Tooltip("默认生成在区域文件夹中的物体，这些物体的文件会创建在区域文件夹内")]
     [SerializeField] private AdvancedItemController[] presetItems;
 
     [Header("区域重力预设")]
@@ -39,14 +40,6 @@ public class FileRegionManager : MonoBehaviour
     private List<Rigidbody2D> _rigidbodiesInRegion = new List<Rigidbody2D>();
     private Dictionary<Rigidbody2D, float> _originalGravityScales = new Dictionary<Rigidbody2D, float>();
     private HashSet<string> _filesInRegion = new HashSet<string>();
-    private List<AdvancedItemController> _advancedItemsInRegion = new List<AdvancedItemController>();
-    private HashSet<GameObject> _objectsInRegion = new HashSet<GameObject>();
-    private Dictionary<GameObject, Vector3> _objectPositions = new Dictionary<GameObject, Vector3>();
-    
-    // 新增：记录由本区域管理的物体及其初始状态
-    private Dictionary<GameObject, string> _objectInitialContents = new Dictionary<GameObject, string>();
-    private Dictionary<GameObject, Vector3> _objectInitialPositions = new Dictionary<GameObject, Vector3>();
-    private HashSet<GameObject> _managedObjects = new HashSet<GameObject>();
     
     // 重力配置
     private string _lastGravityContent;
@@ -138,7 +131,7 @@ public class FileRegionManager : MonoBehaviour
             ReadGravityConfig();
 
             InitializePresetItems();
-            
+
             InitializeRegionGravity();
 
             _isInitialized = true;
@@ -174,7 +167,6 @@ public class FileRegionManager : MonoBehaviour
     {
         if (presetItems == null || presetItems.Length == 0)
         {
-            Debug.Log($"[FileRegionManager] 预设对象数组为空或长度为 0，跳过初始化");
             return;
         }
         
@@ -182,63 +174,30 @@ public class FileRegionManager : MonoBehaviour
         {
             if (item == null) continue;
             
-            GameObject obj = item.gameObject;
             string fileName = item.FileName;
             
             if (string.IsNullOrEmpty(fileName))
             {
-                Debug.LogWarning($"[FileRegionManager] 预设对象 {obj.name} 的文件名为空，跳过");
+                Debug.LogWarning($"[FileRegionManager] 预设对象 {item.gameObject.name} 的文件名为空，跳过");
                 continue;
             }
             
             string regionFilePath = Path.Combine(_regionFolderPath, $"{fileName}.txt");
-            string parentFilePath = Path.Combine(_parentFolderPath, $"{fileName}.txt");
             
             string content = !string.IsNullOrEmpty(item.CustomContent) ? item.CustomContent : "0\n0";
             
             try
             {
-                if (File.Exists(parentFilePath))
+                if (!File.Exists(regionFilePath))
                 {
-                    File.Delete(parentFilePath);
+                    File.WriteAllText(regionFilePath, content);
+                    Debug.Log($"[FileRegionManager] 预设对象文件已创建：{regionFilePath}, 内容={content}");
                 }
-                File.WriteAllText(regionFilePath, content);
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"[FileRegionManager] 创建预设对象区域文件失败：{e.Message}");
-                continue;
+                Debug.LogError($"[FileRegionManager] 创建预设对象文件失败：{e.Message}");
             }
-            
-            item.SetManager(_manager);
-            
-            _objectInitialContents[obj] = content;
-            _objectInitialPositions[obj] = obj.transform.position;
-            
-            obj.transform.position = transform.position;
-            
-            _managedObjects.Add(obj);
-            
-            _manager?.RegisterItemInRegion(fileName, "txt");
-            if (!_advancedItemsInRegion.Contains(item))
-            {
-                _advancedItemsInRegion.Add(item);
-            }
-            
-            Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                if (!_originalGravityScales.ContainsKey(rb))
-                {
-                    _originalGravityScales[rb] = rb.gravityScale;
-                }
-                if (!_rigidbodiesInRegion.Contains(rb))
-                {
-                    _rigidbodiesInRegion.Add(rb);
-                }
-            }
-            
-            Debug.Log($"[FileRegionManager] 预设对象初始化完成：{obj.name}");
         }
     }
 
@@ -283,123 +242,6 @@ public class FileRegionManager : MonoBehaviour
                 Debug.LogError($"[FileRegionManager] 创建区域重力文件失败：{e.Message}");
             }
         }
-    }
-
-    void ProcessObjectEnter(GameObject obj)
-    {
-        AdvancedItemController advancedItem = obj.GetComponent<AdvancedItemController>();
-        if (advancedItem == null) return;
-        
-        string fileName = advancedItem.FileName;
-        string regionFilePath = Path.Combine(_regionFolderPath, $"{fileName}.txt");
-        string parentFilePath = Path.Combine(_parentFolderPath, $"{fileName}.txt");
-        
-        if (!_objectInitialContents.ContainsKey(obj))
-        {
-            try
-            {
-                if (File.Exists(parentFilePath))
-                {
-                    _objectInitialContents[obj] = File.ReadAllText(parentFilePath);
-                }
-                else if (File.Exists(regionFilePath))
-                {
-                    _objectInitialContents[obj] = File.ReadAllText(regionFilePath);
-                }
-                else
-                {
-                    _objectInitialContents[obj] = advancedItem.CustomContent ?? "";
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"[FileRegionManager] 读取初始文件内容失败：{e.Message}");
-                _objectInitialContents[obj] = advancedItem.CustomContent ?? "";
-            }
-            
-            _objectInitialPositions[obj] = obj.transform.position;
-        }
-        
-        string newContent = "0\n0";
-        try
-        {
-            if (File.Exists(parentFilePath))
-            {
-                File.WriteAllText(parentFilePath, newContent);
-            }
-            else if (File.Exists(regionFilePath))
-            {
-                File.WriteAllText(regionFilePath, newContent);
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"[FileRegionManager] 修改文件内容失败：{e.Message}");
-        }
-        
-        obj.transform.position = transform.position;
-        
-        _managedObjects.Add(obj);
-        
-        _manager?.RegisterItemInRegion(fileName, "txt");
-        if (!_advancedItemsInRegion.Contains(advancedItem))
-        {
-            _advancedItemsInRegion.Add(advancedItem);
-        }
-        
-        Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            if (!_originalGravityScales.ContainsKey(rb))
-            {
-                _originalGravityScales[rb] = rb.gravityScale;
-            }
-            if (!_rigidbodiesInRegion.Contains(rb))
-            {
-                _rigidbodiesInRegion.Add(rb);
-            }
-        }
-    }
-
-    void ProcessObjectExit(GameObject obj)
-    {
-        AdvancedItemController advancedItem = obj.GetComponent<AdvancedItemController>();
-        if (advancedItem == null) return;
-        
-        string fileName = advancedItem.FileName;
-        string parentFilePath = Path.Combine(_parentFolderPath, $"{fileName}.txt");
-        
-        if (_objectInitialContents.ContainsKey(obj))
-        {
-            string initialContent = _objectInitialContents[obj];
-            
-            if (File.Exists(parentFilePath))
-            {
-                File.WriteAllText(parentFilePath, initialContent);
-            }
-            
-            _objectInitialContents.Remove(obj);
-        }
-        
-        if (_objectInitialPositions.ContainsKey(obj))
-        {
-            obj.transform.position = _objectInitialPositions[obj];
-            _objectInitialPositions.Remove(obj);
-        }
-        
-        _managedObjects.Remove(obj);
-        
-        _manager?.UnregisterItemInRegion(fileName, "txt");
-        _advancedItemsInRegion.Remove(advancedItem);
-        
-        Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            _rigidbodiesInRegion.Remove(rb);
-            RestoreGravityScale(rb);
-        }
-        
-        Debug.Log($"[FileRegionManager] 物体离开区域完成：{obj.name}");
     }
 
     void CalculateParentGridPosition()
@@ -447,135 +289,11 @@ public class FileRegionManager : MonoBehaviour
 
     public Vector2Int GetParentGridPos() => _parentGridPos;
 
-    public bool IsObjectInRegion(GameObject obj) => _objectsInRegion.Contains(obj);
-
-    void MoveFileToRegion(string fileName, string fileClass)
-    {
-        if (string.IsNullOrEmpty(fileName)) return;
-        if (string.IsNullOrEmpty(_parentFolderPath))
-        {
-            Debug.LogError($"[FileRegionManager] MoveFileToRegion: _parentFolderPath 为空！");
-            return;
-        }
-        if (string.IsNullOrEmpty(_regionFolderPath))
-        {
-            Debug.LogError($"[FileRegionManager] MoveFileToRegion: _regionFolderPath 为空！");
-            return;
-        }
-
-        string sourcePath = Path.Combine(_parentFolderPath, $"{fileName}.{fileClass}");
-        string destPath = Path.Combine(_regionFolderPath, $"{fileName}.{fileClass}");
-
-        Debug.Log($"[FileRegionManager] MoveFileToRegion: 尝试移动 {fileName}.{fileClass}");
-        Debug.Log($"[FileRegionManager] 源路径：{sourcePath}");
-        Debug.Log($"[FileRegionManager] 目标路径：{destPath}");
-        Debug.Log($"[FileRegionManager] 源文件存在：{File.Exists(sourcePath)}");
-        Debug.Log($"[FileRegionManager] 目标文件存在：{File.Exists(destPath)}");
-
-        if (!File.Exists(sourcePath))
-        {
-            Debug.LogWarning($"[FileRegionManager] 源文件不存在，无法移动：{sourcePath}");
-            if (File.Exists(destPath))
-            {
-                Debug.Log($"[FileRegionManager] 但目标文件已存在，物体已在区域内：{destPath}");
-                _filesInRegion.Add(fileName);
-            }
-            return;
-        }
-
-        if (File.Exists(destPath))
-        {
-            Debug.LogWarning($"[FileRegionManager] 目标文件已存在，删除后重新移动：{destPath}");
-            try
-            {
-                File.Delete(destPath);
-                Debug.Log($"[FileRegionManager] 已删除旧文件：{destPath}");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"[FileRegionManager] 删除旧文件失败：{e.Message}");
-                return;
-            }
-        }
-
-        try
-        {
-            File.Move(sourcePath, destPath);
-            _filesInRegion.Add(fileName);
-            Debug.Log($"[FileRegionManager] 文件移入区域成功：{fileName}.{fileClass}");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"[FileRegionManager] 移动文件失败：{e.Message}\n{e.StackTrace}");
-        }
-    }
-
-    void MoveFileToParent(string fileName, string fileClass)
-    {
-        if (string.IsNullOrEmpty(fileName)) return;
-        if (string.IsNullOrEmpty(_regionFolderPath))
-        {
-            Debug.LogError($"[FileRegionManager] MoveFileToParent: _regionFolderPath 为空！");
-            return;
-        }
-        if (string.IsNullOrEmpty(_parentFolderPath))
-        {
-            Debug.LogError($"[FileRegionManager] MoveFileToParent: _parentFolderPath 为空！");
-            return;
-        }
-
-        string sourcePath = Path.Combine(_regionFolderPath, $"{fileName}.{fileClass}");
-        string destPath = Path.Combine(_parentFolderPath, $"{fileName}.{fileClass}");
-
-        Debug.Log($"[FileRegionManager] MoveFileToParent: 尝试移动 {fileName}.{fileClass}");
-        Debug.Log($"[FileRegionManager] 源路径：{sourcePath}");
-        Debug.Log($"[FileRegionManager] 目标路径：{destPath}");
-        Debug.Log($"[FileRegionManager] 源文件存在：{File.Exists(sourcePath)}");
-        Debug.Log($"[FileRegionManager] 目标文件存在：{File.Exists(destPath)}");
-
-        if (!File.Exists(sourcePath))
-        {
-            Debug.LogWarning($"[FileRegionManager] 源文件不存在，无法移动：{sourcePath}");
-            _filesInRegion.Remove(fileName);
-            return;
-        }
-
-        if (File.Exists(destPath))
-        {
-            Debug.LogWarning($"[FileRegionManager] 目标文件已存在，删除后重新移动：{destPath}");
-            try
-            {
-                File.Delete(destPath);
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"[FileRegionManager] 删除旧文件失败：{e.Message}");
-                return;
-            }
-        }
-
-        try
-        {
-            File.Move(sourcePath, destPath);
-            _filesInRegion.Remove(fileName);
-            Debug.Log($"[FileRegionManager] 文件移出区域成功：{fileName}.{fileClass}");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"[FileRegionManager] 移动文件失败：{e.Message}\n{e.StackTrace}");
-        }
-    }
-
-
-
     void ScanRegion()
     {
         ReadGravityConfig();
         ScanRigidbodiesInRegion();
         ApplyGravityToRigidbodies();
-
-        ScanFilesInRegion();
-        CheckObjectsInRegion();
     }
 
     void ReadGravityConfig()
@@ -719,37 +437,13 @@ public class FileRegionManager : MonoBehaviour
 
     void ScanFilesInRegion()
     {
-        if (!Directory.Exists(_regionFolderPath)) return;
-        
-        foreach (var advancedItem in _advancedItemsInRegion.ToList())
-        {
-            if (advancedItem != null)
-            {
-                advancedItem.UpdateFromFile(_regionFolderPath);
-            }
-            else
-            {
-                _advancedItemsInRegion.Remove(advancedItem);
-            }
-        }
+        // 不再扫描文件，由 LevelFileManager 统一管理
     }
 
     void CheckObjectsInRegion()
     {
-        if (_childCollider == null || _manager == null) return;
-        
         // 不再自动检测物体进入/离开区域
         // 改为由 LevelFileManager 检测文件移动后通知
-        
-        // 更新已管理物体的位置记录（用于调试）
-        foreach (var obj in _managedObjects.ToList())
-        {
-            if (obj == null)
-            {
-                _managedObjects.Remove(obj);
-                continue;
-            }
-        }
     }
 
     public void SetManager(LevelFileManager manager)
@@ -792,53 +486,15 @@ public class FileRegionManager : MonoBehaviour
         return regionFolderName;
     }
     
-    /// <summary>
-    /// 检测是否有物体被拖入区域文件夹
-    /// 由 LevelFileManager 调用
-    /// </summary>
-    public void CheckFileDraggedIn(string fileName)
+    public bool IsGravityPreset(GravityController gravityController)
     {
-        if (string.IsNullOrEmpty(fileName)) return;
+        if (gravityPresets == null || gravityPresets.Length == 0) return false;
         
-        // 查找对应的物体
-        var allAdvancedItems = FindObjectsOfType<AdvancedItemController>();
-        foreach (var advancedItem in allAdvancedItems)
+        foreach (var preset in gravityPresets)
         {
-            if (advancedItem.FileName == fileName && !_managedObjects.Contains(advancedItem.gameObject))
-            {
-                Debug.Log($"[FileRegionManager] 检测到文件被拖入区域：{fileName}");
-                ProcessObjectEnter(advancedItem.gameObject);
-                break;
-            }
+            if (preset == gravityController) return true;
         }
-    }
-    
-    /// <summary>
-    /// 检测是否有物体被拖出区域文件夹
-    /// 由 LevelFileManager 调用
-    /// </summary>
-    public void CheckFileDraggedOut(string fileName)
-    {
-        if (string.IsNullOrEmpty(fileName)) return;
-        
-        var allAdvancedItems = FindObjectsOfType<AdvancedItemController>();
-        foreach (var advancedItem in allAdvancedItems)
-        {
-            if (advancedItem.FileName == fileName && _managedObjects.Contains(advancedItem.gameObject))
-            {
-                Debug.Log($"[FileRegionManager] 检测到文件被拖出区域：{fileName}");
-                ProcessObjectExit(advancedItem.gameObject);
-                break;
-            }
-        }
-    }
-    
-    /// <summary>
-    /// 判断物体是否由本区域管理
-    /// </summary>
-    public bool IsObjectManaged(GameObject obj)
-    {
-        return _managedObjects.Contains(obj);
+        return false;
     }
     
     public bool IsPresetItem(AdvancedItemController item)
@@ -852,15 +508,10 @@ public class FileRegionManager : MonoBehaviour
         return false;
     }
     
-    public bool IsGravityPreset(GravityController gravityController)
+    public string GetPresetItemRegionPath(AdvancedItemController item)
     {
-        if (gravityPresets == null || gravityPresets.Length == 0) return false;
-        
-        foreach (var preset in gravityPresets)
-        {
-            if (preset == gravityController) return true;
-        }
-        return false;
+        if (!IsPresetItem(item)) return null;
+        return _regionFolderPath;
     }
 
     void OnDrawGizmos()

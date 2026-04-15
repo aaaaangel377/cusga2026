@@ -30,10 +30,14 @@ public class AdvancedItemController : MonoBehaviour
     [SerializeField] private AudioClip colliderDisableSound;
     [SerializeField] private float colliderDisableDuration = 0.3f;
     
+    [Header("初始状态")]
+    [SerializeField] private bool startActive = true;
+    
     private LevelFileManager _manager;
     private List<FeatureProcessor> _processors;
     
     public string FileName => fileName;
+    public bool StartActive => startActive;
     
     void Awake()
     {
@@ -131,9 +135,10 @@ public class AdvancedItemController : MonoBehaviour
         string fullPath = Path.Combine(folderPath, $"{fileName}.txt");
         bool exists = File.Exists(fullPath);
         
+        targetObject.SetActive(exists);
+        
         if (!exists)
         {
-            
             foreach (var processor in _processors)
             {
                 processor.OnFileDeleted(targetObject, this);
@@ -148,13 +153,18 @@ public class AdvancedItemController : MonoBehaviour
             }
             return;
         }
-        targetObject.SetActive(true);
+        
         string content = File.ReadAllText(fullPath);
         
         foreach (var processor in _processors)
         {
             processor.OnFileUpdated(content, targetObject);
         }
+    }
+    
+    public void SetInitialInactive()
+    {
+        targetObject.SetActive(false);
     }
     
     // public void OnFileCopied(string newFileName, string content)

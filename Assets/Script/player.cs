@@ -248,7 +248,7 @@ public class player : MonoBehaviour
         ismoving = rb.velocity.x != 0;
         anime.SetBool("isMoving", ismoving);
         
-        if (ismoving && !_footstepsRegistered)
+        if (ismoving && !_footstepsRegistered&&IsGrounded)
         {
             AudioManager.Instance.RegisterContinuousAudioEffect(
                 FOOTSTEP_KEY,
