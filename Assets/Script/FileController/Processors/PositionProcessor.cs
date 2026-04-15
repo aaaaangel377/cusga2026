@@ -175,27 +175,19 @@ public class PositionProcessor : FeatureProcessor
 
     private FileRegionManager FindRegionForObject(GameObject target, LevelFileManager manager)
     {
-        if (manager == null) return null;
+        AdvancedItemController controller = target.GetComponent<AdvancedItemController>();
         
-        // 1. 先检查是否被 FileRegionManager 管理
+        if (controller == null) return null;
+        
         FileRegionManager[] allRegions = Object.FindObjectsOfType<FileRegionManager>();
         foreach (var r in allRegions)
         {
-            if (r.IsObjectManaged(target))
+            if (r != null && r.IsPresetItem(controller))
             {
-                Debug.Log($"[PositionProcessor] {target.name} 被区域 {r.GetRegionFolderName()} 管理");
                 return r;
             }
         }
         
-        // 2. 检查注册列表（向后兼容）
-        if (manager.IsObjectInRegion(target, out FileRegionManager region))
-        {
-            Debug.Log($"[PositionProcessor] {target.name} 已在注册列表中，区域：{region.GetRegionFolderName()}");
-            return region;
-        }
-        
-        // 3. 如果没有被管理，返回 null（使用全局坐标）
         return null;
     }
 
