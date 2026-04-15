@@ -257,7 +257,7 @@ public class player : MonoBehaviour
             );
             _footstepsRegistered = true;
         }
-        else if (!ismoving && _footstepsRegistered)
+        else if (!ismoving && _footstepsRegistered||!IsGrounded)
         {
             AudioManager.Instance.UnregisterContinuousAudioEffect(FOOTSTEP_KEY);
             _footstepsRegistered = false;
