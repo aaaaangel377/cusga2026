@@ -22,7 +22,6 @@ public class LevelComputerController : MonoBehaviour
     IEnumerator DelayStart()
     {
         yield return null;
-        File.Delete(Path.Combine(levelFileManager.GetFolderPath(), "block.p.txt"));
         File.Delete(Path.Combine(levelFileManager.GetFolderPath(), "key.txt"));
     }
 
