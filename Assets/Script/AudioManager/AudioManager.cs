@@ -203,7 +203,7 @@ public sealed class AudioManager : MonoBehaviour
         bgmSource.clip = clip;
         bgmSource.loop = is_loop;
         bgmSource.Play();
-        Resources.UnloadUnusedAssets(); // 释放未使用的资源
+        Resources.UnloadUnusedAssets();
     }
 
     /// <summary>

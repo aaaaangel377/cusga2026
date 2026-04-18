@@ -227,7 +227,15 @@ public class player : MonoBehaviour
             rb.velocity = new Vector2(facingDir * dashSpeed, 0);
             dashTime -= Time.deltaTime;
         }*/
-        rb.velocity = new Vector2(xInput * speed, rb.velocity.y);
+        if (AudioConfig.CanWalk)
+        {
+            rb.velocity = new Vector2(xInput * speed, rb.velocity.y);
+        }
+        else
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
+        //rb.velocity = new Vector2(xInput * speed, rb.velocity.y);
         //dashCooldownTimer -= Time.deltaTime;
     }
 
@@ -235,8 +243,11 @@ public class player : MonoBehaviour
     {
         if (IsGrounded)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpforce);
-            AudioManager.Instance.PlayOneShotEffect("2 - Jump", AudioManager.Instance.JumpVolume);
+            if (AudioConfig.CanJump)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpforce);
+                AudioManager.Instance.PlayOneShotEffect("2 - Jump", AudioManager.Instance.JumpVolume);
+            }
         }
     }
 
@@ -250,12 +261,15 @@ public class player : MonoBehaviour
         
         if (ismoving && !_footstepsRegistered&&IsGrounded)
         {
-            AudioManager.Instance.RegisterContinuousAudioEffect(
-                FOOTSTEP_KEY,
-                () => ismoving,
-                "1 - Walk"
-            );
-            _footstepsRegistered = true;
+            if (AudioConfig.CanWalk)
+            {
+                AudioManager.Instance.RegisterContinuousAudioEffect(
+                    FOOTSTEP_KEY,
+                    () => ismoving,
+                    "1 - Walk"
+                );
+                _footstepsRegistered = true;
+            }
         }
         else if (!ismoving && _footstepsRegistered||!IsGrounded)
         {
