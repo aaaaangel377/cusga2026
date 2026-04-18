@@ -79,6 +79,15 @@ public class LevelFileManager: MonoBehaviour
 
     void Start()
     {
+        foreach (var region in regionManagers)
+        {
+            if (region != null)
+            {
+                region.SetManager(this);
+                CreateRegionFolder(region.GetRegionFolderName());
+            }
+        }
+        
         if (autoCreateFiles)
         {
             CreateDefaultFiles();
@@ -106,6 +115,7 @@ public class LevelFileManager: MonoBehaviour
             if (!string.IsNullOrEmpty(folderPath))
             {
                 string filePath = Path.Combine(folderPath, $"{item.FileName}.txt");
+                
                 if (File.Exists(filePath))
                 {
                     try
@@ -298,11 +308,25 @@ public class LevelFileManager: MonoBehaviour
         {
             if (region != null && region.IsPresetItem(item))
             {
-                return region.GetPresetItemRegionPath(item);
+                string regionPath = region.GetPresetItemRegionPath(item);
+                if (string.IsNullOrEmpty(regionPath))
+                {
+                    regionPath = GetRegionFolder(region.GetRegionFolderName());
+                }
+                return regionPath;
             }
         }
         
         return _folderPath;
+    }
+    
+    string GetRegionFolder(string regionName)
+    {
+        if (_regionFolders.ContainsKey(regionName))
+        {
+            return _regionFolders[regionName];
+        }
+        return null;
     }
 
     void ScanFiles()

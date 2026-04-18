@@ -174,6 +174,12 @@ public class FileRegionManager : MonoBehaviour
         {
             if (item == null) continue;
             
+            if (!item.StartActive)
+            {
+                // Debug.Log($"[FileRegionManager] 预设对象 {item.gameObject.name} startActive=false，跳过文件创建");
+                continue;
+            }
+            
             string fileName = item.FileName;
             
             if (string.IsNullOrEmpty(fileName))
@@ -503,6 +509,8 @@ public class FileRegionManager : MonoBehaviour
         
         foreach (var preset in presetItems)
         {
+            if (preset == null) continue;
+            
             if (preset == item) return true;
         }
         return false;
