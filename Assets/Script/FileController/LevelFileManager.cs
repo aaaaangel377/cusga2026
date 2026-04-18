@@ -39,7 +39,7 @@ public class LevelFileManager: MonoBehaviour
         
         Physics2D.gravity = new Vector2(0, -9.81f);
         string gameRoot = Directory.GetParent(Application.dataPath).FullName;
-        _folderPath = Path.Combine(gameRoot, "level", levelIndex.ToString());
+        _folderPath = Path.Combine(gameRoot, "levels", levelIndex.ToString());
 
         if (!Directory.Exists(_folderPath))
         {
@@ -346,7 +346,7 @@ public class LevelFileManager: MonoBehaviour
             {
                 currentFiles.Add(fileName);
             }
-            else if (fileName.EndsWith(".cop"))
+            else if (fileName.EndsWith(".copy"))
             {
                 currentCopFiles.Add(fileName);
             }
@@ -524,7 +524,7 @@ public class LevelFileManager: MonoBehaviour
             string baseName = kvp.Key;
             var spawners = kvp.Value;
             
-            string originalFileName = $"{baseName}.cop";
+            string originalFileName = $"{baseName}.copy";
             bool originalFileExists = currentCopFiles.Contains(originalFileName);
             
             foreach (var spawner in spawners)
@@ -581,7 +581,7 @@ public class LevelFileManager: MonoBehaviour
         {
             if (fileName.Contains(" - 副本") && !_existingCopFiles.Contains(fileName))
             {
-                string baseName = System.Text.RegularExpressions.Regex.Replace(fileName, @" - 副本( \(\d+\))?\.cop", "");
+                string baseName = System.Text.RegularExpressions.Regex.Replace(fileName, @" - 副本( \(\d+\))?\.copy", "");
                 
                 if (spawnersByBaseName.ContainsKey(baseName))
                 {

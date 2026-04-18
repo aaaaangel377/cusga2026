@@ -690,7 +690,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseFileName: ball
-  fileExtension: .cop
+  fileExtension: .copy
   addRigidbody2D: 0
   mass: 1
   gravityScale: 1
@@ -2850,6 +2850,7 @@ MonoBehaviour:
   enableColliderDisableOnUpdate: 1
   colliderDisableSound: {fileID: 0}
   colliderDisableDuration: 0.3
+  startActive: 1
 --- !u!1 &1894847571
 GameObject:
   m_ObjectHideFlags: 0

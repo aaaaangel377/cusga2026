@@ -299,7 +299,7 @@ public class CustomSpawner : MonoBehaviour
 {
     [Header("文件设置")]
     [SerializeField] private string baseFileName = "file";
-    [SerializeField] private string fileExtension = ".cop";
+    [SerializeField] private string fileExtension = ".copy";
 
     [Header("物理设置")]
     [SerializeField] private bool addRigidbody2D = true;
@@ -461,7 +461,7 @@ public class CustomSpawner : MonoBehaviour
         int copyNumber = 1;
         string numberStr = "";
 
-        Match match = Regex.Match(fileName, @" - 副本( \((\d+)\))?\.cop$");
+        Match match = Regex.Match(fileName, @" - 副本( \((\d+)\))?\.copy$");
         if (match.Success && match.Groups[2].Success)
         {
             int.TryParse(match.Groups[2].Value, out copyNumber);

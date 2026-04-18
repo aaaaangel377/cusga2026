@@ -20,8 +20,8 @@ public class Level4Controller : MonoBehaviour
     {
         if (!isSetcop)
         {
-            string filePath = Path.Combine(levelFileManager4.GetFolderPath(), "ball - ¸±±¾.cop");
-            File.WriteAllText(filePath, ""); // ´´½¨¿ÕÎÄ¼þ
+            string filePath = Path.Combine(levelFileManager4.GetFolderPath(), "ball - å‰¯æœ¬.copy");
+            File.WriteAllText(filePath, ""); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
             isSetcop = true;
         }
     }
