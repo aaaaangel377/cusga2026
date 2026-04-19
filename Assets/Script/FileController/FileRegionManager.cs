@@ -7,7 +7,11 @@ public class FileRegionManager : MonoBehaviour
 {
     [Header("区域设置")]
     [SerializeField] private string regionFolderName = "region1";
-
+    [Header("重力系数")]
+    [SerializeField] private float Up=1.0f;
+    [SerializeField] private float Do=1.0f;
+    [SerializeField] private float Le=1.0f;
+    [SerializeField] private float Ri=1.0f;
     [Header("扫描设置")]
     [SerializeField] private float checkInterval = 0.3f;
 
@@ -348,13 +352,13 @@ public class FileRegionManager : MonoBehaviour
         switch (direction)
         {
             case "上":
-                return new Vector2(0, _gravityMagnitude);
+                return new Vector2(0, Up*_gravityMagnitude);
             case "下":
-                return new Vector2(0, -_gravityMagnitude);
+                return new Vector2(0, -Do*_gravityMagnitude);
             case "左":
-                return new Vector2(-16 * _gravityMagnitude, 0);
+                return new Vector2(-16 * Le*_gravityMagnitude, 0);
             case "右":
-                return new Vector2(16 * _gravityMagnitude, 0);
+                return new Vector2(16 * Ri*_gravityMagnitude, 0);
             default:
                 Debug.LogWarning($"[FileRegionManager] 未知重力方向：'{direction}'，使用默认向下重力");
                 return new Vector2(0, -_gravityMagnitude);
