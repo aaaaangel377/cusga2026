@@ -2403,7 +2403,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4840713711309746225, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
       propertyPath: gravityPresets.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4840713711309746225, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
       propertyPath: presetItems.Array.data[0]
