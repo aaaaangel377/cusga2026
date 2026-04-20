@@ -6,6 +6,7 @@ public class AdvancedItemController : MonoBehaviour
 {
     [Header("文件设置")]
     [SerializeField] private string fileName;
+    [SerializeField] private string fileExtension = "txt";
     
     [Header("初始内容")]
     [TextArea]
@@ -115,7 +116,7 @@ public class AdvancedItemController : MonoBehaviour
     
     public void CreateDefaultFile(string folderPath)
     {
-        string fullPath = Path.Combine(folderPath, $"{fileName}.txt");
+        string fullPath = Path.Combine(folderPath, $"{fileName}.{fileExtension}");
         
         if (File.Exists(fullPath)) return;
         
@@ -132,7 +133,7 @@ public class AdvancedItemController : MonoBehaviour
     
     public void UpdateFromFile(string folderPath)
     {
-        string fullPath = Path.Combine(folderPath, $"{fileName}.txt");
+        string fullPath = Path.Combine(folderPath, $"{fileName}.{fileExtension}");
         bool exists = File.Exists(fullPath);
         
         targetObject.SetActive(exists);
