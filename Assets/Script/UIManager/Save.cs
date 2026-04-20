@@ -1,16 +1,19 @@
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class LevelUnlockSystem : MonoBehaviour
 {
     public GameObject[] levelButtons;  
-    public string[] num;               
+    public string[] num;
+    public Toggle hintsToggle;
 
     [System.Serializable]
     public class SaveData
     {
         public List<string> passedLevels = new List<string>();
+        public bool hintsEnabled = true;
     }
 
     private string saveFileName = "level_save.json";
@@ -25,6 +28,58 @@ public class LevelUnlockSystem : MonoBehaviour
 
         // 2. 解锁按钮
         UnlockButtonsFromSave(saveData);
+
+        // 3. 设置提示开关状态
+        SetHintsToggle(saveData);
+    }
+
+    // 设置提示开关
+    void SetHintsToggle(SaveData saveData)
+    {
+        if (hintsToggle != null)
+        {
+            // 从存档加载开关状态
+            hintsToggle.isOn = saveData.hintsEnabled;
+
+            // 添加状态改变监听
+            hintsToggle.onValueChanged.AddListener(OnHintsToggleChanged);
+        }
+    }
+
+    // 提示开关状态改变回调
+    void OnHintsToggleChanged(bool isOn)
+    {
+        // 加载存档
+        SaveData saveData = LoadSave();
+
+        // 更新提示开关状态
+        saveData.hintsEnabled = isOn;
+
+        // 保存
+        SaveToFile(saveData);
+    }
+
+    // 新增：获取提示开关状态（供其他脚本调用）
+    public bool AreHintsEnabled()
+    {
+        SaveData saveData = LoadSave();
+        return saveData.hintsEnabled;
+    }
+
+    // 新增：设置提示开关状态（供其他脚本调用）
+    public void SetHintsEnabled(bool enabled)
+    {
+        if (hintsToggle != null)
+        {
+            hintsToggle.isOn = enabled;
+        }
+        else
+        {
+            // 如果 Toggle 未设置，直接修改存档
+            SaveData saveData = LoadSave();
+            saveData.hintsEnabled = enabled;
+            SaveToFile(saveData);
+        }
     }
 
     // 新增：隐藏所有按钮
@@ -56,6 +111,7 @@ public class LevelUnlockSystem : MonoBehaviour
         {
             newData.passedLevels.Add(num[0]);  // 默认解锁第一关
         }
+        newData.hintsEnabled = true; // 默认开启提示
         SaveToFile(newData);
         return newData;
     }
@@ -86,6 +142,8 @@ public class LevelUnlockSystem : MonoBehaviour
             levelButtons[0].SetActive(true);
         }
     }
+
+
 
     // ============ 给旗子调用的函数 ============
 
