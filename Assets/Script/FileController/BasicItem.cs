@@ -49,7 +49,7 @@ public class BasicItem : MonoBehaviour
         OnFileCreated();
     }
     //根据文件内容更新对象状态
-    public void UpdateFromFile(string folderPath)
+    public virtual void UpdateFromFile(string folderPath)
     {
         string fullPath = Path.Combine(folderPath, $"{fileName}.{fileclass}");
         bool exists = File.Exists(fullPath);

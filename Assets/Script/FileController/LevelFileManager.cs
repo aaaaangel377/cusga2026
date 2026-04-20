@@ -24,6 +24,7 @@ public class LevelFileManager: MonoBehaviour
     private List<ImageColliderFile> imageColliderFiles = new List<ImageColliderFile>();
     private List<CustomSpawner> customSpawners = new List<CustomSpawner>();
     private List<FileRegionManager> regionManagers = new List<FileRegionManager>();
+    private List<HiddenItem> hiddenItems = new List<HiddenItem>();
     private Dictionary<string, string> _regionFolders = new Dictionary<string, string>();
     private HashSet<string> _existingFiles = new HashSet<string>();
     private HashSet<string> _existingCopFiles = new HashSet<string>();
@@ -50,11 +51,13 @@ public class LevelFileManager: MonoBehaviour
         imageColliderFiles = FindObjectsOfType<ImageColliderFile>().ToList();
         customSpawners = FindObjectsOfType<CustomSpawner>().ToList();
         regionManagers = FindObjectsOfType<FileRegionManager>().ToList();
+        hiddenItems = FindObjectsOfType<HiddenItem>().ToList();
 
         Debug.Log("[LevelFileManager] 找到对象 - AdvancedItem: " + advancedItems.Count + 
             ", ImageCollider: " + imageColliderFiles.Count + 
             ", CustomSpawner: " + customSpawners.Count + 
-            ", RegionManager: " + regionManagers.Count);
+            ", RegionManager: " + regionManagers.Count +
+            ", HiddenItem: " + hiddenItems.Count);
 
         foreach (var item in advancedItems)
         {
@@ -71,6 +74,14 @@ public class LevelFileManager: MonoBehaviour
             if (region != null)
             {
                 region.SetManager(this);
+            }
+        }
+
+        foreach (var hiddenItem in hiddenItems)
+        {
+            if (hiddenItem != null)
+            {
+                hiddenItem.SetManager(this);
             }
         }
 
@@ -491,6 +502,19 @@ public class LevelFileManager: MonoBehaviour
         foreach (var item in imageColliderFiles)
         {
             item.CheckImageFile(_folderPath);
+        }
+
+        for (int i = hiddenItems.Count - 1; i >= 0; i--)
+        {
+            var hiddenItem = hiddenItems[i];
+            if (hiddenItem != null)
+            {
+                hiddenItem.UpdateFromFile(_folderPath);
+            }
+            else
+            {
+                hiddenItems.RemoveAt(i);
+            }
         }
     }
 
