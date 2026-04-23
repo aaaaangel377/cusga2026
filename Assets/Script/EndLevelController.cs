@@ -1,224 +1,4 @@
-//using UnityEngine;
-//using UnityEngine.Events;
-//using System.IO;
-//using System.Diagnostics;
-//using Debug = UnityEngine.Debug;
-
-//public class EndLevelController : MonoBehaviour
-//{
-//    [SerializeField] private string processName = "au3";
-//    [SerializeField] private string protectedFileName = "A¦Ì3.ai";
-//    [SerializeField] private string inputFileName = "input.txt";
-//    [SerializeField] private string targetContent = "end";
-
-//    // Unity ÊÂ¼ş
-//    public UnityEvent OnFileDeleted;      // Íæ¼ÒÉ¾³ıÎÄ¼şÊ±´¥·¢
-//    public UnityEvent<string> OnInputMatched;  // input.txt ÄÚÈİÆ¥ÅäÊ±´¥·¢
-
-//    private string _folderPath;
-//    private float _checkInterval = 0.5f;
-//    private float _timer = 0f;
-//    private bool _isReady = false;
-//    private bool _isProcessRunning = false;
-//    private string _lastInputContent = "";
-//    private string _protectedFilePath;
-//    private string _inputFilePath;
-//    private Process _au3Process;
-//    private FileStream _fileLock;
-//    private bool _fileLockReleased = false;  // ±ê¼ÇËøÊÇ·ñÒÑÊÍ·Å
-
-//    void Start()
-//    {
-//        LevelFileManager manager = FindObjectOfType<LevelFileManager>();
-//        if (manager == null)
-//        {
-//            Debug.LogError("EndLevelController: Î´ÕÒµ½ LevelFileManager");
-//            return;
-//        }
-
-//        _folderPath = manager.GetFolderPath();
-//        _checkInterval = manager.GetCheckInterval();
-
-//        if (string.IsNullOrEmpty(_folderPath))
-//        {
-//            Debug.LogError("EndLevelController: ÎÄ¼ş¼ĞÂ·¾¶Îª¿Õ");
-//            return;
-//        }
-
-//        _protectedFilePath = Path.Combine(_folderPath, protectedFileName);
-//        _inputFilePath = Path.Combine(_folderPath, inputFileName);
-
-//        if (!Directory.Exists(_folderPath))
-//        {
-//            Directory.CreateDirectory(_folderPath);
-//        }
-
-//        CreateAndLockFile();
-//        CreateInputFile();
-
-//        StartAu3Process();
-//        CheckInputFile();
-//        _isReady = true;
-//    }
-
-//    void CreateAndLockFile()
-//    {
-//        try
-//        {
-//            if (File.Exists(_protectedFilePath))
-//            {
-//                File.Delete(_protectedFilePath);
-//            }
-
-//            _fileLock = new FileStream(_protectedFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
-//            byte[] data = System.Text.Encoding.UTF8.GetBytes("locked");
-//            _fileLock.Write(data, 0, data.Length);
-//            _fileLock.Flush();
-
-//            Debug.Log($"EndLevelController: ÒÑ´´½¨²¢Ëø¶¨ÎÄ¼ş {_protectedFilePath}");
-//        }
-//        catch (System.Exception e)
-//        {
-//            Debug.LogError($"EndLevelController: Ëø¶¨ÎÄ¼şÊ§°Ü - {e.Message}");
-//        }
-//    }
-
-//    void StartAu3Process()
-//    {
-//        try
-//        {
-//            ProcessStartInfo startInfo = new ProcessStartInfo();
-//            startInfo.FileName = "cmd.exe";
-//            startInfo.Arguments = "/c \"ping 127.0.0.1 -n 3600 > nul\"";
-//            startInfo.WindowStyle = ProcessWindowStyle.Normal;
-//            startInfo.CreateNoWindow = false;
-
-//            _au3Process = Process.Start(startInfo);
-
-//            Debug.Log($"EndLevelController: au3 ½ø³ÌÒÑÆô¶¯ PID={_au3Process.Id}");
-//            _isProcessRunning = true;
-//        }
-//        catch (System.Exception e)
-//        {
-//            Debug.LogError($"EndLevelController: Æô¶¯½ø³ÌÊ§°Ü - {e.Message}");
-//        }
-//    }
-
-//    void Update()
-//    {
-//        if (!_isReady) return;
-
-//        _timer += Time.deltaTime;
-//        if (_timer >= _checkInterval)
-//        {
-//            _timer = 0f;
-//            CheckProcess();
-//            CheckFileExists();      // ¼ì²éÎÄ¼şÊÇ·ñ±»Íæ¼ÒÉ¾³ı
-//            CheckInputFile();
-//        }
-//    }
-
-//    void CheckProcess()
-//    {
-//        if (_au3Process == null) return;
-
-//        bool processExists = !_au3Process.HasExited;
-
-//        // ½ø³Ì¹Ø±ÕÊ±£¬ÊÍ·ÅÎÄ¼şËø£¬ÈÃÍæ¼Ò¿ÉÒÔÉ¾³ı
-//        if (_isProcessRunning && !processExists)
-//        {
-//            Debug.Log($"EndLevelController: au3 ½ø³ÌÒÑ¹Ø±Õ£¬ÊÍ·ÅÎÄ¼şËø");
-
-//            if (_fileLock != null && !_fileLockReleased)
-//            {
-//                _fileLock.Close();
-//                _fileLock.Dispose();
-//                _fileLock = null;
-//                _fileLockReleased = true;
-//                Debug.Log($"EndLevelController: ÎÄ¼şÒÑ½âËø£¬Íæ¼ÒÏÖÔÚ¿ÉÒÔÉ¾³ı {protectedFileName}");
-//            }
-//        }
-
-//        _isProcessRunning = processExists;
-//    }
-
-//    // ¼ì²éÎÄ¼şÊÇ·ñ±»Íæ¼ÒÉ¾³ı
-//    void CheckFileExists()
-//    {
-//        // Ö»ÓĞËøÒÑÊÍ·Åºó£¬²Å¼ì²éÎÄ¼şÊÇ·ñ±»É¾³ı
-//        if (!_fileLockReleased) return;
-
-//        // ÎÄ¼ş²»´æÔÚÁË£¬ËµÃ÷Íæ¼ÒÉ¾³ıÁË
-//        if (!File.Exists(_protectedFilePath))
-//        {
-//            Debug.Log($"EndLevelController: Íæ¼ÒÒÑÉ¾³ıÎÄ¼ş {protectedFileName}");
-
-//            // ´¥·¢ÊÂ¼ş
-//            OnFileDeleted?.Invoke();
-
-//            // È¡ÏûÕâ¸ö¼ì²é£¬±ÜÃâÖØ¸´´¥·¢
-//            _fileLockReleased = false;
-//        }
-//    }
-
-//    void CreateInputFile()
-//    {
-//        if (File.Exists(_inputFilePath)) return;
-
-//        try
-//        {
-//            File.WriteAllText(_inputFilePath, "", System.Text.Encoding.UTF8);
-//            Debug.Log($"EndLevelController: ´´½¨ input.txt {_inputFilePath}");
-//        }
-//        catch (System.Exception e)
-//        {
-//            Debug.LogError($"EndLevelController: ´´½¨ input.txt Ê§°Ü - {e.Message}");
-//        }
-//    }
-
-//    void CheckInputFile()
-//    {
-//        if (!File.Exists(_inputFilePath)) return;
-
-//        try
-//        {
-//            string content = File.ReadAllText(_inputFilePath, System.Text.Encoding.UTF8).Trim();
-
-//            if (content != _lastInputContent)
-//            {
-//                _lastInputContent = content;
-//                Debug.Log($"EndLevelController: input.txt ÄÚÈİ±ä»¯ -> '{content}'");
-
-//                if (content == targetContent)
-//                {
-//                    Debug.Log($"EndLevelController: input.txt ÄÚÈİÆ¥Åä '{targetContent}'");
-//                    OnInputMatched?.Invoke(content);
-//                }
-//            }
-//        }
-//        catch (System.Exception e)
-//        {
-//            Debug.LogError($"EndLevelController: ¶ÁÈ¡ input.txt Ê§°Ü - {e.Message}");
-//        }
-//    }
-
-//    void OnApplicationQuit()
-//    {
-//        if (_fileLock != null)
-//        {
-//            _fileLock.Close();
-//            _fileLock.Dispose();
-//        }
-
-//        if (_au3Process != null && !_au3Process.HasExited)
-//        {
-//            _au3Process.Kill();
-//            _au3Process.Dispose();
-//        }
-//    }
-//}
-
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.Events;
 using System.IO;
 using System.Diagnostics;
@@ -227,14 +7,14 @@ using Debug = UnityEngine.Debug;
 public class EndLevelController : MonoBehaviour
 {
     [SerializeField] private string processName = "au3";
-    [SerializeField] private string protectedFileName = "A¦Ì3.ai";
+    [SerializeField] private string protectedFileName = "AÎ¼3.ai";
     [SerializeField] private string inputFileName = "input.txt";
     [SerializeField] private string targetContent = "end";
-    [SerializeField] private string windowTitle = "A¦Ì3 AI System - Running";  // ¿ØÖÆÌ¨´°¿Ú±êÌâ
+    [SerializeField] private string windowTitle = "AÎ¼3 AI System - Running";  // æ§åˆ¶å°çª—å£æ ‡é¢˜
 
-    // Unity ÊÂ¼ş
-    public UnityEvent OnFileDeleted;      // Íæ¼ÒÉ¾³ıÎÄ¼şÊ±´¥·¢
-    public UnityEvent<string> OnInputMatched;  // input.txt ÄÚÈİÆ¥ÅäÊ±´¥·¢
+    // Unity äº‹ä»¶
+    public UnityEvent OnFileDeleted;      // ç©å®¶åˆ é™¤æ–‡ä»¶æ—¶è§¦å‘
+    public UnityEvent<string> OnInputMatched;  // input.txt å†…å®¹åŒ¹é…æ—¶è§¦å‘
 
     private string _folderPath;
     private float _checkInterval = 0.5f;
@@ -254,7 +34,7 @@ public class EndLevelController : MonoBehaviour
         LevelFileManager manager = FindObjectOfType<LevelFileManager>();
         if (manager == null)
         {
-            Debug.LogError("EndLevelController: Î´ÕÒµ½ LevelFileManager");
+            Debug.LogError("EndLevelController: æœªæ‰¾åˆ° LevelFileManager");
             return;
         }
 
@@ -263,7 +43,7 @@ public class EndLevelController : MonoBehaviour
 
         if (string.IsNullOrEmpty(_folderPath))
         {
-            Debug.LogError("EndLevelController: ÎÄ¼ş¼ĞÂ·¾¶Îª¿Õ");
+            Debug.LogError("EndLevelController: æ–‡ä»¶å¤¹è·¯å¾„ä¸ºç©º");
             return;
         }
 
@@ -298,11 +78,11 @@ public class EndLevelController : MonoBehaviour
             _fileLock.Write(data, 0, data.Length);
             _fileLock.Flush();
 
-            Debug.Log($"EndLevelController: ÒÑ´´½¨²¢Ëø¶¨ÎÄ¼ş {_protectedFilePath}");
+            Debug.Log($"EndLevelController: å·²åˆ›å»ºå¹¶é”å®šæ–‡ä»¶ {_protectedFilePath}");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"EndLevelController: Ëø¶¨ÎÄ¼şÊ§°Ü - {e.Message}");
+            Debug.LogError($"EndLevelController: é”å®šæ–‡ä»¶å¤±è´¥ - {e.Message}");
         }
     }
 
@@ -310,13 +90,13 @@ public class EndLevelController : MonoBehaviour
     {
         try
         {
-            // ´´½¨¿´ÆğÀ´Ïñ AI ÔËĞĞµÄÅú´¦Àí½Å±¾
+            // åˆ›å»ºçœ‹èµ·æ¥åƒ AI è¿è¡Œçš„æ‰¹å¤„ç†è„šæœ¬
             string scriptContent = $@"
 @echo off
 title {windowTitle}
 color 0A
 echo ========================================
-echo    A¦Ì3 Artificial Intelligence System v3.2.1
+echo    AÎ¼3 Artificial Intelligence System v3.2.1
 echo ========================================
 echo.
 echo [OK] Neural network loaded (784 nodes)
@@ -327,19 +107,19 @@ echo [STATUS] {protectedFileName} is locked and protected
 echo [INFO] Process ID: %random%
 echo.
 echo ----------------------------------------
-echo  A¦Ì3 AI is now monitoring the system
+echo  AÎ¼3 AI is now monitoring the system
 echo  Close this window to shutdown the AI
 echo ----------------------------------------
 echo.
 
 :ai_loop
-echo [%time%] A¦Ì3^> Scanning file system...
+echo [%time%] AÎ¼3^> Scanning file system...
 ping 127.0.0.1 -n 2 > nul
-echo [%time%] A¦Ì3^> Checking integrity of {protectedFileName}...
+echo [%time%] AÎ¼3^> Checking integrity of {protectedFileName}...
 ping 127.0.0.1 -n 2 > nul
-echo [%time%] A¦Ì3^> Protection active - File locked
+echo [%time%] AÎ¼3^> Protection active - File locked
 ping 127.0.0.1 -n 2 > nul
-echo [%time%] A¦Ì3^> Analyzing data patterns...
+echo [%time%] AÎ¼3^> Analyzing data patterns...
 ping 127.0.0.1 -n 2 > nul
 echo.
 goto ai_loop
@@ -355,12 +135,12 @@ goto ai_loop
 
             _au3Process = Process.Start(startInfo);
 
-            Debug.Log($"EndLevelController: A¦Ì3 AI ÒÑÆô¶¯£¬´°¿Ú±êÌâ: {windowTitle}");
+            Debug.Log($"EndLevelController: AÎ¼3 AI å·²å¯åŠ¨ï¼Œçª—å£æ ‡é¢˜: {windowTitle}");
             _isProcessRunning = true;
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"EndLevelController: Æô¶¯Ê§°Ü - {e.Message}");
+            Debug.LogError($"EndLevelController: å¯åŠ¨å¤±è´¥ - {e.Message}");
         }
     }
 
@@ -384,10 +164,10 @@ goto ai_loop
 
         bool processExists = !_au3Process.HasExited;
 
-        // ½ø³Ì¹Ø±ÕÊ±£¬ÊÍ·ÅÎÄ¼şËø£¬ÈÃÍæ¼Ò¿ÉÒÔÉ¾³ı
+        // è¿›ç¨‹å…³é—­æ—¶ï¼Œé‡Šæ”¾æ–‡ä»¶é”ï¼Œè®©ç©å®¶å¯ä»¥åˆ é™¤
         if (_isProcessRunning && !processExists)
         {
-            Debug.Log($"EndLevelController: A¦Ì3 AI ½ø³ÌÒÑ¹Ø±Õ£¬ÊÍ·ÅÎÄ¼şËø");
+            Debug.Log($"EndLevelController: AÎ¼3 AI è¿›ç¨‹å·²å…³é—­ï¼Œé‡Šæ”¾æ–‡ä»¶é”");
 
             if (_fileLock != null && !_fileLockReleased)
             {
@@ -395,10 +175,10 @@ goto ai_loop
                 _fileLock.Dispose();
                 _fileLock = null;
                 _fileLockReleased = true;
-                Debug.Log($"EndLevelController: ÎÄ¼şÒÑ½âËø£¬Íæ¼ÒÏÖÔÚ¿ÉÒÔÉ¾³ı {protectedFileName}");
+                Debug.Log($"EndLevelController: æ–‡ä»¶å·²è§£é”ï¼Œç©å®¶ç°åœ¨å¯ä»¥åˆ é™¤ {protectedFileName}");
             }
 
-            // ÇåÀíÁÙÊ± bat ÎÄ¼ş
+            // æ¸…ç†ä¸´æ—¶ bat æ–‡ä»¶
             if (File.Exists(_batFilePath))
             {
                 File.Delete(_batFilePath);
@@ -408,14 +188,14 @@ goto ai_loop
         _isProcessRunning = processExists;
     }
 
-    // ¼ì²éÎÄ¼şÊÇ·ñ±»Íæ¼ÒÉ¾³ı
+    // æ£€æŸ¥æ–‡ä»¶æ˜¯å¦è¢«ç©å®¶åˆ é™¤
     void CheckFileExists()
     {
         if (!_fileLockReleased) return;
 
         if (!File.Exists(_protectedFilePath))
         {
-            Debug.Log($"EndLevelController: Íæ¼ÒÒÑÉ¾³ıÎÄ¼ş {protectedFileName}");
+            Debug.Log($"EndLevelController: ç©å®¶å·²åˆ é™¤æ–‡ä»¶ {protectedFileName}");
             OnFileDeleted?.Invoke();
             _fileLockReleased = false;
         }
@@ -428,11 +208,11 @@ goto ai_loop
         try
         {
             File.WriteAllText(_inputFilePath, "", System.Text.Encoding.UTF8);
-            Debug.Log($"EndLevelController: ´´½¨ input.txt {_inputFilePath}");
+            Debug.Log($"EndLevelController: åˆ›å»º input.txt {_inputFilePath}");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"EndLevelController: ´´½¨ input.txt Ê§°Ü - {e.Message}");
+            Debug.LogError($"EndLevelController: åˆ›å»º input.txt å¤±è´¥ - {e.Message}");
         }
     }
 
@@ -447,18 +227,18 @@ goto ai_loop
             if (content != _lastInputContent)
             {
                 _lastInputContent = content;
-                Debug.Log($"EndLevelController: input.txt ÄÚÈİ±ä»¯ -> '{content}'");
+                Debug.Log($"EndLevelController: input.txt å†…å®¹å˜åŒ– -> '{content}'");
 
                 if (content == targetContent)
                 {
-                    Debug.Log($"EndLevelController: input.txt ÄÚÈİÆ¥Åä '{targetContent}'");
+                    Debug.Log($"EndLevelController: input.txt å†…å®¹åŒ¹é… '{targetContent}'");
                     OnInputMatched?.Invoke(content);
                 }
             }
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"EndLevelController: ¶ÁÈ¡ input.txt Ê§°Ü - {e.Message}");
+            Debug.LogError($"EndLevelController: è¯»å– input.txt å¤±è´¥ - {e.Message}");
         }
     }
 
