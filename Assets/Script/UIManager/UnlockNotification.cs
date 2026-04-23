@@ -24,17 +24,17 @@ public class UnlockNotification : MonoBehaviour
 
     void Awake()
     {
-        // 单例设置
-        if (Instance == null)
-        {
+        //// 单例设置
+        //if (Instance == null)
+        //{
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        //    //DontDestroyOnLoad(gameObject);
+        //}
+        //else
+        //{
+        //    Destroy(gameObject);
+        //    return;
+        //}
 
         // 初始化组件
         if (notificationPanel != null)

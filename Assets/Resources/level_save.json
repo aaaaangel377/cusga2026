@@ -1,7 +1,9 @@
 {
     "passedLevels": [
-        "1"
+        "1",
+        "2",
+        "8EX1"
     ],
-    "pendingExLevel": "",
+    "pendingExLevel": "8EX1",
     "hintsEnabled": true
 }

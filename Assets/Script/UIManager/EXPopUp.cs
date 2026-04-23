@@ -5,11 +5,11 @@ public class EXPopUp : MonoBehaviour
     void Start()
     {
         LevelUnlockSystem.SaveData saveData1 = levelUnlockSystem.LoadSave();
-        // 从 LevelUnlockSystem 读取 pendingExLevel
+
         if (!string.IsNullOrEmpty(saveData1.pendingExLevel))
         {
             string exLevel = saveData1.pendingExLevel;
-
+            Debug.Log("准备弹窗");
             if (!saveData1.passedLevels.Contains(exLevel))
             {
                 // 弹窗
