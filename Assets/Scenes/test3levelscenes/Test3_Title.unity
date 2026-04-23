@@ -1305,7 +1305,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 15
+          m_IntArgument: 20
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2163,12 +2163,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -10
-  m_Sprite: {fileID: 21300000, guid: 2b0da67c738e1314b987711e543cd188, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c0b3c932397e06b409f07aa45c4871ef, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 30.062141, y: 22.62}
+  m_Size: {x: 30.068361, y: 22.609999}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -2278,7 +2278,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 15
+          m_IntArgument: 20
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2475,6 +2475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: "\u5730\u9762.p"
+  fileExtension: txt
   customContent: '0
 
     8'
@@ -2486,6 +2487,7 @@ MonoBehaviour:
   enableColliderDisableOnUpdate: 1
   colliderDisableSound: {fileID: 0}
   colliderDisableDuration: 0.3
+  startActive: 1
 --- !u!1 &1894847571
 GameObject:
   m_ObjectHideFlags: 0
