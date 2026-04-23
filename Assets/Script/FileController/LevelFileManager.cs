@@ -627,6 +627,7 @@ public class LevelFileManager: MonoBehaviour
         shouldResetFiles = true;
         string currentScene = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(currentScene);
+        AudioManager.Instance.PlayOneShotEffect("die", AudioManager.Instance.FileFailVolume,false);
     }
     
     public void RegisterAdvancedItem(AdvancedItemController item)
