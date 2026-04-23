@@ -690,7 +690,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseFileName: ball
-  fileExtension: .cop
+  fileExtension: .copy
   addRigidbody2D: 0
   mass: 1
   gravityScale: 1
@@ -2168,6 +2168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelButtons: []
   num: []
+  hintsToggle: {fileID: 0}
 --- !u!4 &1322340868
 Transform:
   m_ObjectHideFlags: 0
@@ -2839,6 +2840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: "\u5730\u9762.p"
+  fileExtension: txt
   customContent: '0
 
     8'
