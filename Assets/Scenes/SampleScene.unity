@@ -430,7 +430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8799122182554229455, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -903,7 +903,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &903380677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -917,6 +917,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: "\u65B9\u5757"
+  fileExtension: txt
   customContent: '1
 
     1'
@@ -1304,6 +1305,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: "\u5927\u5E73\u53F0"
+  fileExtension: txt
   customContent: '6
 
     8'
@@ -1367,18 +1369,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: "\u65B9\u5757"
-  customContent: '1
-
-    1'
+  fileExtension: txt
+  customContent: 6
   targetObject: {fileID: 0}
-  enablePosition: 1
-  enableRotation: 0
+  enablePosition: 0
+  enableRotation: 1
   enableCritical: 0
   Cantbedeleted: 0
   enableColliderDisableOnUpdate: 1
   colliderDisableSound: {fileID: 0}
   colliderDisableDuration: 0.3
-  startActive: 0
+  startActive: 1
 --- !u!1 &1696177205
 GameObject:
   m_ObjectHideFlags: 0
@@ -1445,7 +1446,7 @@ SpriteRenderer:
   m_Size: {x: 30.062141, y: 22.62}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1696177207
@@ -1749,7 +1750,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1992582101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1763,6 +1764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: "\u65B9\u5757"
+  fileExtension: txt
   customContent: '1
 
     1'
@@ -2476,7 +2478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8799122182554229455, guid: 9a65aba7b54ce0b4cb03a825cb5667b5, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
