@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class LevelUnlockSystem : MonoBehaviour
 {
-    public GameObject[] levelButtons;  
+    public GameObject[] levelButtons;
     public string[] num;
     public Toggle hintsToggle;
 
@@ -13,6 +13,7 @@ public class LevelUnlockSystem : MonoBehaviour
     public class SaveData
     {
         public List<string> passedLevels = new List<string>();
+        public string pendingExLevel = null;
         public bool hintsEnabled = true;
     }
 
@@ -95,7 +96,7 @@ public class LevelUnlockSystem : MonoBehaviour
     }
 
     // º”‘ÿ¥Êµµ
-    SaveData LoadSave()
+    public SaveData LoadSave()
     {
         string resourcesPath = Path.Combine(Application.dataPath, "Resources", saveFileName);
 
@@ -158,6 +159,16 @@ public class LevelUnlockSystem : MonoBehaviour
             saveData.passedLevels.Add(levelCode);
 
             // 3. ±£¥Ê
+            SaveToFile(saveData);
+        }
+    }
+
+    public void SaveLevelPassedUnlockEX(string exLevelCode)
+    {
+        SaveData saveData = LoadSave();
+        if (!saveData.passedLevels.Contains(exLevelCode))
+        {
+            saveData.pendingExLevel = exLevelCode;
             SaveToFile(saveData);
         }
     }
