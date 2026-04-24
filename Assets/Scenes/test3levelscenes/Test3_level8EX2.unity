@@ -3265,13 +3265,13 @@ MonoBehaviour:
   fileName: "\u56FE\u7247"
   fileExtension: png
   checkInterval: 0.5
-  resourcePath: 7
+  resourcePath: 6
   useResourceAsDefault: 1
   colliderChild: {fileID: 8921840434918961411}
   autoAddCollider: 0
   threshold: 128
   curveAccuracy: 2
-  minArea: 100
+  minArea: 1
   showDebugInfo: 0
   contourCount: 0
   totalPointsCount: 0
