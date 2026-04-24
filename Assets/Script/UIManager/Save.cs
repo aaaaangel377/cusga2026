@@ -118,7 +118,7 @@ public class LevelUnlockSystem : MonoBehaviour
     }
 
     // 解锁按钮
-    public void UnlockButtonsFromSave(SaveData saveData)
+    void UnlockButtonsFromSave(SaveData saveData)
     {
         // 遍历存档中的每一个已通过关卡
         foreach (string levelCode in saveData.passedLevels)

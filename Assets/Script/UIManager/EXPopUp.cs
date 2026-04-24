@@ -1,5 +1,4 @@
 using UnityEngine;
-using static LevelUnlockSystem;
 public class EXPopUp : MonoBehaviour
 {
     public LevelUnlockSystem levelUnlockSystem;
@@ -21,8 +20,6 @@ public class EXPopUp : MonoBehaviour
                 }
 
                 levelUnlockSystem.SaveLevelPassed(exLevel);
-                saveData1 = levelUnlockSystem.LoadSave();
-                levelUnlockSystem.UnlockButtonsFromSave(saveData1);
             }
 
         }

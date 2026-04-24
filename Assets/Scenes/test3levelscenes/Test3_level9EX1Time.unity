@@ -1961,7 +1961,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1280972556}
         m_TargetAssemblyTypeName: LevelUnlockSystem, Assembly-CSharp
-        m_MethodName: SaveLevelPassedUnlockEX
+        m_MethodName: SaveLevelPassed
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

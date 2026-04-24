@@ -12,10 +12,8 @@
         "9",
         "10",
         "9EX1",
-        "9EX2",
         "11",
         "10EX1",
-        "10EX2",
         "12",
         "13",
         "14",
@@ -23,6 +21,6 @@
         "16",
         "17"
     ],
-    "pendingExLevel": "10EX2",
+    "pendingExLevel": "10EX1",
     "hintsEnabled": true
 }
