@@ -460,6 +460,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1616869834}
     m_Modifications:
+    - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
+      propertyPath: firstHint
+      value: "\u770B\u4E00\u4E0B\u6709\u4EC0\u4E48\u7279\u6B8A\u7684\u6587\u4EF6\u5462\uFF1F"
+      objectReference: {fileID: 0}
+    - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
+      propertyPath: thirdHint
+      value: "\u91CD\u529B\u4E5F\u53EF\u4EE5\u6709\u5DE6\u53F3\u7684\u3002"
+      objectReference: {fileID: 0}
+    - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
+      propertyPath: secondHint
+      value: "\u8BD5\u7740\u4FEE\u6539\u4E00\u4E0B\u6587\u4EF6\u3002"
+      objectReference: {fileID: 0}
     - target: {fileID: 1948394701294781120, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
