@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using System.IO;
 using System.Diagnostics;
+using System.Collections;
 using Debug = UnityEngine.Debug;
 
 public class EndLevelController : MonoBehaviour
@@ -12,9 +13,15 @@ public class EndLevelController : MonoBehaviour
     [SerializeField] private string targetContent = "end";
     [SerializeField] private string windowTitle = "Aμ3 AI System - Running";  // 控制台窗口标题
 
+    [Header("Fade Settings")]
+    [SerializeField] private float fadeDuration = 1.0f;  // 黑屏渐变动画时长
+    [SerializeField] private CanvasGroup fadeCanvasGroup;  // 用于黑屏的CanvasGroup
+    [SerializeField] private GameObject fadePanel;  // 黑屏面板（可选，如果没有CanvasGroup则使用此对象）
+
     // Unity 事件
     public UnityEvent OnFileDeleted;      // 玩家删除文件时触发
     public UnityEvent<string> OnInputMatched;  // input.txt 内容匹配时触发
+    public UnityEvent OnFadeComplete;     // 黑屏渐变完成时触发
 
     private string _folderPath;
     private float _checkInterval = 0.5f;
@@ -28,6 +35,8 @@ public class EndLevelController : MonoBehaviour
     private FileStream _fileLock;
     private bool _fileLockReleased = false;
     private string _batFilePath;
+    private bool _isFading = false;
+    private CanvasGroup _canvasGroup;
 
     void Start()
     {
@@ -61,7 +70,203 @@ public class EndLevelController : MonoBehaviour
 
         StartAu3Process();
         CheckInputFile();
+
+        // 初始化黑屏组件
+        InitializeFadeSystem();
+
         _isReady = true;
+    }
+
+    void InitializeFadeSystem()
+    {
+        // 优先使用 CanvasGroup
+        if (fadeCanvasGroup != null)
+        {
+            _canvasGroup = fadeCanvasGroup;
+            _canvasGroup.alpha = 0f;
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
+        }
+        // 如果没有 CanvasGroup，尝试从 fadePanel 获取或添加
+        else if (fadePanel != null)
+        {
+            _canvasGroup = fadePanel.GetComponent<CanvasGroup>();
+            if (_canvasGroup == null)
+            {
+                _canvasGroup = fadePanel.AddComponent<CanvasGroup>();
+            }
+            _canvasGroup.alpha = 0f;
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
+        }
+        else
+        {
+            Debug.LogWarning("EndLevelController: 未设置黑屏组件，将自动创建");
+            CreateFadePanel();
+        }
+    }
+
+    void CreateFadePanel()
+    {
+        // 创建一个新的 UI 面板用于黑屏
+        GameObject panel = new GameObject("FadePanel");
+        panel.transform.SetParent(transform);
+
+        // 添加 Canvas 组件
+        Canvas canvas = panel.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 999; // 确保在最上层
+
+        // 添加 CanvasGroup
+        _canvasGroup = panel.AddComponent<CanvasGroup>();
+        _canvasGroup.alpha = 0f;
+        _canvasGroup.interactable = false;
+        _canvasGroup.blocksRaycasts = false;
+
+        // 添加图像组件并设置为全屏黑色
+        var image = panel.AddComponent<UnityEngine.UI.Image>();
+        image.color = Color.black;
+        image.rectTransform.anchorMin = Vector2.zero;
+        image.rectTransform.anchorMax = Vector2.one;
+        image.rectTransform.sizeDelta = Vector2.zero;
+
+        fadePanel = panel;
+        Debug.Log("EndLevelController: 已自动创建黑屏面板");
+    }
+
+    /// <summary>
+    /// 公开函数：开始黑屏渐变
+    /// </summary>
+    public void StartFadeToBlack()
+    {
+        if (_isFading)
+        {
+            Debug.LogWarning("EndLevelController: 已经在黑屏渐变中");
+            return;
+        }
+
+        if (_canvasGroup == null)
+        {
+            Debug.LogError("EndLevelController: 无法开始黑屏渐变 - CanvasGroup 未初始化");
+            OnFadeComplete?.Invoke(); // 出错时直接触发完成事件
+            return;
+        }
+
+        StartCoroutine(FadeToBlackCoroutine());
+    }
+
+    /// <summary>
+    /// 公开函数：开始从黑屏恢复
+    /// </summary>
+    public void StartFadeFromBlack()
+    {
+        if (_isFading)
+        {
+            Debug.LogWarning("EndLevelController: 已经在黑屏渐变中");
+            return;
+        }
+
+        if (_canvasGroup == null)
+        {
+            Debug.LogError("EndLevelController: 无法开始恢复渐变 - CanvasGroup 未初始化");
+            return;
+        }
+
+        StartCoroutine(FadeFromBlackCoroutine());
+    }
+
+    /// <summary>
+    /// 公开函数：立即设置黑屏（无动画）
+    /// </summary>
+    /// <param name="isBlack">true为全黑，false为全透明</param>
+    public void SetBlackImmediate(bool isBlack)
+    {
+        if (_canvasGroup == null)
+        {
+            Debug.LogError("EndLevelController: CanvasGroup 未初始化");
+            return;
+        }
+
+        StopAllCoroutines();
+        _isFading = false;
+        _canvasGroup.alpha = isBlack ? 1f : 0f;
+        _canvasGroup.interactable = isBlack;
+        _canvasGroup.blocksRaycasts = isBlack;
+
+        Debug.Log($"EndLevelController: 立即设置黑屏状态为 {isBlack}");
+
+        if (isBlack)
+        {
+            OnFadeComplete?.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// 公开函数：检查是否正在黑屏渐变中
+    /// </summary>
+    public bool IsFading()
+    {
+        return _isFading;
+    }
+
+    /// <summary>
+    /// 公开函数：获取当前黑屏透明度
+    /// </summary>
+    public float GetCurrentAlpha()
+    {
+        return _canvasGroup != null ? _canvasGroup.alpha : 0f;
+    }
+
+    private IEnumerator FadeToBlackCoroutine()
+    {
+        _isFading = true;
+        float elapsedTime = 0f;
+        float startAlpha = _canvasGroup.alpha;
+
+        // 确保在渐变过程中可以阻挡点击
+        _canvasGroup.interactable = true;
+        _canvasGroup.blocksRaycasts = true;
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / fadeDuration;
+            // 使用平滑曲线
+            float alpha = Mathf.Lerp(startAlpha, 1f, Mathf.SmoothStep(0f, 1f, t));
+            _canvasGroup.alpha = alpha;
+            yield return null;
+        }
+
+        _canvasGroup.alpha = 1f;
+        _isFading = false;
+
+        Debug.Log("EndLevelController: 黑屏渐变完成");
+        OnFadeComplete?.Invoke();
+    }
+
+    private IEnumerator FadeFromBlackCoroutine()
+    {
+        _isFading = true;
+        float elapsedTime = 0f;
+        float startAlpha = _canvasGroup.alpha;
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / fadeDuration;
+            // 使用平滑曲线
+            float alpha = Mathf.Lerp(startAlpha, 0f, Mathf.SmoothStep(0f, 1f, t));
+            _canvasGroup.alpha = alpha;
+            yield return null;
+        }
+
+        _canvasGroup.alpha = 0f;
+        // 恢复后不再阻挡点击
+        _canvasGroup.interactable = false;
+        _canvasGroup.blocksRaycasts = false;
+        _isFading = false;
+
+        Debug.Log("EndLevelController: 从黑屏恢复完成");
     }
 
     void CreateAndLockFile()

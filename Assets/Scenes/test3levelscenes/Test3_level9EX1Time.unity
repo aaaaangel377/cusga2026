@@ -354,7 +354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4165b70ff6a8e6a4b824e313303455fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelIndex: levelTime
+  levelIndex: level9EX1
   checkInterval: 0.1
   autoCreateFiles: 1
   fileStartEvent:
@@ -1696,7 +1696,7 @@ MonoBehaviour:
   Cantbedeleted: 0
   enableColliderDisableOnUpdate: 1
   colliderDisableSound: {fileID: 0}
-  colliderDisableDuration: 0.3
+  colliderDisableDuration: 0.01
   startActive: 1
 --- !u!212 &976429909
 SpriteRenderer:
@@ -1968,7 +1968,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 4
           m_FloatArgument: 0
-          m_StringArgument: 4
+          m_StringArgument: 9EX2
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 154234857}
@@ -1978,19 +1978,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 4
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1508247288}
-        m_TargetAssemblyTypeName: TimeScaleController, Assembly-CSharp
-        m_MethodName: ResumeTimeScale
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 4
+          m_IntArgument: 20
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

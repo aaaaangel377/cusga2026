@@ -2821,7 +2821,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3673604614253895027, guid: 7ea19a6e15e54184b9acd677dfd01bd0, type: 3}
       propertyPath: levelIndex
-      value: Draw
+      value: "Level8_\u7ED8\u753B"
       objectReference: {fileID: 0}
     - target: {fileID: 5362179391725266303, guid: 7ea19a6e15e54184b9acd677dfd01bd0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3019,7 +3019,7 @@ MonoBehaviour:
   fileName: "\u56FE\u7247"
   fileExtension: png
   checkInterval: 0.5
-  resourcePath: 1
+  resourcePath: 2
   useResourceAsDefault: 1
   colliderChild: {fileID: 8921840434918961411}
   autoAddCollider: 0
