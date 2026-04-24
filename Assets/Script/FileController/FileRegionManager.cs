@@ -42,11 +42,13 @@ public class FileRegionManager : MonoBehaviour
     private Vector2Int _regionSize;
 
     private List<Rigidbody2D> _rigidbodiesInRegion = new List<Rigidbody2D>();
-    private Dictionary<Rigidbody2D, float> _originalGravityScales = new Dictionary<Rigidbody2D, float>();
     private HashSet<string> _filesInRegion = new HashSet<string>();
     
     // 重力配置
     private string _lastGravityContent;
+    
+    // 全局跟踪每个 Rigidbody 在多少个区域中
+    private static Dictionary<Rigidbody2D, int> _rigidbodyRegionCount = new Dictionary<Rigidbody2D, int>();
 
     void Awake()
     {
@@ -86,11 +88,14 @@ public class FileRegionManager : MonoBehaviour
             if (!_rigidbodiesInRegion.Contains(rb))
             {
                 _rigidbodiesInRegion.Add(rb);
-                if (!_originalGravityScales.ContainsKey(rb))
+                
+                if (!_rigidbodyRegionCount.ContainsKey(rb))
                 {
-                    _originalGravityScales[rb] = rb.gravityScale;
+                    _rigidbodyRegionCount[rb] = 0;
                 }
-                Debug.Log($"[FileRegionManager] 物体进入区域：{other.gameObject.name}, 列表数={_rigidbodiesInRegion.Count}");
+                _rigidbodyRegionCount[rb]++;
+                
+                Debug.Log($"[FileRegionManager] 物体进入区域：{other.gameObject.name}, 列表数={_rigidbodiesInRegion.Count}, 区域计数={_rigidbodyRegionCount[rb]}");
             }
         }
         else
@@ -109,8 +114,22 @@ public class FileRegionManager : MonoBehaviour
         if (rb != null && _rigidbodiesInRegion.Contains(rb))
         {
             _rigidbodiesInRegion.Remove(rb);
-            RestoreGravityScale(rb);
-            Debug.Log($"[FileRegionManager] 物体离开区域：{other.gameObject.name}, 列表数={_rigidbodiesInRegion.Count}");
+            
+            if (_rigidbodyRegionCount.ContainsKey(rb))
+            {
+                _rigidbodyRegionCount[rb]--;
+                Debug.Log($"[FileRegionManager] 物体离开区域：{other.gameObject.name}, 区域计数={_rigidbodyRegionCount[rb]}");
+                
+                if (_rigidbodyRegionCount[rb] <= 0)
+                {
+                    RestoreGravityScale(rb);
+                    _rigidbodyRegionCount.Remove(rb);
+                }
+            }
+            else
+            {
+                RestoreGravityScale(rb);
+            }
         }
     }
 
@@ -384,11 +403,14 @@ public class FileRegionManager : MonoBehaviour
                 if (!_rigidbodiesInRegion.Contains(rb))
                 {
                     _rigidbodiesInRegion.Add(rb);
-                    if (!_originalGravityScales.ContainsKey(rb))
+                    
+                    if (!_rigidbodyRegionCount.ContainsKey(rb))
                     {
-                        _originalGravityScales[rb] = rb.gravityScale;
+                        _rigidbodyRegionCount[rb] = 0;
                     }
-                    Debug.Log($"[FileRegionManager] 检测到区域内物体：{colliders[i].gameObject.name}, 列表数={_rigidbodiesInRegion.Count}");
+                    _rigidbodyRegionCount[rb]++;
+                    
+                    Debug.Log($"[FileRegionManager] 检测到区域内物体：{colliders[i].gameObject.name}, 列表数={_rigidbodiesInRegion.Count}, 区域计数={_rigidbodyRegionCount[rb]}");
                 }
             }
         }
@@ -401,7 +423,21 @@ public class FileRegionManager : MonoBehaviour
                 _rigidbodiesInRegion.RemoveAt(i);
                 if (rb != null)
                 {
-                    RestoreGravityScale(rb);
+                    if (_rigidbodyRegionCount.ContainsKey(rb))
+                    {
+                        _rigidbodyRegionCount[rb]--;
+                        Debug.Log($"[FileRegionManager] 物体离开区域，区域计数={_rigidbodyRegionCount[rb]}");
+                        
+                        if (_rigidbodyRegionCount[rb] <= 0)
+                        {
+                            RestoreGravityScale(rb);
+                            _rigidbodyRegionCount.Remove(rb);
+                        }
+                    }
+                    else
+                    {
+                        RestoreGravityScale(rb);
+                    }
                 }
                 Debug.Log($"[FileRegionManager] 物体离开区域，列表数={_rigidbodiesInRegion.Count}");
             }
@@ -419,6 +455,7 @@ public class FileRegionManager : MonoBehaviour
             Rigidbody2D rb = _rigidbodiesInRegion[i];
             if (rb != null)
             {
+                Debug.Log($"[FileRegionManager] ApplyGravity: {rb.gameObject.name} gravityScale {rb.gravityScale} -> 0");
                 rb.gravityScale = 0f;
                 Vector2 force = _currentGravity * rb.mass;
                 rb.AddForce(force, ForceMode2D.Force);
@@ -434,14 +471,13 @@ public class FileRegionManager : MonoBehaviour
     {
         if (rb == null) return;
 
-        if (_originalGravityScales.TryGetValue(rb, out float originalGravityScale))
+        rb.gravityScale = 4f;
+        Debug.Log($"[FileRegionManager] RestoreGravityScale: {rb.gameObject.name} gravityScale 设置为 4");
+        
+        if (_rigidbodiesInRegion.Contains(rb))
         {
-            rb.gravityScale = originalGravityScale;
-            _originalGravityScales.Remove(rb);
-        }
-        else
-        {
-            rb.gravityScale = 1f;
+            _rigidbodiesInRegion.Remove(rb);
+            Debug.Log($"[FileRegionManager] RestoreGravityScale: 已从列表中移除 {rb.gameObject.name}");
         }
     }
 
