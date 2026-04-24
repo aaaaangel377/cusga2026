@@ -83,4 +83,22 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_level10EX2.unity
     guid: 82644521d159847478005238e41c733c
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level3EX1.unity
+    guid: 1c45745704a8894469ede0d7f8e7748b
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level3EX2.unity
+    guid: 1358954bd8afb9a49af65b086f184b50
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level3EX3.unity
+    guid: 163c155bea14a1a4381a59c447bedb4a
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level7EX.unity
+    guid: 1e5d606ab66088a43b2cce4eba2764a1
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level8EX1.unity
+    guid: 4f2b52327f1f18b499480a4fdfc08a50
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level8EX2.unity
+    guid: 925d0fb8ddcdf8b4ab03960a4d9f6aa2
   m_configObjects: {}
