@@ -71,4 +71,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_levelhide.unity
     guid: c569e45f2fc64994cb93d5eeb85161aa
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level9EX1Time.unity
+    guid: 648b9050b5000d94faed81b1afa30c1f
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level9EX2audio.unity
+    guid: e4a946fd0733bb34daa8bb48847e46f8
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level10EX1.unity
+    guid: 6439ef249f91e26478d490545aab2d57
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level10EX2.unity
+    guid: 82644521d159847478005238e41c733c
   m_configObjects: {}
