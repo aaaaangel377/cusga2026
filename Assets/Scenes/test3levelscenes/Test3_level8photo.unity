@@ -3019,7 +3019,7 @@ MonoBehaviour:
   fileName: "\u56FE\u7247"
   fileExtension: png
   checkInterval: 0.5
-  resourcePath: 1
+  resourcePath: 2
   useResourceAsDefault: 1
   colliderChild: {fileID: 8921840434918961411}
   autoAddCollider: 0
