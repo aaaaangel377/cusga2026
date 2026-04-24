@@ -1531,6 +1531,18 @@ MonoBehaviour:
   onBallReachHole:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 1068291941}
+        m_TargetAssemblyTypeName: ResourceMove, Assembly-CSharp
+        m_MethodName: MoveResourceWithRelativePath
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 20
+          m_FloatArgument: 0
+          m_StringArgument: "levels|\u62FC\u56FE-\u4E0D\u53EF\u627F\u8F7D\u4E4B\u91CD.png"
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 737555483}
         m_TargetAssemblyTypeName: LevelUnlockSystem, Assembly-CSharp
         m_MethodName: SaveLevelPassedUnlockEX

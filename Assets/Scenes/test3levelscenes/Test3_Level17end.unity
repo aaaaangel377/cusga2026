@@ -1516,7 +1516,7 @@ MonoBehaviour:
   processName: au3
   protectedFileName: "A\u03BC3.closing"
   inputFileName: input.txt
-  targetContent: end
+  targetContent: rpq473ky
   windowTitle: Au3 AI System - Running
   fadeDuration: 1
   fadeCanvasGroup: {fileID: 0}
@@ -1548,6 +1548,18 @@ MonoBehaviour:
           m_StringArgument: "\u7EC8\u4E86.txt"
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1509562457}
+        m_TargetAssemblyTypeName: ResourceMove, Assembly-CSharp
+        m_MethodName: MoveResourceWithRelativePath
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: "levels|\u62FC\u56FE-\u52FF\u5FD8\u6211.png"
+          m_BoolArgument: 0
+        m_CallState: 2
   OnInputMatched:
     m_PersistentCalls:
       m_Calls:
@@ -1573,6 +1585,18 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: "\u672A\u6765.txt"
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1509562457}
+        m_TargetAssemblyTypeName: ResourceMove, Assembly-CSharp
+        m_MethodName: MoveResourceWithRelativePath
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: "levels|\u62FC\u56FE-\u52FF\u5FD8\u6211.png"
           m_BoolArgument: 0
         m_CallState: 2
   OnFadeComplete:
