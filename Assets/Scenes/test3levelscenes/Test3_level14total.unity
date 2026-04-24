@@ -297,7 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4165b70ff6a8e6a4b824e313303455fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelIndex: "\u7EFC\u5408\u5173"
+  levelIndex: Level14
   checkInterval: 0.1
   autoCreateFiles: 1
   fileStartEvent:
