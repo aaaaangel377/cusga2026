@@ -1705,6 +1705,30 @@ MonoBehaviour:
   colliderDisableSound: {fileID: 0}
   colliderDisableDuration: 0.3
   startActive: 1
+--- !u!1 &1189902333 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5964984816423584005, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
+  m_PrefabInstance: {fileID: 1413506442}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1189902335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189902333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 323e89f21bea02a468283c671490d050, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hintObject: {fileID: 0}
+  useSelf: 1
+  levelSystem: {fileID: 0}
+  invertLogic: 0
+  updateOnEnable: 1
+  updateOnStart: 1
+  debugLog: 0
 --- !u!1001 &1297918484
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1954,7 +1978,10 @@ PrefabInstance:
     - {fileID: 1906095497603923689, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
     - {fileID: 3816843952838752562, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5964984816423584005, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1189902335}
   m_SourcePrefab: {fileID: 100100000, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
 --- !u!1 &1552157301
 GameObject:
