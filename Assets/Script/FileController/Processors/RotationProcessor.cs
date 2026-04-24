@@ -9,32 +9,46 @@ public class RotationProcessor : FeatureProcessor
     {
     }
     
+    bool Fal=false;
+    private float? _lastRotationValue;
     public override void OnFileUpdated(string content, GameObject target)
     {
         if (string.IsNullOrEmpty(content))
         {
-            if (FailSoundThrottle.CanPlay())
+            if (FailSoundThrottle.CanPlay()&&Fal==!true)
             {
-                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume);
+                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume,true);
                 FailSoundThrottle.MarkPlayed();
+                Fal = true;
             }
             return;
         }
         
         float? rotation = ParseRotation(content);
-        if (!rotation.HasValue)
+        if (!rotation.HasValue&&Fal==!true)
         {
             if (FailSoundThrottle.CanPlay())
             {
-                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume);
+                AudioManager.Instance.PlayOneShotEffect("9 - SadRobot", AudioManager.Instance.FileFailVolume,true);
                 FailSoundThrottle.MarkPlayed();
+                Fal = true;
             }
             return;
         }
         
         FailSoundThrottle.Reset();
-        target.transform.rotation = Quaternion.Euler(0, 0, rotation.Value);
-        AudioManager.Instance.PlayOneShotEffect("correct", AudioManager.Instance.FileSuccessVolume);
+        if (!_lastRotationValue.HasValue || _lastRotationValue.Value != rotation.Value)
+        {
+            target.transform.rotation = Quaternion.Euler(0, 0, rotation.Value);
+            AudioManager.Instance.PlayOneShotEffect("correct", AudioManager.Instance.FileSuccessVolume);
+            _lastRotationValue = rotation.Value;
+            Fal=false;
+            Debug.Log($"Rotation updated to {rotation.Value} degrees");
+        }
+        else
+        {
+            target.transform.rotation = Quaternion.Euler(0, 0, rotation.Value);
+        }
     }
     
     public override void OnFileDeleted(GameObject target, AdvancedItemController controller)
