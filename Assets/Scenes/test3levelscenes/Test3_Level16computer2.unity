@@ -1229,11 +1229,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: thirdHint
-      value: "\u5173\u5361\u6587\u4EF6\u5939\u91CC\u6709\u8FD9\u53F0\u7535\u8111\u7684\u6587\u4EF6\u5939\uFF0C\u4ECE\u91CC\u9762\u627E\u5230\u94A5\u5319\u548C\u57AB\u811A\u77F3\u5427\uFF01"
+      value: "\u4ECE\u8FD9\u53F0\u7535\u8111\u5BF9\u5E94\u7684\u6587\u4EF6\u5939\u91CC\u9762\u627E\u5230\u4F60\u60F3\u8981\u7684\u5427\uFF01"
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: secondHint
-      value: "\u7535\u8111\u5176\u5B9E\u5728\u54EA\u91CC\uFF1F"
+      value: "\u7535\u8111\u5BF9\u5E94\u4EC0\u4E48\uFF1F"
       objectReference: {fileID: 0}
     - target: {fileID: 1948394701294781120, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: m_Pivot.x
@@ -1322,7 +1322,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5964984816423584005, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1414545082}
   m_SourcePrefab: {fileID: 100100000, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
 --- !u!224 &514886221 stripped
 RectTransform:
@@ -2478,6 +2481,30 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 752293406ac39ba4b9a95e9134d54b1a, type: 3}
+--- !u!1 &1414545080 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5964984816423584005, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
+  m_PrefabInstance: {fileID: 514886220}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1414545082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414545080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 323e89f21bea02a468283c671490d050, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hintObject: {fileID: 0}
+  useSelf: 1
+  levelSystem: {fileID: 0}
+  invertLogic: 0
+  updateOnEnable: 1
+  updateOnStart: 1
+  debugLog: 0
 --- !u!1 &1552157301
 GameObject:
   m_ObjectHideFlags: 0
