@@ -1696,7 +1696,7 @@ MonoBehaviour:
   Cantbedeleted: 0
   enableColliderDisableOnUpdate: 1
   colliderDisableSound: {fileID: 0}
-  colliderDisableDuration: 0.3
+  colliderDisableDuration: 0.01
   startActive: 1
 --- !u!212 &976429909
 SpriteRenderer:
