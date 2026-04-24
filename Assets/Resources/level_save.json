@@ -20,8 +20,13 @@
         "15",
         "16",
         "17",
-        "9EX2"
+        "9EX2",
+        "8EX2",
+        "3EX1",
+        "3EX2",
+        "3EX3",
+        "7EX"
     ],
-    "pendingExLevel": "9EX2",
+    "pendingExLevel": "7EX",
     "hintsEnabled": true
 }

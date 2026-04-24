@@ -101,4 +101,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_level8EX2.unity
     guid: 925d0fb8ddcdf8b4ab03960a4d9f6aa2
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_leveldoubletest.unity
+    guid: 6e145d00c1ac6c440ba9ae3444a90788
   m_configObjects: {}
