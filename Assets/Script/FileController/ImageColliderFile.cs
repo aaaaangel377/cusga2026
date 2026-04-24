@@ -71,7 +71,7 @@ public class ImageColliderFile : MonoBehaviour
 
     public void SetManager(LevelFileManager manager)
     {
-        _manager = manager;
+        _manager = manager; 
         string gameRoot = Directory.GetParent(Application.dataPath).FullName;
         _folderPath = Path.Combine(gameRoot, "levels", manager.GetLevelIndex().ToString());
 
