@@ -3019,7 +3019,7 @@ MonoBehaviour:
   fileName: "\u56FE\u7247"
   fileExtension: png
   checkInterval: 0.5
-  resourcePath: 4
+  resourcePath: 5
   useResourceAsDefault: 1
   colliderChild: {fileID: 8921840434918961411}
   autoAddCollider: 0
@@ -3088,7 +3088,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: dd2bab1bf7cea5744839c786b0edc54f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0bb47ede9610a534da6a8bcc1e682a4d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
