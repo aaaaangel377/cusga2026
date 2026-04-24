@@ -2392,6 +2392,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HintSystem
       objectReference: {fileID: 0}
+    - target: {fileID: 5964984816423584005, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
