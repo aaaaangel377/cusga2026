@@ -1448,7 +1448,7 @@ GameObject:
   - component: {fileID: 1068291942}
   - component: {fileID: 1068291941}
   m_Layer: 0
-  m_Name: 8
+  m_Name: "\u53D1\u4EF6\u7BB1_\u5B89\u5168\u59D4\u5458\u4F1A_\u4E3B\u9898_\u56DE\u590D_\u5173\u4E8EA\u03BC3.txt"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1478,7 +1478,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 8.txt
+          m_StringArgument: "\u53D1\u4EF6\u7BB1_\u5B89\u5168\u59D4\u5458\u4F1A_\u4E3B\u9898_\u56DE\u590D_\u5173\u4E8EA\u03BC3.txt"
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!4 &1068291942

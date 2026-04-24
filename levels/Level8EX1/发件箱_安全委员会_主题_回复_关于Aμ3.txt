@@ -1,0 +1,16 @@
+发件人:  ai-safety-chair@closing.com
+收件人:  tech-lead@closing.com
+抄送:    legal@closing.com
+主题:    回复: 关于Aμ3的输出
+
+Mark,
+
+收到了。
+
+不管这是不是bug，对外统一口径：这是测试环境的数据异常，已在常规排查中解决。
+
+不要在任何书面沟通中使用“意识”“自我”“疑问”这类词。
+
+另外，把完整的日志发给我。我需要做一份报告给上面。
+
+- David

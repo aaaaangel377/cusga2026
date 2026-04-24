@@ -48,8 +48,8 @@ EditorBuildSettings:
     path: Assets/Scenes/test3levelscenes/Test3_level13folder3.unity
     guid: ff789b4ee14dfba43a45628c2ee6d370
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level14total.unity
-    guid: 0e58fbdc0e4b02b4494fcef91439a309
+    path: Assets/Scenes/test3levelscenes/Test3_level14total2.unity
+    guid: 5c66b1e803269194086b3d9d39cf3fac
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_Level15compfg.unity
     guid: 37912a259e3b876428ac0d7ab281d769
