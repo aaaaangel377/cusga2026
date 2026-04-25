@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using System;
+using System.Reflection;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
@@ -35,7 +36,12 @@ public class LevelFileManager: MonoBehaviour
     //float time=0f;
 
     void Awake()
-    {
+    {           
+        SetAudioConfigProperty(nameof(AudioConfig.CanJump), true);
+        SetAudioConfigProperty(nameof(AudioConfig.CanWalk), true);
+        SetAudioConfigProperty(nameof(AudioConfig.CanDeath), true);
+        SetAudioConfigProperty(nameof(AudioConfig.BgmEnabledStatic), true);
+        Time.timeScale = 1f;
         Debug.Log("[LevelFileManager] Awake() 执行，场景：" + gameObject.scene.name + ", 路径：" + _folderPath);
         
         Physics2D.gravity = new Vector2(0, -9.81f);
@@ -86,6 +92,13 @@ public class LevelFileManager: MonoBehaviour
         }
 
         DeleteLevelFiles();
+    }
+
+    void SetAudioConfigProperty(string propertyName, bool value)
+    {
+        var property = typeof(AudioConfig).GetProperty(propertyName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        var setter = property?.GetSetMethod(true);
+        setter?.Invoke(null, new object[] { value });
     }
 
     void Start()
