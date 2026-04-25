@@ -5352,7 +5352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseFileName: box
-  fileExtension: .cop
+  fileExtension: .copy
   addRigidbody2D: 0
   mass: 1
   gravityScale: 1
