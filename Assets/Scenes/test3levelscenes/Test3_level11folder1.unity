@@ -1978,7 +1978,7 @@ MonoBehaviour:
   enableColliderDisableOnUpdate: 1
   colliderDisableSound: {fileID: 0}
   colliderDisableDuration: 0.3
-  startActive: 0
+  startActive: 1
 --- !u!212 &1147997465
 SpriteRenderer:
   m_ObjectHideFlags: 0
