@@ -1769,7 +1769,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fileName: flag
   fileExtension: end
-  customContent: 
+  customContent: "\u8FC7\u5173\u65D7\u5B50"
   targetObject: {fileID: 0}
   enablePosition: 0
   enableRotation: 0

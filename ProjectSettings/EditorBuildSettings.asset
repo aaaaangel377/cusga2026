@@ -87,13 +87,13 @@ EditorBuildSettings:
     path: Assets/Scenes/test3levelscenes/Test3_level4EX1.unity
     guid: 1c45745704a8894469ede0d7f8e7748b
   - enabled: 1
-    path: "Assets/Scenes/test3levelscenes/Test3_level4\u6682\u65F6\u653E\u5F03.unity"
+    path: "Assets/Scenes/test3levelscenes/Test3_\u989D\u59160.unity"
     guid: 1358954bd8afb9a49af65b086f184b50
   - enabled: 1
-    path: "Assets/Scenes/test3levelscenes/Test3_level4\u989D\u5916.unity"
+    path: "Assets/Scenes/test3levelscenes/Test3_\u989D\u59161.unity"
     guid: 163c155bea14a1a4381a59c447bedb4a
   - enabled: 1
-    path: "Assets/Scenes/test3levelscenes/Test3_level\u989D\u59161.unity"
+    path: "Assets/Scenes/test3levelscenes/Test3_\u989D\u59162.unity"
     guid: 1e5d606ab66088a43b2cce4eba2764a1
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_level9EX1.unity
@@ -102,9 +102,15 @@ EditorBuildSettings:
     path: Assets/Scenes/test3levelscenes/Test3_level9EX2.unity
     guid: 925d0fb8ddcdf8b4ab03960a4d9f6aa2
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_leveldoubletest.unity
+    path: "Assets/Scenes/test3levelscenes/Test3_\u989D\u59164.unity"
     guid: 6e145d00c1ac6c440ba9ae3444a90788
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/ending2.unity
     guid: c53943d9d8a19a542a1f24909d3703eb
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level4EX2.unity
+    guid: 5e7a1ff504b279a45929fb9329a4e370
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level8EX.unity
+    guid: 76650a52302c8d9458d0f516c8718924
   m_configObjects: {}
