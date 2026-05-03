@@ -775,7 +775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4165b70ff6a8e6a4b824e313303455fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelIndex: ???
+  levelIndex: SP4
   checkInterval: 0.1
   autoCreateFiles: 1
   fileStartEvent:
@@ -4145,18 +4145,6 @@ MonoBehaviour:
   onBallReachHole:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2066025295}
-        m_TargetAssemblyTypeName: LevelUnlockSystem, Assembly-CSharp
-        m_MethodName: SaveLevelPassed
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 7
-          m_FloatArgument: 0
-          m_StringArgument: 13
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 154234857}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: LoadScene
@@ -4164,7 +4152,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 13
+          m_IntArgument: 20
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -4809,6 +4797,10 @@ PrefabInstance:
     - target: {fileID: 5964984816423584005, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: m_Name
       value: HintSystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 5964984816423584005, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

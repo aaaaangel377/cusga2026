@@ -25,8 +25,12 @@
         "15",
         "16",
         "17",
-        "18"
+        "18",
+        "SP1",
+        "SP2",
+        "SP3",
+        "SP4"
     ],
-    "pendingExLevel": "11EX2",
+    "pendingExLevel": "SP4",
     "hintsEnabled": true
 }
