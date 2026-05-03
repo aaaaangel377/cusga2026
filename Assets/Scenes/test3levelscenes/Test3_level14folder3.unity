@@ -2224,15 +2224,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: firstHint
-      value: "\u8DDF\u4E4B\u524D\u5DEE\u4E0D\u591A\u7684\u65B9\u6CD5\u3002"
+      value: "\u8FD9\u4E2A\u5173\u5361\u6587\u4EF6\u5939\u6709\u4EC0\u4E48\u6587\u4EF6\uFF1F"
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: thirdHint
-      value: "\u628A\u91CD\u529B\u914D\u7F6E\u6587\u4EF6\u653E\u5230\u5C0F\u6587\u4EF6\u5939\u8BD5\u8BD5\u3002"
+      value: "\u4FEE\u6539\u91CD\u529B\u5427\uFF0C\u8BB0\u5F97\u8DF3\u4E0B\u53BB\u540E\u4ECD\u8981\u6309\u4F4F\u5DE6\u65B9\u5411\u952E\u3002"
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: secondHint
-      value: "\u8FD9\u4E2A\u5173\u5361\u6587\u4EF6\u5939\u6709\u4EC0\u4E48\u6587\u4EF6\u5462\uFF1F"
+      value: "\u628A\u91CD\u529B\u914D\u7F6E\u6587\u4EF6\u653E\u5230\u5C0F\u6587\u4EF6\u5939\u8BD5\u8BD5\u3002"
       objectReference: {fileID: 0}
     - target: {fileID: 1948394701294781120, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: m_Pivot.x

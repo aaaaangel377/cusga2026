@@ -2002,11 +2002,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: thirdHint
-      value: "\u5220\u9664\u6587\u4EF6\u5939\u91CC\u7684\u201C\u5899\u201D\u6765\u5220\u9664\u573A\u666F\u4E2D\u5BF9\u5E94\u7684\u7269\u54C1\u3002"
+      value: "\u6587\u4EF6\u91CC\u7684\u6570\u5B57\u662F\u4E0D\u662F\u4E00\u4E2A\u5750\u6807\u5462\uFF1F"
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: secondHint
-      value: "\u6587\u4EF6\u53EF\u4EE5\u8FDB\u884C\u5220\u9664\uFF0C\u7F16\u8F91\uFF0C\u79FB\u52A8\uFF0C\u590D\u5236\u7B49\u64CD\u4F5C\u3002"
+      value: "\u5C1D\u8BD5\u5BF9\u6587\u4EF6\u8FDB\u884C\u64CD\u4F5C\u3002"
       objectReference: {fileID: 0}
     - target: {fileID: 1948394701294781120, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: m_Pivot.x

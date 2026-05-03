@@ -3107,15 +3107,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: firstHint
-      value: "\u8FD9\u4E9B\u65B9\u5757\u7684\u6587\u4EF6\u6709\u4EC0\u4E48\u7279\u522B\u7684\u5462\uFF1F"
+      value: "\u60F3\u60F3\u4F60\u6709\u54EA\u4E9B\u6587\u4EF6\u53EF\u4EE5\u64CD\u4F5C\uFF1F"
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: thirdHint
-      value: "\u5899\u4E5F\u53EF\u4EE5\u5F53\u4E00\u683C\u7684\u8DF3\u53F0\u5E2E\u52A9\u4F60\u79FB\u52A8\u3002"
+      value: "\u8BD5\u8BD5\u642D\u51FA\u9636\u68AF\u5427\u3002"
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: secondHint
-      value: "\u7528\u4E00\u4E0B\u590D\u5236\u64CD\u4F5C\u600E\u4E48\u6837\u3002"
+      value: "\u8BD5\u8BD5\u79FB\u52A8\u5899\u4F53\u548C\u590D\u5236\u65B9\u5757\u5427\u3002"
       objectReference: {fileID: 0}
     - target: {fileID: 1948394701294781120, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: m_Pivot.x

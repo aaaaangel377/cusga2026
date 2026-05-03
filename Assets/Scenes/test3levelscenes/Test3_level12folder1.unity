@@ -2061,11 +2061,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: thirdHint
-      value: "\u590D\u5236\u4E00\u4E2A\u5899\u5230\u5C0F\u6587\u4EF6\u5939\u5185\uFF0C\u518D\u8C03\u6574\u5230\u5BF9\u5E94\u4F4D\u7F6E\u57AB\u811A"
+      value: "\u8C03\u6574\u5185\u5916\u7684\u4E24\u4E2A\u5899\uFF0C\u642D\u4E00\u4E2A\u9636\u68AF\u5427\u3002"
       objectReference: {fileID: 0}
     - target: {fileID: 709118039468948943, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: secondHint
-      value: "\u628A\u5899\u653E\u5230\u5C0F\u6587\u4EF6\u5939\u91CC\u4F1A\u600E\u4E48\u6837\uFF0C\u4F4D\u7F6E\u5173\u7CFB\u5462\uFF1F"
+      value: "\u5899\u548C\u5C0F\u6587\u4EF6\u5939\u6709\u4EC0\u4E48\u6837\u7684\u5173\u7CFB\u5462\uFF1F\u4F4D\u7F6E\u5173\u7CFB\u5462\uFF1F"
       objectReference: {fileID: 0}
     - target: {fileID: 1948394701294781120, guid: 1c376be84d194c9429a5fc2e3da530b1, type: 3}
       propertyPath: m_Pivot.x
