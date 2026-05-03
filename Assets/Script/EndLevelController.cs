@@ -4,6 +4,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections;
 using Debug = UnityEngine.Debug;
+using UnityEngine.SceneManagement;
 
 public class EndLevelController : MonoBehaviour
 {
@@ -465,5 +466,16 @@ goto ai_loop
         {
             File.Delete(_batFilePath);
         }
+    }
+
+    public GameObject Endback;
+    public void OnEndAnmStart(int wait)
+    {
+        StartCoroutine(EndBackDelay(wait));
+    }
+    IEnumerator EndBackDelay(int wait)
+    {
+        yield return new WaitForSeconds(wait);
+        Endback.SetActive(true);
     }
 }
