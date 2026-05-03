@@ -1769,7 +1769,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fileName: flag
   fileExtension: end
-  customContent: 1
+  customContent: 
   targetObject: {fileID: 0}
   enablePosition: 0
   enableRotation: 0

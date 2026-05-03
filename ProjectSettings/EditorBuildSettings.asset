@@ -16,55 +16,55 @@ EditorBuildSettings:
     guid: 397efceeb9a25c3438d1b4c4bfbed7c2
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_level3.unity
-    guid: 6d9b9bcadac1bf64092ab1c7e34c1ad1
+    guid: dedc106d12977904898ccfa5c3e376e3
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_level4.unity
-    guid: a1b83eb19ea99474da019139374af356
+    guid: 6d9b9bcadac1bf64092ab1c7e34c1ad1
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_level5.unity
-    guid: a67321ca3bbc67449a73332695eac0f3
+    guid: a1b83eb19ea99474da019139374af356
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_level6.unity
+    guid: a67321ca3bbc67449a73332695eac0f3
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/Test3_level7.unity
     guid: 5be28d64051070f429d3dbae57fc6d55
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level7nosee.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level8.unity
     guid: dd6d5b33aaa0eab40bfa169fbe6e89ce
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level8photo.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level9photo.unity
     guid: 36824de7d1f223642817c29eec33fe0b
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level9gravity.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level10gravity.unity
     guid: da309d206336db64592c125f11601749
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level10.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level11.unity
     guid: c4b5045a7df72e84ca5b6a1b80c6ded9
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level11folder1.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level12folder1.unity
     guid: 0f63bd2ce0cfd9344a47aa9c02eeb15a
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level12folder2.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level13folder2.unity
     guid: eef8fd00eceb1c04d8f315505b4d564c
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level13folder3.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level14folder3.unity
     guid: ff789b4ee14dfba43a45628c2ee6d370
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level14total2.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level15total2.unity
     guid: 5c66b1e803269194086b3d9d39cf3fac
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_Level15compfg.unity
+    path: Assets/Scenes/test3levelscenes/Test3_Level16compfg.unity
     guid: 37912a259e3b876428ac0d7ab281d769
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_Level16computer2.unity
+    path: Assets/Scenes/test3levelscenes/Test3_Level17computer2.unity
     guid: f53231c42158734498f2f869e0b53693
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_Level17end.unity
+    path: Assets/Scenes/test3levelscenes/Test3_Level18end.unity
     guid: c4de10617dc204f46a1dd3d209dea553
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/ending1.unity
     guid: 55f559dc873eec24b9ed55a441f430f0
-  - enabled: 1
-    path: Assets/Scenes/test3levelscenes/ending2.unity
-    guid: c53943d9d8a19a542a1f24909d3703eb
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/T3_chooselevel 1.unity
     guid: f9a087829ea1a3947baa96e757432f06
@@ -72,36 +72,39 @@ EditorBuildSettings:
     path: Assets/Scenes/test3levelscenes/Test3_levelhide.unity
     guid: c569e45f2fc64994cb93d5eeb85161aa
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level9EX1Time.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level10EX1Time.unity
     guid: 648b9050b5000d94faed81b1afa30c1f
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level9EX2audio.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level10EX2audio.unity
     guid: e4a946fd0733bb34daa8bb48847e46f8
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level10EX1.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level11EX1.unity
     guid: 6439ef249f91e26478d490545aab2d57
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level10EX2.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level11EX2.unity
     guid: 82644521d159847478005238e41c733c
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level3EX1.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level4EX1.unity
     guid: 1c45745704a8894469ede0d7f8e7748b
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level3EX2.unity
+    path: "Assets/Scenes/test3levelscenes/Test3_level4\u6682\u65F6\u653E\u5F03.unity"
     guid: 1358954bd8afb9a49af65b086f184b50
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level3EX3.unity
+    path: "Assets/Scenes/test3levelscenes/Test3_level4\u989D\u5916.unity"
     guid: 163c155bea14a1a4381a59c447bedb4a
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level7EX.unity
+    path: "Assets/Scenes/test3levelscenes/Test3_level\u989D\u59161.unity"
     guid: 1e5d606ab66088a43b2cce4eba2764a1
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level8EX1.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level9EX1.unity
     guid: 4f2b52327f1f18b499480a4fdfc08a50
   - enabled: 1
-    path: Assets/Scenes/test3levelscenes/Test3_level8EX2.unity
+    path: Assets/Scenes/test3levelscenes/Test3_level9EX2.unity
     guid: 925d0fb8ddcdf8b4ab03960a4d9f6aa2
   - enabled: 1
     path: Assets/Scenes/test3levelscenes/Test3_leveldoubletest.unity
     guid: 6e145d00c1ac6c440ba9ae3444a90788
+  - enabled: 1
+    path: Assets/Scenes/test3levelscenes/ending2.unity
+    guid: c53943d9d8a19a542a1f24909d3703eb
   m_configObjects: {}

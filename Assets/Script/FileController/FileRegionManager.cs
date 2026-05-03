@@ -612,4 +612,11 @@ public class FileRegionManager : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        // 清理所有引用，释放可能的文件句柄
+        _rigidbodiesInRegion.Clear();
+        _filesInRegion.Clear();
+    }
+
 }

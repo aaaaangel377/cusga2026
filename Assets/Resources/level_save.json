@@ -25,8 +25,9 @@
         "3EX1",
         "3EX2",
         "3EX3",
-        "7EX"
+        "7EX",
+        "8EX"
     ],
-    "pendingExLevel": "7EX",
+    "pendingExLevel": "8EX",
     "hintsEnabled": false
 }
